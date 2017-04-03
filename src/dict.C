@@ -492,7 +492,7 @@ Tps_Dict_Tcl::stats(void)
      */
 
     result = (char *) ckalloc((unsigned) ((NUM_COUNTERS*60) + 300));
-    sprintf(result, "%d entries in table, %d buckets\n",
+    sprintf(result, "%ld entries in table, %ld buckets\n",
 	    numEntries, numBuckets);
     p = result + strlen(result);
     for (i = 0; i < NUM_COUNTERS; i++) {
