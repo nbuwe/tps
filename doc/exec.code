@@ -1,0 +1,18 @@
+\begin{verbatim}
+struct Tps_Frame {
+    struct Tps_Handler*    _handler;   /* ptr to the frame handler */
+};
+
+Tps_Frame* Tps_create_frame(Tps_Interp*, Tps_Handler&, int);
+Tps_Status Tps_unwind_frame(Tps_Interp*,Tps_Frame*);
+
+struct Tps_Handler {
+    Tps_Framelenfcn        _framelen;
+    Tps_Framenamefcn    _framename;
+    Tps_Unwindfcn        _unwind;
+    Tps_Reenterfcn        _reenter;
+    Tps_Tracefcn        _trace;
+    Tps_Exportfcn        _export;
+    Tps_Importfcn        _import;
+};
+\end{verbatim}

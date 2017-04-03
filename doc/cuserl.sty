@@ -1,0 +1,240 @@
+\typeout{Document Style `SERL Tech. Report.'}
+\typeout{Based on the article style and CU Tech Report style}
+\input{article.sty}
+%\input{culogo.tex} % ok to zap this line
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\makeatletter
+%\def\thanks#1{\begingroup
+%\def\protect{\noexpand\protect\noexpand}\xdef\@thanks{\@thanks
+%  \protect\footnotetext[\the\c@footnote]{#1}}\endgroup}
+%\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%	Normally, you would make different copies of the following
+%	modifications for each point size of the intended paper,
+%	however, these changes are common across all the point
+%	sizes, and it's easier to keep everything in this
+%	single file.
+%
+%
+% Set the page layout for 8.5 by 11 inch pages.
+%
+% SIDE MARGINS:
+\oddsidemargin 0.125in
+\evensidemargin 0.125in
+\marginparwidth 0.95in      % might use margin paragraphs in a 
+\marginparsep 0.15in        % draft version.
+
+% VERTICAL SPACING:
+\topmargin 0in
+\headheight 0.25in
+\headsep 0.5in
+\footheight 0.25in
+\footskip 0.25in
+
+% DIMENSION OF TEXT:
+\textheight 8in
+\textwidth 6.25in
+%%
+%	Make figure and table labels be emboldened
+%
+\def\fnum@figure{{\bf Figure \thefigure}}
+\def\fnum@table{{\bf Table \thetable}}
+%
+%	Highly penalize widows & clubs
+%
+\clubpenalty=100000
+\widowpenalty=100000
+%%
+%%	Le Title Page
+%%
+\def\@techreportno{nnn}
+\def\@techreportyr{89}
+\def\@techreportmo{\month}
+\def\@techreportlabel{{CU-SERL-\@techreportno-\@techreportyr}}
+\def\@techreporttitle{\@title}
+\def\TechReportYear#1{\gdef\@techreportyr{{\ignorespaces #1}}}
+\def\TechReportMonth#1{\gdef\@techreportmo{{\ignorespaces #1}}}
+\def\TechReportNumber#1{\gdef\@techreportno{{\ignorespaces #1}}}
+%%
+%% Use \TechReportTitle if you need to specifiy a different title
+%% (e.g., w/o a footnote marker) on the tech report cover page.
+%%
+\def\TechReportTitle#1{\gdef\@techreporttitle{#1}}
+%
+\def\MakeCUTitle{
+%
+%	setting lineskip to 0pt insures no extra space between following
+%	vboxes.
+%
+\begingroup
+\lineskip=0pt
+\lineskiplimit=\maxdimen
+\thispagestyle{empty}
+\setcounter{page}{0}
+%
+%	this bit of garbage allows us to paste a larger-than-allowed vbox
+%	on the first page without getting an over-full vbox. If we don't
+%	do this, we get a blank sheet of paper for the first page, followed
+%	by our over-full vbox. the \vss at the bottom of this vbox causes
+%	us to un-glue 9in of veritcal space, making TeX think that this
+%	fits on a single page. See pages 82,83 of the TeXbook for why.
+%
+\vspace*{1.5in}%
+\centerline{
+\hsize=4in
+\Large
+\hbox to \hsize{
+\vtop to 2in{%
+\hbox to \hsize{\Large \hfill \begin{tabular}{c}
+	\@techreporttitle \end{tabular} \hfill}
+\vfill
+\large
+\hbox to \hsize{\hfill \begin{tabular}{c} \@author \end{tabular} \hfill}
+\vfill
+{\hfill\@techreportlabel\hfill\@techreportmo~19\@techreportyr\hfill}
+\vfill
+}}}
+\vspace*{1.0in}
+\begin{center}
+%{\culogofont\CUlogoE}
+%\vskip 0.25in
+{\Large University of Colorado Software Engineering Laboratory}\\
+\vskip \baselineskip
+\large
+SERL Technical Report \@techreportlabel\\[2ex]
+Department of Computer Science \\
+Campus Box 430 \\
+University of Colorado \\
+Boulder, Colorado 80309
+\end{center}
+\endgroup
+%%
+\if@twoside\typeout{Using twosided - print in duplex}%
+   \newpage
+%%
+%% now, set this page style to empty, eject the page and start page numbering
+%% at page one.
+%%
+   \thispagestyle{empty}\ \newpage
+   \setcounter{page}{1}
+\else
+   \newpage
+\fi
+}
+
+%%
+%% Copied from article.doc.Z
+%%
+\def\MakeFirstPageTitle{
+\par
+ \begingroup
+   \def\thefootnote{\fnsymbol{footnote}}
+   \def\@makefnmark{\hbox   
+       to 0pt{$^{\@thefnmark}$\hss}}   
+   \if@twocolumn               
+     \twocolumn[\@maketitle]   
+     \else \newpage
+     \global\@topnum\z@        % Prevents figures from going at top of page.
+     \@maketitle \fi\thispagestyle{plain}\@thanks
+ \endgroup
+ \setcounter{footnote}{0}
+ \let\maketitle\relax
+ \let\@maketitle\relax
+ \gdef\@thanks{}\gdef\@author{}\gdef\@title{}\let\thanks\relax
+}
+
+\def\maketitle{
+  \MakeCUTitle
+  \MakeFirstPageTitle
+}
+
+%
+%	A macro giving the month only
+%
+\def\@month{\ifcase\month\or
+ January\or February\or March\or April\or May\or June\or
+ July\or August\or September\or October\or November\or December\fi}
+%
+\def\@maketitle{\newpage
+ \null
+ \vskip 2em \begin{center}
+ {\LARGE \@title \par} \vskip 1.5em {\large \lineskip .5em
+\begin{tabular}[t]{c}\@author 
+ \end{tabular}\par} 
+ \vskip 1em {\large \@techreportmo\ 19\@techreportyr} \end{center}
+ \par
+ \vskip 1.5em
+\begin{figure}[b]
+\vspace*{\footnotesep}
+\footnoterule
+\vspace{0.15in}\noindent\small
+This material is based upon work sponsored by
+the Air Force Materiel Command, Rome Laboratory, and
+the Advanced Research Projects Agency under
+Contract Number F30602-94-C-0253.
+The content of the information does not necessarily reflect the
+position or the policy of the Government and no official endorsement
+should be inferred.
+\end{figure}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \pageheader{LEFT}{CENTER}{RIGHT}
+% \pagefooter{LEFT}{CENTER}{RIGHT}
+% Example: \pagefooter{}{\thepage}{}
+% Say \pageheaderlinetrue if you want the header underlined.
+% Say \pagefooterlinetrue if you want a rule above the footer.
+\newif\ifpageheaderline	\pageheaderlinefalse
+\newif\ifpagefooterline	\pagefooterlinefalse
+
+\newdimen\pageheaderlineskip  \pageheaderlineskip=1.5pt
+
+\newdimen\pagefooterlineskip  \pagefooterlineskip=\pageheaderlineskip
+
+\def\@headerline#1#2#3{%
+	\ifpageheaderline
+          \vbox{\hbox to \textwidth{\rlap{#1}\hss{#2}\hss\llap{#3}}%
+                \vskip\pageheaderlineskip \hrule}%
+        \else{\rlap{#1}\hss{#2}\hss\llap{#3}}\fi}
+
+\def\@footerline#1#2#3{%
+	\ifpagefooterline
+          \vbox{\hrule \vskip\pagefooterlineskip
+                \hbox to \textwidth{\rlap{#1}\hss{#2}\hss\llap{#3}}}%
+        \else{\rlap{#1}\hss{#2}\hss\llap{#3}}\fi}
+
+\newcommand\oddpageheader[3]{\def\@oddhead{\@headerline{#1}{#2}{#3}}}
+
+\newcommand\evenpageheader[3]{\def\@evenhead{\@headerline{#1}{#2}{#3}}}
+
+\newcommand\oddpagefooter[3]{\def\@oddfoot{\@footerline{#1}{#2}{#3}}}
+
+\newcommand\evenpagefooter[3]{\def\@evenfoot{\@footerline{#1}{#2}{#3}}}
+
+\newcommand\pageheader[3]{%
+	\oddpageheader{#1}{#2}{#3}\evenpageheader{#1}{#2}{#3}}
+
+\newcommand\pagefooter[3]{%
+	\oddpagefooter{#1}{#2}{#3}\evenpagefooter{#1}{#2}{#3}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\horizontalline}{~\hrulefill~}
+\newcommand{\simplenote}[1]{
+\footnotetext{{#1}
+\addtolength{\footnotesep}{-0.3em}
+\vspace*{\footnotesep}
+\addtolength{\footnotesep}{0.3em}
+\footnoterule
+\vspace*{- \footnotesep}}
+}
+\newenvironment{abstractpage}{\setcounter{page}{0}\begin{abstract}}{\end{abstract}\newpage}
+%\newcommand{comment}[1]{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{execsum}{\setcounter{page}{0}
+\if@twocolumn
+\section*{Executive Summary}
+\else \small
+\begin{center}
+{\bf Executive Summary\vspace{-.5em}\vspace{0pt}}
+\end{center}
+\quotation
+\fi}{\if@twocolumn\else\endquotation\fi\newpage}

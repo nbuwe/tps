@@ -1,0 +1,18 @@
+\begin{verbatim}
+struct Tps_Global {
+    Tps_Stream_File*    _stdcons;
+    Tps_Value           __stdcons;
+    Tps_Stream_File*    _stdin;
+    Tps_Stream_File*    _stdout;
+    Tps_Stream_File*    _stderr;
+    Tps_Value           __stdin;
+    Tps_Value           __stdout;
+    Tps_Value           __stderr;
+    Tps_Stream_String*  _tempbuf;
+    Tps_Nametable*      _nametable;
+    Tps_Dict*           _systemdict;
+    Tps_Value           __systemdict;
+    Tps_List*           _objects;
+    Tps_Handler_List*   _handlers;
+} tpsg;
+\end{verbatim}

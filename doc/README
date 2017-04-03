@@ -1,0 +1,17 @@
+The documentation for tps
+is not automatically constructed
+during build since it may not immediately
+be needed, and it is often highly
+system dependent.
+
+The file doc/Imake.tmpl
+contains some site specific information
+about tool names:
+	LATEX=latex	- a standard latex processor.
+	DVIPS=dvips	- this converts .dvi files to .ps (postscript)
+
+To make a postscript file (tps.ps) do the command
+	make ps
+which will run latex twice (for labels)
+and then dvips to get the postscript.
+This is obviously irritating, so you may want to edit it.

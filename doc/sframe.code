@@ -1,0 +1,9 @@
+\begin{verbatim}
+struct Tps_Frame_Source : Tps_Frame {
+    Tps_Value    _body;
+    long        _index;
+};
+
+Tps_Handler Tps_handler_source;
+Tps_Status Tps_create_source(Tps_Interp*,Tps_Value,boolean singular=FALSE);
+\end{verbatim}

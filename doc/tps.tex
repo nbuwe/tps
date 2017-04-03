@@ -1,0 +1,2333 @@
+%   Copyright (c) 1995 Dennis Heimbigner.
+%   All rights reserved.
+%
+%   This software was developed as part of the Arcadia project
+%   at the University of Colorado, Boulder.
+%
+%   Redistribution and use in source and binary forms are permitted
+%   provided that the above copyright notice and this paragraph are
+%   duplicated in all such forms.
+%   THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+%   IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+%   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%
+\documentstyle[11pt]{cuserl}
+\input epsf
+\setlength{\topmargin}{-0.125in}
+\setlength{\headsep}{0in}
+\setlength{\headheight}{0in}
+\setlength{\textheight}{9in}
+\setlength{\textwidth}{6.75in}
+\setlength{\columnsep}{0.25in}
+\setlength{\oddsidemargin}{-0.125in}
+\newcommand{\pv}{2.1b}
+\newcommand{\tv}{2.1c}
+\newenvironment{block}{\begin{tabbing}
+xxxxxxxx\= xxxxxxxx\= xxxxxxxx\= xxxxxxxx\=\kill\\
+}{\end{tabbing}}
+% \newcommand{\horizontalline}{~\hrulefill~}
+\def\CC{\mbox{C\hspace{-.05em}\raisebox{.5ex}{\tiny ++}}}
+\newcommand{\question}[1]{
+	{[{\bf{\sc Question:  }} {\bf{#1}} ]}
+	\marginpar[?$\Rightarrow$]{$\Leftarrow$?}
+}
+\setcounter{totalnumber}{10}
+\setcounter{topnumber}{5}
+\setcounter{bottomnumber}{5}
+\renewcommand{\topfraction}{1.0}
+\renewcommand{\bottomfraction}{1.0}
+
+\begin{document}
+
+\TechReportYear{96}
+\TechReportMonth{3 January}
+\TechReportNumber{201}
+
+\TechReportTitle{The Tps Reference Manual \\
+Version \tv}
+
+\title{The Tps Reference Manual \\
+Version \tv
+}
+
+\author{Dennis Heimbigner\\
+(dennis@cs.colorado.edu)
+}
+\maketitle
+\sloppy
+
+\section{Introduction}
+\label{intro}
+{\bf Tps}
+(Tiny/Transportable Postscript)
+provides an embedded interpreter for a language that looks
+much like a version of Postscript%
+\footnote{Postscript is a registered trademark of Adobe Corporation.}
+with all of the graphics operators removed.
+The resulting system is roughly the same size and for the same purposes
+as Tcl~\cite{Ousterhout94a}, and the myriad of other embedded
+language interpreters.
+
+Obviously the question is: why another embedded language interpreter?
+For Tps, the answer is {\em Heterogeneous State Transportability}.
+This term covers to two abilities.
+First, it is possible to interrupt an executing Tps program,
+and save the state of the computation in a persistent form.
+Later, in some other interpreter, that state can be re-constituted
+and the computation can continue.
+Second, the state can be restored to a different kind of
+machine than the one from which the state was saved,
+thus allowing for computation to cross between heterogeneous
+platforms.
+Note that this differs from the simpler mechanisms of invoking
+a program, which cannot accumulate state,
+or saving the complete address space
+of a Unix process and later restoring it, which is not heterogeneous.
+
+Combined with some appropriate network technology, state transport
+can be used to a achieve the ability to move an executing
+program from network node to node.
+Additionally, it can be used to achieve computation
+persistence by saving the state into some appropriate persistent store.
+As far as is known, Tps,
+Obliq~\cite{obliq94a}
+and the proprietary Telescript%
+\footnote{Telescript is a registered trademark of General Magic
+Corporation.}
+~\cite{Knaster94a}
+agent language
+are the only systems with this capability.
+It is rumored that the engine underlying Telescript
+is in fact a Forth/Postscript style stack machine.
+Obliq has similar capabilities, but is rather more heavyweight.
+It is difficult to use the facility in any
+way other than prescribed by the language.
+
+The key to state transportability is packaging
+up the current state of a computation and transporting
+it to some other site
+where it can continue execution.
+Basically, it is possible to stop the interpreter and save the state,
+or start an interpreter and cause it to continue
+execution of some previously saved state.
+More details are provided in Section \ref{state}.
+% note: ability to detect state differential because of sysdict vs userdict
+
+In addition to state transportability,
+there are several other features of Tps that
+differentiate it with respect to many
+of the other available systems.
+\begin{itemize}
+\item Safe Execution.
+No program written in the safe subset of Tps
+can cause any uncontrolled actions in the interpreter.
+(see, for example, SafeTcl~\cite{safetcl93a}
+for the inspiration for this idea).
+\item Documentation.
+Because Tps is so similar to Postscript,
+it can build on the many books describing
+Postscript and how to program in it.
+\item State Accessibility.  The computational state of a Tps program
+execution is very visible.  It essentially consists of
+the operand stack, the dictionary
+stack, and the execution stack.
+This is one of the essential supports for state transportability.
+\item Stepping Behavior.
+Most other embedded languages intertwine their execution
+stack with the C process stack.  In particular, when the embedded
+language needs to recurse, it does so by recursively calling
+its interpreter procedure, which is generally a C procedure.
+One of the consequences is that (assuming no threading), it is
+difficult to stop a computation and later resume it.
+The Tps interpreter does not intertwine stacks, and so can be
+stopped and resumed between operator invocations.
+This provides, among other things, general single step execution
+for Tps programs, which is a significant aid to debugging.
+\item Multiple Interpreters.
+It is possible to create multiple interpreters executing simultaneously.
+This capability is surprisingly rare.  Tcl, for example,
+is one of the few
+other systems that provides it.
+It is rare because many interpreters
+were written with the assumption that they were in control
+and that only one instance was needed.  Most Scheme interpreters
+seem to suffer from this delusion of being in control.
+\item Extensible types.
+The types provided by Tps are, for the most part, similar to the
+non-graphics types of Postscript.  This set currently includes
+null, mark, boolean, integer, real, name, string, array, dict, and
+stream.  The stream is a generalization of the Postscript file type.
+Adding a new type is generally not very difficult.
+\item Extensible execution stack frames.
+The execution stack consists of a series of frames holding
+control information.  Thus, when a stopped operator is executed,
+it puts a special frame on the execution stack to implement the stopped
+operator semantics.  Similarly, the repeat operator keeps its current count
+in a frame on the execution stack.
+Adding new kinds of frames is relatively simple, and can even be done
+on the fly.
+%\item Thread Safety.
+%The Tps interpreter has been designed to operate in a threaded
+%environment.  This means that all global data structures are
+%protected by mutual exclusion.
+\end{itemize}
+
+\section{Differences with Postscript}
+The Tps interpreter deliberately attempts to be compatible with the
+basic Postscript interpretation model.
+This section characterizes the differences between Tps and Postscript. 
+
+\subsection{Syntactic Differences}
+There are number of syntactic differences between Tps and Postscript. 
+\begin{itemize}
+
+\item Strings in Tps are delimited by double quotes
+rather than parenthesis.  Additionally, the typical C escapes
+are available within strings.  These escapes include
+\verb|'\\'|,
+\verb|'\n'|,
+\verb|'\r'|,
+\verb|'\t'|,
+\verb|'\b'|,
+\verb|'\f'|,
+and
+\verb|'\ddd'|, where ddd is a 3 digit octal number.
+
+\item Integers representing single characters can be
+written using the C single quote notation.
+For example \verb|'@'|.
+The escapes associated with strings are allowable as the enclosed character.
+
+\item The C integer radix format (e.g. 0xffffffff) is supported
+in addition to the Postscript (e.g. 16\#ffffffff) notation.
+\end{itemize}
+These changes are under
+the control of a PSMIMIC compile-time flag.  Setting this flag
+causes the interpreter to use parenthesis for strings instead
+of double quotes, and to ignore escapes.  It also
+only allows the Postscript integer radix notation.
+
+\subsection{Interpreter Values}
+The set of values representable by the interpreter overlaps
+the set of Postscript values.  It does not contain any graphics
+related values such as graphic states, and the file type has been
+generalized to a {\em stream} type.
+The value types matching Postscript are
+{\em null},
+{\em mark},
+{\em boolean},
+{\em integer},
+{\em real},
+{\em name},
+{\em string},
+{\em array},
+and
+{\em dict}.
+As mentioned, the {\em stream} type replaces the file type.
+The {\em operator} type is new and represents a reference to
+a primitive operator.
+Note also that Tps does not support the array and string subintervals.
+Rather, copying of an interval actually produces a new string
+or array.
+
+\subsection{Supported Operators}
+\begin{figure}[t]\centering
+\begin{tabbing}
+xxxxxxxxxxxxxx \= xxxxxxxxxxxxxx \= xxxxxxxxxxxxxx \= xxxxxxxxxxxxxx \= xxxxxxxxxxxxxx \= \kill
+[ \> ] \> = \> == \> abs \> add \\
+aload \> anchorsearch \> and \> array \> astore \> atan \\
+begin \> bind \> bitshift \> bytesavailable \> ceiling \> clear \\
+cleartomark \> closefile$^{1}$ \> copy$^{2}$ \> cos \> count \> countdictstack \\
+countexecstack$^{2}$ \> counttomark \> currentdict \> currentfile \> cvi \> cvlit \\
+cvn \> cvr \> cvrs$^{2}$ \> cvs$^{2}$ \> cvx$^{1}$ \> def \\
+dict \> dictstack \> div \> dup \> end \> eq \\
+exch \> exec \> execstack$^{1,2}$ \> executeonly \> exit \> exp \\
+false \> file$^{1}$ \> floor \> flush \> flushfile \> for \\
+forall \> ge \> get \> getinterval \> gt \> handleerror$^{1}$ \\
+idiv \> if \> ifelse \> index \> interrupt \> known \\
+le \> length \> ln \> load \> log \> loop \\
+lt \> mark \> maxlength \> mod \> mul \> ne \\
+neg \> noaccess \> not \> null \> or \> pop \\
+print$^{1}$ \> prompt$^{1}$ \> pstack$^{1}$ \> put \> putinterval \> quit \\
+rand \> rcheck \> read \> readline$^{2}$ \> readstring$^{2}$ \> repeat \\
+resetfile$^{1}$ \> roll \> round \> rrand \> run$^{1}$ \> search \\
+sin \> sqrt \> srand \> stack \> start$^{1}$ \> status \\
+stop \> stopped \> store \> string \> sub \> systemdict \\
+token \> true \> truncate \> type \> userdict \> usertime \\
+version \> wcheck \> where \> write$^{1}$ \> writestring$^{1}$ \> xcheck \\
+xor \\
+\end{tabbing}
+\caption{Supported Operators}
+\label{supported}
+\end{figure}
+The operators shown in Figure \ref{supported} in alphabetical order are
+supported in Tps, and appear to have the same semantics as with Postscript.
+The superscripts indicate the following.
+\begin{enumerate}
+\item This is a potentially unsafe operator (see Section \ref{safety}).
+\item This is an operator whose semantics has been modified/exended
+with respect to normal postscript semantics.
+\end{enumerate}
+
+\subsection{Unsupported Operators}
+\begin{figure}[t]\centering
+\begin{tabbing}
+xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= \kill
+arc \> arcn \> arcto \> ashow \\
+awidthshow \> banddevice \> cachestatus \> charpath \\
+clip \> clippath \> closepath \> concat \\
+concatmatrix \> copypage \> currentdash \> currentflat \\
+currentfont \> currentgray \> currenthsbcolor \> currentlinecap \\
+currentlinejoin \> currentlinewidth \> currentmatrix \> currentmiterlimit \\
+currentpoint \> currentrgbcolor \> currentscreen \> currenttransfer \\
+curveto \> defaultmatrix \> definefont \> dtransform \\
+eoclip \> eofill \> erasepage \> fill \\
+findfont \> flattenpath \> FontDirectory \> framedevice \\
+grestore \> grestoreall \> gsave \> identmatrix \\
+idtransform \> image \> imagemask \> initclip \\
+initgraphics \> initmatrix \> invertmatrix \> itransform \\
+kshow \> lineto \> makefont \> matrix \\
+moveto \> newpath \> nulldevice \> pathbbox \\
+pathforall \> rcurveto \> readonly \> renderbands \\
+reversepath \> rlineto \> rmoveto \> rotate \\
+scale \> scalefont \> setcachedevice \> setcachelimit \\
+setcharwidth \> setdash \> setflat \> setfont \\
+setgray \> sethsbcolor \> setlinecap \> setlinejoin \\
+setlinewidth \> setmatrix \> setmiterlimit \> setrgbcolor \\
+setscreen \> settransfer \> show \> showpage \\
+StandardEncoding \> stringwidth \> stroke \> strokepath \\
+transform \> translate \> widthshow
+\end{tabbing}
+\caption{Unsupported Graphics Operators}
+\label{unsupportedgraphics}
+\end{figure}
+\begin{figure}[b]\centering
+\begin{tabbing}
+xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= \kill \\
+echo \> errordict \> prompt \> readhexstring \\
+restore \> save \> vmstatus \> writehexstring
+\end{tabbing}
+\caption{Other Unsupported Operators}
+\label{otherunsupported}
+\end{figure}
+A number of operators in Postscript are not supported in Tps.
+Figure \ref{unsupportedgraphics} shows the graphics operators of
+Postscript, none of which are supported in Tps.
+Figure \ref{otherunsupported} shows the other Postscript operators
+not supported in Tps.
+
+\subsection{Modified Operators}
+Some of the operators have been modified in a compatible fashion.
+The operators with superscript ``2'' in
+Figure \ref{supported} shows the operators whose semantics
+is noticeably different from normal postscript.
+The countexecstack and execstack operators
+have different semantics oriented to the support of state
+transportability (see Section \ref{state}).
+The {\em copy}, {\em cvrs}, {\em cvs}, {\em readline}, and {\em readstring}
+operators
+have been modified to allow a null value in place of the input string.
+When a null is specified, a string of the correct size is created and returned
+as a value.
+In the case of {\em copy} this also works when copying an array or dict.
+
+\subsection{New Operators}
+\begin{figure}[b]\centering
+\begin{tabbing}
+xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= \kill \\
+append \> catch \> closestream$^{1}$ \> configurationdict \\
+currentstream \> cvts \> cvunsafe$^{1}$ \> cvuntrace$^{1}$ \\
+eol \> errortrap$^{1}$ \> flushstream \> gc \\
+neq \> noop \> platformdict \> remove \\
+resetstream$^{1}$ \> runstream$^{1}$ \> safecheck$^{1}$ \> safeexec$^{1}$ \\
+safestate$^{1}$ \> stateexec$^{1}$ \> statesave$^{1}$ \> staterestore$^{1}$ \\
+stdin$^{1}$ \> stdout$^{1}$ \> stderr$^{1}$ \> stream$^{1}$ \\
+streamstring \> throw$^{1}$ \> trace$^{1}$ \> tracecheck$^{1}$ \\
+traceexec$^{1}$ \> tracereturn$^{1}$ \> tracetrap$^{1}$ \> undef \\
+while \\
+\end{tabbing}
+\caption{New Operators}
+\label{newoperators}
+\end{figure}
+Figure \ref{newoperators} shows the operators that are new in Tps.
+Some of them could
+be implemented using other operators.  Some, such as catch,
+represent a more general approach to error handling than is implemented
+in Postscript.  Some of them are existing file
+operations but generalized to streams.
+As with Figure \ref{supported},
+the superscript ``1'' marks operators that are modified by safety
+considerations.
+\begin{description}
+\item[append]
+The append operation takes either two strings, or a string and an integer,
+or two arrays
+and produces a result by appending the top argument to the second
+argument.  Thus ``abc'' ``def'' append $\rightarrow$ ``abcdef''.
+\item[catch]
+The catch operation operates in somewhat the same fashion as stopped.
+It executes the top element of the operand stack, normally a procedure.
+If the procedure execution returns normally, then catch pushes the value false
+onto the stack.  If the throw operator is executed within the procedure,
+then
+the execution stack is unwound,
+the argument to throw is pushed onto the operand stack,
+the value true is pushed onto the stack,
+and the catch returns.
+\item[closestream]
+The closestream operator is essentially the same as the closefile operator,
+but operates on any stream object and not just on files.
+\item[configurationdict]
+This is a dict containing the following configuration information.
+    \begin{itemize}
+	\item {\em /copyright} -- a string containing a copyright notice.
+	\item {\em /safefileprefix} -- The prefix used by safe
+		stream operator; see Section \ref{unsafestream}.
+    \end{itemize}
+\item[currentstream]
+Return the current stream from which input is being taken.
+\item[cvts]
+The cvts operator takes a value plus a string, converts the value
+to a token string in the string arg, and then returns a substring
+representing the result.  If the string is instead a null, then
+a string of the correct size is created and returned.
+\item[cvunsafe]
+See the discussion of safety in Section \ref{safety}.
+\item[cvuntrace]
+See the discussion of tracing in Section \ref{trace}.
+\item[eol]
+Pushes the value of end-of-line character onto the operand stack.
+\item[errortrap]
+See the discussion of error handling in Section \ref{error}.
+\item[flushstream]
+The flushstream operator is essentially the same as the {\em flushfile}
+operator, but operates on any stream object and not just on files.
+\item[neq]
+Equivalent to {\em eq not}.
+\item[noop]
+Do nothing.
+\item {\em /platformdict} -- 
+This is a dict containing the some of the platform information
+established by the platform command during installation.
+It contains the following keys.
+    \begin{itemize}
+	\item {\em /version} -- a string containing the version string.
+	\item {\em /targetarch} -- the hardware architecture.
+	\item {\em /targetos} -- the operating system.
+    \end{itemize}
+Note that this is actually a command to lookup the {\em platformdict}
+within the {\em configurationdict}.
+\item[remove]
+The remove operator is the ``inverse'' of the {\em put} operator
+when applied to a dictionary.
+It takes a key and a dictionary and removes the key, and its associated value,
+from the dictionary.  If the key is not defined, then the operator
+has no effect.
+\item[resetstream]
+The resetstream operator is essentially the same as the
+{\em resetfile} operator, but operates on any stream
+object and not just on files.
+\item[runstream]
+The runstream operator is a generalization of the {\em run} operator.
+It reads and executes successive tokens from the specified stream,
+which might be a file or might be a string stream.
+\item[safecheck, safeexec, safestate]
+See the discussion of safety in Section \ref{safety}.
+\item[stateexec, statesave, staterestore]
+See the discussion of state transportability in Section \ref{state}.
+\item[stdin, stdout, stderr]
+Return the Unix stdin, stdout, or stderr file stream, respectively.
+\item[stream]
+Takes one of the following forms.
+\begin{enumerate}
+\item name|string /r /file filename stream $\Rightarrow$ --stream(name)--
+\item name|string /w /file filename stream $\Rightarrow$ --stream(name)--
+\item string /r /string stream $\Rightarrow$ --stream--
+\item null /w /string stream $\Rightarrow$ --stream--
+\end{enumerate}
+The first two forms take a file name (a name or string),
+a mode (read or write) and the
+keyword {\em /file}, opens the specified file and returns a stream
+object attached to that file.
+The second form takes a string, a mode (must be read) and the
+keyword {\em /string} and creates a stream that will takes its
+characters from the specified string.
+The third form takes a null, a mode (must be write) and the
+keyword {\em /string} and creates a stream that will write characters
+characters into a newly created string.
+The contents of the stream may be extracted using {\em streamstring}.
+\item[streamstring]
+Given a stream string, return the contents of the stream as a string.
+\item[throw]
+The {\em throw} operator acts in consort with the {\em catch} operator.
+If no catch operator is currently active, then this causes the interpreter to
+quit.  Otherwise it pushes its argument, the throw flag, onto the
+operand stack, unwinds the execution stack to reach the level
+of the {\em catch} operator and then continues the catch.
+This operator is safety sensitive in that if executed in
+unsafe mode, it will never be caught by a catch frame
+in safe mode.
+\item[trace, tracecheck, traceexec, tracereturn, tracetrap]
+See the discussion of tracing in Section \ref{trace}.
+\item[undef]
+The {\em undef} operator is the ``inverse'' of the {\em def} operator.
+It locates the definition of its argument, the key, in the dictionary
+stack.  If not defined, then it does nothing.
+If the key is located, then the key plus associated
+value is removed from that dictionary.
+\item[while]
+This is a loop operator that takes two executable arrays.
+The first is repeatedly evaluated and if it leaves true (or integer != 0)
+on the stack, the second array is executed.
+\end{description}
+
+\subsection{Errors}
+\label{error}
+
+\subsubsection{Supported Errors}
+The non-graphic errors show in Figure \ref{stderrors} 
+defined in the Postscript reference manual are used by
+the Tps interpreter.
+\begin{figure}[b]\centering
+\horizontalline
+\begin{tabbing}
+xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= \kill
+dictfull \> dictstackoverflow \> dictstackunderflow \> execstackoverflow \\
+interrupt \> invalidaccess \> invalidexit \> invalidfileaccess \\
+ioerror \> limitcheck \> rangecheck \> stackoverflow \\
+stackunderflow \> syntaxerror \> timeout \> typecheck \\
+undefined \> undefinedfilename \> undefinedresult \> unmatchedmark \\
+unregistered \> vmerror
+\end{tabbing}
+\caption{Supported Standard Errors}
+\label{stderrors}
+\end{figure}
+
+\subsubsection{Unsupported Errors}
+The graphics-related errors
+({\em invalidfont}, {\em invalidrestore}, {\em nocurrentpoint})
+as defined in the Postscript reference manual are unused by the Tps
+interpreter.
+
+\subsubsection{New Errors/Conditions}
+\begin{figure}[b]\centering
+\begin{tabbing}
+xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= xxxxxxxxxxxxxxxx \= \kill
+eof \> fail \> interrupt \> invalidstreamaccess \\
+popframe \> quit \> retryframe \> stop \\
+systemerror \> tailframe \> unsafe
+\end{tabbing}
+\caption{New Errors and Conditions}
+\label{newerrors}
+\end{figure}
+
+Figure \ref{newerrors} shows
+a number of new ``errors'' used by Tps.
+In some cases, they are not actually errors so much
+as notifiers of interesting conditions.
+\begin{description}
+\item[eof] -- returned by the read operations to indicate
+that end of file was encountered.
+\item[fail] -- a generic error condition.
+Continued execution is not possible.
+\item[interrupt] -- returned by the interpreter to indicate
+that the {\em interrupt} operation was executed.
+Continued execution is possible.
+\item[invalidstreamaccess] -- stream generalization of invalidfileaccess.
+\item[ok] -- indicates a successful operation.
+\item[popframe] -- used internally by frame procedures
+to indicate that a frame is no longer needed.
+\item[quit]  -- returned by the interpreter to indicate
+that the {\em quit} operation was executed.
+Continued execution is possible, but not desirable.
+\item[retryframe] -- used internally by frame procedures
+to indicate that an operator pushed a new exec stack frame,
+and that the new frame should be consulted.
+\item[stop] -- used internally by frame procedures
+to indicate that an frame unwinding should stop.
+\item[systemerror] -- some unrecoverable disaster has occurred.
+Continued execution is not possible, and continued program execution
+may not be possible.
+\item[tailframe] -- used internally by frame procedures
+to indicate that they obtained an object to execute,
+but that the frame itself was no longer needed.
+\item[unsafe] -- returned by unsafe primitives
+when invoked in safe mode in such a way as to potentially
+violate safety constraints.
+\item[uncaughtthrow] -- returned from the interpreter
+if a throw is executed and no catch frame is on the exec stack
+to handle it.
+\end{description}
+
+\section{Error Handling}
+\label{errhandle}
+The Tps error handling mechanism is similar to, but simpler than,
+the Postscript model.
+When an error is detected, the currently executing object and the
+error, as a name, are pushed onto the stack and the routine
+{\em errortrap} is executed (usually from {\em systemdict}).
+
+{\em Errortrap} currently is defined to 
+be equivalent to the {\em stop} operator.
+This is different from the Postscript model, which invokes the errorname
+as a procedure, which normally invokes the
+{\em errorhandler} procedure.
+In Postscript, {\em errorhandler} 
+fills in the {\em \$error} dictionary
+with the same information as does a Postscript interpreter.
+After this, {\em errorhandler} executes the {\em stop} operator.
+
+In the current Tps model,
+as with Postscript, the assumption is that there is a {\em stopped}
+operator frame on the exec stack to pick up the stop and execute
+the procedure {\em handleerror}.
+In Tps, however, {\em handleerror} assumes that the error causing object
+and the errorname are still on the stack, and it prints an
+error message based on these values.
+Note specifically that the Tps model has no {\em errordict}
+or {\em \$error} dict.
+
+\section{Tracing}
+\label{trace}
+A feature of Tps is its ability to execute a program a step
+at a time, where a step is a primitive operator execution.
+As a consequence of this feature, it is possible to trace (or
+debug) the execution a program in a highly flexible manner.
+
+\begin{figure}[b]\centering
+\centerline{\epsfbox{trace.id}}
+\caption{Trace State of Execution Stack}
+\label{traceexec}
+\end{figure}
+
+Tracing turns out to be slightly tricky.
+Figure \ref{traceexec} attempts to show
+the general case during execution.
+The box represents the sequence of frames on the exec stack,
+or equivalently, the depth of procedure calls
+reached while executing some piece of code.
+The so-called ``monitor'' code at the left of the figure
+refers to code which acts as an execution monitor;
+it collects input from the user, arranges for its execution,
+traps errors from the user code execution and reports
+the errors to the user.
+At the right of the figure, there is code being executed
+that represents (for the user) atomic support code.
+Both the monitor code and the support code should not be traced,
+no matter what the trace state of the user code.
+
+The user code in the center part of the Figure is,
+as a rule, either traced completely or not traced at all.
+However, as with support code, the user may wish to not trace
+certain of the user procedures, but rather treat them as atomic.
+Thus, even user code tracing may be conditional.
+
+When tracing is activated and an object needs to be traced,
+then the interpreter invokes the ``tracetrap'' operator
+(see below) with tracing temporarily off.
+The default semantics for {\em tracetrap} is to
+print the object and return.
+{\em Tracetrap} takes the object itself as its argument.
+
+The relevant operators are as follows.
+\begin{description}
+\item[cvuntrace]
+-- marks an object as untraceable; actually, it will be still traced
+to one level if it is anything but an executable array.
+\item[trace]
+-- This is a synonym for traceexec.
+\item[tracecheck]
+-- Returns true if its arg is traceable, false otherwise.
+\item[traceexec]
+-- This operator controls the crossing of the boundary between
+the untraced monitor code and the user code.
+It saves the current trace state on the exec stack
+and sets the trace state as determined by {\em \_trace\_user}.
+It then executes its argument as if it had been done
+by the {\em exec} operator.
+When a user wants to trace something, say operator x,
+then he should execute {\em \{x\} traceexec}.
+\item[tracereturn]
+-- This should be the last operator executed inside the tracetrap
+routine.
+It is essentially equivalent to
+\begin{quote}
+\{ /exittrace throw \}
+\end{quote}
+where the throw will be caught by a trace frame.
+This operator takes the original object argument to {\em tracexec},
+resets the exec stack (via the throw), and causes the object to execute.
+It sets {\em \_traceskip} so that in the next cycle,
+the object will actually execute rather than be traced again.
+\item[tracetrap]
+-- This is the name invoked to trace an object.
+The default just prints the object.
+It may be redefined to execute pretty much any desired code.
+\end{description}
+
+\section{State Transportability}
+\label{state}
+Within the interpreter, state transport
+is managed by the following operators.
+\begin{description}
+\item[statesave:]
+This operator gathers up the current state of the interpreter,
+encodes that state as a string, and leaves it on the operand stack.
+After the state is saved, this operator pushes the value {\em true}
+onto the operand stack.
+\item[staterestore:]
+This operator takes two arguments:
+\begin{quote}
+string boolean staterestore $\rightarrow$\hskip0.25in --
+\end{quote}
+It decodes the string to create a new interpreter state.
+If the boolean is true, then the current interpreter state
+is completely overwritten (subject to keeping the safety mode
+correct).  If the boolean is false, then the state is ``concatenated''
+with the existing state.  This means that the stacks in the string
+are pushed onto the corresponding stacks.
+After the state is restored, this operator pushes the value {\em false}
+onto the operand stack.
+In either case, execution continues in the restored state.
+The ability to concatenate states is provided to allow
+state restore to be controlled by some form of monitoring code.
+\item[stateexec:]
+This operator performs two actions.
+First, it places a so-called {\em statemark} frame
+on the exec stack.  This frame marks the limit of the exec
+stack that will we saved by a {\em statesave} operation.
+Second, it takes its argument and begins executing it
+in the same way as the {\em exec} operator.
+Thus, the accepted use is to begin executing some piece of
+code to form a transportable computation. 
+\end{description}
+
+The reason that the {\em statesave} and {\em staterestore}
+operators return {\em true} and {\em false}, respectively,
+is to allow a computation to determine if it has just been
+restarted.  The following code illustrates
+the sort of canonical use.
+\begin{quote}
+\{statesave \{continue1\} \{continue2\} ifelse\}
+\end{quote}
+After a statesave, the {\em continue1} code will be executed.
+If the saved state is restored, it will appear
+again as if it is returning from the statesave, but
+the stack value will differ, so {\em continue2} will be executed instead.
+
+\subsection{Limitations and Assumptions}
+In order to successfully transport state,
+it must be possible to encode all information about
+the current state of an interpreter.
+Later, within a target interpreter, it must
+be possible to reverse the encoding and achieve
+an equivalent state.
+This requires the target interpreter to have
+as least the same types and primitive operators
+as the originating interpreter.
+For Tps, such agreements have some ramifications.
+\begin{itemize}
+\item Common Operators -
+Both interpreters assume that a base set of operators
+is defined by a common system dictionary.
+\item Shared Containers -
+Dictionaries, arrays, and strings represent
+container objects that have modifiable state.
+Thus, if two objects point to the same container
+in one interpreter, then the transported state
+should arrange to maintain this shared state
+in the target interpreter.
+\item Operator Bindings - 
+The bind operation represents a potentially irreversible
+operation in that the names of the operators is lost
+in the process of binding a code array.
+In order to transport bound code, some means
+for reversing the binding is required.
+For Tps, this is performed by defining a special
+set of names for operators in the systemdict.
+When an operator is to be ``unbound,''
+it is replaced by that special name.
+Note that this requires operator objects to
+maintain an internally accessible name.
+On the target side, these special names are recognized
+and converted back to direct operator references.
+\item Streams -
+For streams being read and for which the {\em bytesavailable}
+operator returns a non-negative value, it is possible
+to read the complete contents of the file and pass it as part of the state.
+During state restore, the contents can be made available again
+as a string stream.
+Obviously there are significant limitations to this approach
+to passing streams.
+\end{itemize}
+
+Transporting a state requires the encoding of the
+following information.
+\begin{itemize}
+\item User dictionary -
+The user dictionary is the repository of user defined
+operations.  These operators must be built from
+a common set of primitive operations defined
+in the system dictionary.
+If state is saved during unsafe operation, then the unsafe mode user dict
+is saved.  In all cases, the safe mode user dict is saved.
+\item Operand stack -
+The operand stack is a sequence of values
+from the interpreter type system.
+This may include various kinds of containers
+and even references to operators.
+\item Dict Stack -
+This is the set of dictionaries in use
+to define names.
+It is assumed (and enforced) that the lowest
+level dictionary (the last one consulted during lookup)
+is the system dictionary.
+If state is saved during unsafe operation, then the unsafe mode dict stack
+is saved.  In all cases, the safe mode dict stack is saved.
+\item Exec Stack -
+Successive frames from exec stack are reversibly converted to
+sequences of values and pushed onto the operand stack.
+This is effectively the {\em execstack} operator.
+Then these values are encoded and inserted into the transported state.
+Note the conversion of frames starts with the most current
+and continues ``down'' until it has encodes all frames
+or has reached a {\em statemark} frame.
+If statesave is executed during safe mode, then the exec state save
+will also stop upon encountering a safety frame.
+\end{itemize}
+
+\section{Safety}
+\label{safety}
+Other embedded interpreters, notably Tcl,
+have a notion of a {\em safe} interpreter
+(e.g., SafeTcl~\cite{safetcl93a}).
+The idea is that no program written in the safe language
+can cause any uncontrolled actions in the interpreter.
+The key to safety for Tps is control of the name space,
+which is defined by the dict stack.
+The interpreter keeps two dict stacks; one for safe mode
+and one for unsafe mode, and it switches between them
+when the safe mode changes.
+
+In Safe Tps, this is accomplished in a manner similar
+to the way Operating systems handle system calls.
+Unsafe operators in the system dictionary are marked
+with a special {\em unsafe} flag.
+An attempt to execute such an operator causes the interpreter
+to do the following actions.
+\begin{enumerate}
+\item Push the current state of the safe mode flag onto the operand stack.
+\item Push an exec stack frame to save the safe mode of the interpreter.
+\item Mark the interpreter to put it into unsafe mode.
+\item Switch to the unsafe mode dict stack.
+\item Execute the unsafe operator in this controlled
+context.
+\item The unsafe operator returns to safe execution
+by returning from the top level of the operator code.
+This will unwind the safe frame on the exec stack
+which set the interpreter safe mode flag and changes
+to the safe mode dict stack.
+\end{enumerate}
+Note that this mechanism is a bit different from
+SafeTcl.  SafeTcl uses two complete interpreters: one for each mode.
+Tps uses one interpreter and only modifies the dict stack.
+
+Currently, executing in safe mode affects the semantics
+of a variety of operators.
+\begin{description}
+\item[closefile, closestream]
+If you can open the file (see {\em stream} operator),
+then you can do these operators,
+otherwise, they are prohibited.
+\item[cvuntrace]
+Entering unsafe mode while tracing causes tracing to be suspended.
+\item[cvx]
+If executed in safe mode and the target object has its
+unsafe bit set, then cvx will noop.
+This is a bit of added safety in case, somehow, safe code
+finds a way to set the unsafe bit.
+\item[execstack]
+If executed in safe mode,
+only the part of the stack created since entry to safe mode
+will be dumped.
+\item[errortrap, handleerror]
+It is ok to override the error handlers, but the ones used
+in unsafe mode will not be affected.
+\item[print, pstack]
+Depending on how the safe interpreter is started up, these may
+dump to /dev/null.
+\item[file, stream]
+These are the obvious problem operators since they potentially
+open external files for reading and/or writing.
+Programs can use strings for temporary storage,
+so access to files for temporary storage is not strictly
+necessary.  Nevertheless, using files for large quantities of data
+is convenient.
+Since the {\em file} operator ultimately invokes the {\em stream}
+operator, the latter is marked as an unsafe operator.
+Section \ref{unsafestream} shows how stream is implemented as an example
+of an unsafe operator.
+\item[resetfile, resetstream]
+If you can open the file (see {\em stream} operator),
+then you can do these operators,
+otherwise, they are prohibited.
+\item[run, runstream]
+If you can open the file (see {\em stream} operator),
+then you can do these operators,
+otherwise, they are prohibited.
+\item[start]
+Normally, this operator is executed at interpreter startup
+and executes in unsafe mode.  It is possible to execute it
+in safe mode, but it will probably fail attempting
+to do unsafe operators.
+\item[stderr, stdin, stdout]
+Depending on how the safe interpreter is started up, these may
+be attached to /dev/null.
+\item[stateexec, staterestore, statesave]
+If executed during safe mode, then only the part of the stack
+that was created in safe mode will be saved.
+\item[trace, tracecheck, traceexec, tracereturn, tracetrap]
+You can do what you want with the tracing code, but entering
+unsafe mode will temporarily turn off tracing.
+\item[write,writestring]
+If you can open the file (see {\em stream} operator),
+then you can do these operators,
+otherwise, they are prohibited.
+There may also be limits on how much you can write to protect resource
+limits.
+\end{description}
+
+\noindent Several new operators are defined to manage safety.
+\begin{description}
+\item[cvunsafe]
+This marks an operator as either unsafe or not;
+noop if executed in safe mode.
+\item[safecheck]
+This returns false or true as a value has its {\em unsafe} flag set.
+\item[safeexec]
+This causes the interpreter to begin execution in safe mode,
+which means that that the interpreter dict stack changes to the
+safe mode dict stack and the old mode value is saved on the exec
+stack in a {\em safety} frame.
+It is a noop if executed in safe mode.
+\item[safestate]
+This returns true or false as the interpreter is in safe mode or not.
+\end{description}
+
+\subsection{Spoofing Safety Via State Restore}
+An obvious attack on safety is to use the state save/restore
+capability.
+One could imagine modifying the string produced from state save
+to attempt to break safe mode.
+In fact this should fail for several reasons.
+\begin{itemize}
+\item Restoring a state marked as saved from unsafe state
+is not allowed from safe state.
+\item There are no absolute pointers anywhere in the saved string.
+\end{itemize}
+
+\subsection{Safety Mode ``Cliches''}
+The mechanism for entering unsafe mode from safe mode
+implies some cliches about the proper programming
+of unsafe operators.
+Specifically, such operators have to be prepared to deal
+with the boolean on the stack top that represents
+the previous state of the safe mode flag.
+\begin{enumerate}
+\item If the body of an unsafe operator is a primitive operator,
+      then it is the responsibility of that operator to
+      take the value on the stack
+      into account during its actions.
+      See the definition of the code for the primitive {\em cvx} operator
+      for a simple example.
+\item If the body of an unsafe operator is an executable code
+      array then when it is invoked, it presumably will need to
+      alter its action depending on whether it was invoked originally
+      in safe mode or unsafe mode.
+      The canonical method for doing this would be to make the first
+      level code be as follows.
+      \begin{quote}
+	\{from-safe-mode-actions\} \{from-unsafe-mode-actions\} ifelse
+      \end{quote}
+      For an example, look at the definition of the safe {\em stream}
+      operator in Figure \ref{unsstrmop}.
+\end{enumerate}
+
+\subsection{Example: The Stream Operator}
+\label{unsafestream}
+\begin{figure}[tp]\centering
+\begin{verbatim}
+/stream { % filename mode kind true|false
+          {% do action appropriate when coming from safe mode
+           dup /file eq
+           {safefileprefix null copy
+            4 -1 roll
+            % check for ".."
+            dup ".." search {/invalidstreamaccess stop} {pop} ifelse
+            null cvs dup 0 get
+            '/' neq {exch \"/\" append exch} if
+            append 3 1 roll
+           } if
+           __stream % do primitive stream action
+          }
+          {% do action appropriate when coming from unsafe mode
+           __stream
+          }
+          ifelse
+} def
+\end{verbatim}
+\caption{Unsafe Stream Operator Definition}
+\label{unsstrmop}
+\end{figure}
+The stream operator definition of Figure \ref{unsstrmop}
+provides an example for controlling the behavior of
+an unsafe operator.
+In system dict, the {\em stream} operator is marked as unsafe.
+This means that if invoked in unsafe mode, the value {\em false}
+is pushed onto the stack before the code body is executed.
+If invoked from safe mode, the value {\em true}
+is pushed onto the stack before the code body is executed.
+So, the first level code tests this flag and takes action
+based upon its value.
+
+In the case that it is true (coming from safe mode),
+the operator will test for the presence of the ``..'' in the
+path name and if found, signal failure.  This is so the path name
+cannot walk out of a controlled subdirectory.
+Then, the file is forced into a controlled subdirectory by
+prefixing it with the path prefix specified by the {\em safefileprefix}
+value.
+
+If this operator is invoked any other way, it will directly
+invoke the primitive operator, {\em \_\_stream}.
+
+If the primitive is directly invoked in safe mode, the primitive
+operator will signal error.
+
+\subsection{Safe Error Processing}
+Because of the changes in error processing in Tps,
+an error in unsafe mode may be caught in either
+unsafe mode or may pass back to safe mode and be handled there.
+The key assumption here is that unsafe mode will leave
+nothing dangerous on the operand stack when the error occurs.
+Of course, an unsafe mode operator can catch errors, cleanup,
+and then resignal the error.
+\section{Internals}
+
+\subsection{Interpreter Value Representation}
+Figure \ref{valuestruct}
+shows the structure of a Tps value.
+It consists of two words, each of four bytes%
+\footnote{For 64 bit machines such as the DEC Alpha, it is two
+words of 8 bytes each.}
+One word consists of various flags,
+and the other word holds the actual value, if any.
+The flags word consists of an
+{em executable} flag,
+the {\em traceoff} flag,
+the {\em unsafe} flag,
+access flags (read and write),
+and a 16 bit type id field.
+The type id defines the type of the value.
+The actual value is a union of a variety of values, where the particular
+value is determined by the type id.  Any type not mentioned (e.g., null
+or mark) has no meaningful associated value.
+\begin{figure}[t]\centering
+\input{value.code}
+\caption{Value Type Structure}
+\label{valuestruct}
+\horizontalline
+\end{figure}
+
+There are two protections flags, one for read-access and one for write-access.
+Note that the access flags are kept separate from the execute flag,
+which would seem inconsistent with the implied access controls
+in Postscript.  This is because Postscript overloads two
+notions of execute.  One meaning is that the object
+{\em contains} code, which can be executed by the interpreter.
+The second meaning is that the interpreter is {\em allowed}
+(in the sense of an access control) to execute the object.
+The {\em traceoff} flag 
+can be used to mark a value as untraceable.  Note that turning off
+tracing on the value may not turn off tracing on other references
+to an object.
+The {\em unsafe} flag 
+can be used to mark an operator as unsafe.
+
+The header file, {\em value.H}, defines a variety of constructors
+and field access macros for use with values.  Note that the
+Tps\_Flags structure is not actually used, but rather, bit masking
+is used to achieve the same effect.
+
+\subsection{Global Data}
+\begin{figure}[b]\centering
+\horizontalline
+\input{global.code}
+\caption{Global Data Structure}
+\label{vglobal}
+\end{figure}
+All interpreters share a small of amount of global
+information as defined in {\em init.H}
+in the Tps\_Global structure.
+The actual instance of the global data is called {\em tpsg}.
+The fields of the global structure are defined in Figure \ref{vglobal}.
+
+The meaning of these fields is as follows.
+\begin{description}
+\item[\_stdcons, \_\_stdcons :]
+This stands for ``standard console.''
+This is a pointer to a known writable stream to use
+for guaranteed output of important information.
+The first field is a pointer to the stream, the second
+is the same pointer, but encapsulated as a value.
+\item[\_stdin, \_\_stdin, \_stdout, \_\_stdout, \_stdout, \_\_stdout :]
+These are pointers to the standard Unix streams.
+They are available both as stream pointers and values.
+\item[\_tempbuf :]
+This is string stream object used for various temporary purposes.
+\item [\_nametable: ]
+This is a global hash table containing all known name strings.
+See Section \ref{nametable} below.
+\item [\_systemdict, \_\_systemdict :]
+This is a pointer to the system dictionary defining
+all the primitive operators and values.
+\item [\_objects :]
+This is a linked list over all the container
+objects.  It is used by the garbage collector
+to track reclaimable objects.
+\item [\_handlers :]
+This is a linked list whose nodes point
+to the known exec frame handlers.
+See Section \ref{state} for more detail.
+\end{description}
+
+\subsubsection{The Global Name Table}
+\label{nametable}
+In order to allow for testing name equality via pointer
+equality, all known names (of type Tps\_Nameid)
+must refer to the same physical string in memory.
+The global name table (tpsg.\_nametable) is a hash table
+used to guarantee this.  Whenever a new name is
+to be made known to Tps, it must be inserted into
+the hash table, which will return a unique pointer for that name.
+Note that there is a single, global, name table
+since names are never removed, and so all interpreters
+can share one name table.
+
+The {\em Tps\_Nametable} class defines one externally usable method: 
+\begin{description}
+\item[newname(char* nm, boolean ro):]
+This takes a C style, null terminated string, inserts it into the
+table, and returns a pointer to the name.
+If it is already there, then a pointer to the previously inserted
+string is returned.
+The {\em ro} argument indicates that the name is some form
+of static value and need not be duplicated before
+insertion into the table.
+\end{description}
+
+\subsection{Interpreter Structure}
+\label{interp}
+The type {\em Tps\_Interp} is a \CC{} class
+defining the externally accessible interface.
+Note that the interface is rather open and most
+fields are public.  This was done intentionally
+since it is not yet clear what the proper minimal interface
+abstraction should be.
+
+In any case,
+Figure \ref{interpstruct} shows the interpreter class fields.
+\begin{figure}[t]\centering
+\input{interp.code}
+\caption{Interpreter Class}
+\label{interpstruct}
+\horizontalline
+\end{figure}
+It contains
+interpreter specific global information, including the three
+stacks: operand (value) stack, execution (exec) stack,
+and dictionary (dict) stack.
+
+The various Interp fields have the following definition.
+\begin{description}
+\item[\_realtime :]
+The absolute clock time since the interpreter began execution.
+Used for measurements.
+Measured in microseconds.
+\item[\_usertime :]
+The amount of user time since the interpreter began execution.
+Used for measurements.
+Measured in microseconds.
+\item[\_userdicts, \_\_userdicts :]
+The \_userdicts field is two element array.
+Each element is a user dictionary.
+Element zero contains the dict for unsafe mode, and element one
+for safe mode.
+The \_\_userdicts fields is like the \_userdicts field, but
+contains {\em Tps\_Value} versions of the contents of the \_userdicts field.
+\item[\_inbuf :]
+This is a string stream object.  It is primarily used as input to
+the tokenizer to convert from a string to a set of tokens.
+\item[\_tokenbuf :]
+This is a string stream object used by the tokenizer to collect
+the text of each token in turn.
+\item[\_tempbuf :]
+This is string stream object used for various temporary purposes,
+such as debug output.
+\item[\_status :]
+This is used during the interpreter constructor to record
+the last status of the interpreter.
+\item[\_step :]
+This flag controls interpreter stepping.
+If set, then the interpreter Tps\_run() method will execute
+one operator and then return.
+If not set, then  Tps\_run() method will execute continuously
+until a {\em quit} or {\em interrupt} operator, is executed, or
+an unrecoverable error occurs.
+\item[\_tracing :]
+If true, then objects being executed will be traced,
+assuming that tracing is not suppressed for other reasons.
+\item {\em \_traceskip} -- this is a field in the interpreter
+structure that indicates if tracing should be suppressed
+for one cycle.
+\item[\_traceskip :]
+If true, then user code should not be traced on this cycle
+of the interpreter.
+This used by the {\em tracereturn} operator.
+\item[\_object :]
+This is used to store the value of the current object being executed.
+\item[\_throwflag :]
+This value keeps the argument to the current {\em throw}.
+After unwinding of the various stacks, this value will be pushed onto
+the operand stack.
+\item[\_safe :]
+If true, then the interpreter is executing in safe mode, otherwise
+unsafe mode.
+\item[\_allstacks :]
+All three of the stacks are allocated into a single space of fixed size.
+\item[\_allstacks\_alloc :]
+The total space allocated for all stacks.
+\item[\_stack :]
+The operand stack.  It consists of Tps\_Value values.
+\item[\_dstacks[2] :]
+The dictionary stacks.
+They consists of values pointing to dictionary objects, but there are two
+of them indexed by the \_safe mode flag.
+\item[\_dstack :]
+The current dictionary stack.
+It is actually a pointer to one of the two elements of \_dstacks.
+\item[\_estack :]
+The execution stack.  It consists of a sequence of objects of type
+Tps\_Frame (see {\em exec.H}).
+\item[\_framecount :]
+The number of frames on the exec frame stack.
+\item[\_uidcounter :]
+Used in state transport. 
+\end{description}
+\clearpage
+
+\subsection{Interpreter Methods}
+Figures \ref{interpmetha}
+and \ref{interpmethb} show the methods for the Tps\_Interp class.
+These various methods have the following definition.
+\begin{description}
+\item[Tps\_Interp :] The constructor.
+\item[$\sim$Tps\_Interp :] The destructor.
+\item[export\_exec :]
+This routine is primarily an internal utility method.
+It does the work involved in materializing the exec stack
+onto the operand stack.
+\item[import\_exec :]
+This routine is primarily an internal utility method.
+It is essentially the inverse of export\_exec
+and converts operand stack values into exec frames.
+\item[unwind\_throw :]
+This routine is primarily an internal utility method.
+It is used by the throw operator to unwind the exec
+stack until the throw is stopped or the exec stack is empty.
+\item[unwind\_thru :]
+This routine is primarily an internal utility method.
+It invokes the {\em unwind} action on each frame in the exec stack
+and then removes that frame from the exec stack.
+It stops when the exec stack is empty, or a specified frame
+is unwound.  The second argument indicates if the unwind
+is occurring as a result of a {\em throw} operator.
+\item[save, restore :]
+See Section \ref{state}.
+\item[load :]
+The {\em load} method sets the interpreter state to convert
+the supplied argument string into executable code and to arrange
+for the code to begin execution when the interpreter
+is (re-)started.
+The default is to execute the procedure ``start.''
+Execution normally starts in unsafe mode.
+\item[run :]
+The {\em run} method causes the interpreter to begin execution.
+If stepping is not set, then execution continues until the
+the {\em quit} or {\em interrupt} operators are executed,
+or some unrecoverable error occurs, or there is nothing left to execute.
+This method returns a status indicating the reason for returning. 
+\item[step :]
+The two {\em step} functions are accessors and 
+and modifiers for the {\em \_step} field of the interpreter.
+They determine if the interpreter will execute in single step mode.
+\item[tracing :]
+The two {\em tracing} functions are accessors and 
+and modifiers for the {\em \_tracing} field of the interpreter.
+They determine if the interpreter will execute in tracing mode.
+\item[safe :]
+The two {\em safe} functions are accessors and 
+and modifiers for the {\em \_safe} field of the interpreter.
+They determine if the interpreter will execute in safe mode or unsafe mode.
+\item[reset :]
+Clear the state of the interpreter.
+In particular, all the stacks are cleared.
+\item[gc :]
+Invoke the garbage collector.  See Section \ref{gc}. 
+\item[save :]
+Save the current interpreter state in a transportable form
+and return a pointer to the state string.
+\item[restore :]
+Reset the interpreter and load its state from a transportable
+state.  Loading may either come from a string or from
+a file descriptor.
+\item[newoperator :]
+Define a new operator in the system dict.
+See Section \ref{opdef}.
+\item[destroyoperator :]
+Remove an operator in the system dict.
+See Section \ref{opdef}.
+\end{description}
+The {\em run} and {\em load} methods are sufficiently important
+to go over them in detail in the following sections.
+
+Finally, there are number of methods for externally manipulating
+the various stacks of the interpreter.
+There are three almost identical sets: one for each of the
+operand, dict, and exec stacks.
+The ones for the operand stack are as follows, remembering
+that the stack grows down.
+\begin{description}
+\item[depth :]  Returns the number of values on the stack.
+\item[room :] Returns the number of values that can 
+be pushed onto the stack without overflow.
+\item[push :] Push a value onto the stack.
+\item[pushn :] Move the stack pointer to make room for n values
+and return a pointer to the top of the stack, which
+also points to the allocated space.
+\item[pop :] Pop a value off the stack and return that value.
+\item[popn :] Pop n values from the stack and return nothing.
+\item[top :] Return the top value on the stack without altering the stack.
+\item[tosp :] Return a pointer to the top of the stack.
+\item[settosp :] Force the top of stack pointer
+to a specified location.
+\item[base :] Return a pointer to the ``stack bootom'', which
+is equivalent to tosp() + depth().
+\item[clear :] Set the depth to zero.
+\end{description}
+
+\subsubsection{The {\em Load} Method}
+The load method (Figure \ref{loadmeth}) takes code, as a string,
+converts it to executable code,
+and creates a ``source frame'' on the execution stack.
+The term ``source frame'' refers to a specific kind of exec frame
+that is used to track execution of some value.
+\begin{figure}[b]\centering
+\horizontalline
+\input{load.code}
+\caption{The Load Method}
+\label{loadmeth}
+\end{figure}
+
+\input{imethods.code}
+\clearpage
+
+\subsubsection{The {\em Run} Method}
+The body of the {\em run} method is shown in the series
+of Figures
+\ref{runmeth1},
+\ref{runmeth2},
+\ref{runmeth3},
+\ref{runmeth4},
+\ref{runmeth5},
+\ref{runmeth6},
+\ref{runmeth7}.
+Note that the code shown in these figures is the un-optimized
+code.  If you examine the actual source code, you will
+see a number of places where the code has been modified
+to inline various procedures.  These sections
+are marked by the flag NOINLINE.
+
+Basically, the run method is a loop
+beginning in at label {\bf loopstart:}
+and ending at the label {\bf loopend:}.
+Actually, because of the continue statement, it effectively
+ends at label {\bf loopcont:}
+The loop will terminate if the {\em \_step} field of the interpreter
+is set.  Thus, if stepping is enabled, then the loop will
+execute one operator and then return.  If stepping is not enabled,
+then the loop will continue until condition leaves the loop.
+
+The first action, as shown starting at label {bf retry:}
+is to test that there is at least one frame on the exec stack.
+If not, then there is nothing to do, so return the status {\em TPSSTAT\_QUIT}.
+
+The mechanism for finding the next object
+to execute starts at label {\bf getobj:}.
+Each frame on the exec stack has an associated {\em reenter}
+procedure (see Section \ref{exec} for more detail).
+Invoking this procedure will cause the frame to attempt to
+locate and return an object to execute.  If it finds an object,
+then it returns {\em TPSSTAT\_OK}.
+Alternatively, the reenter procedure may return other values
+to signal other conditions:
+\begin{description}
+\item[TPSSTAT\_RETRYFRAME]
+This indicates that the frame did not directly produce
+an object, but it may have had a side effect of pushing
+a new exec stack frame that should now be consulted.
+\item[TPSSTAT\_POPFRAME]
+This indicates that the frame has no more objects to deliver.
+It should be removed from the stack (using {\em unwind\_thru})
+and the reenter procedure for the new top stack frame should
+be consulted.
+\item[TPSSTAT\_TAILFRAME]
+This indicates that the frame found an object,
+but that the frame was complete and could be removed.
+\item[TPSSTAT\_INTERRUPT]
+The reenter procedure indicates that the interpreter
+should halt execution temporarily.
+\item[TPSSTAT\_QUIT]
+The reenter procedure indicates that the interpreter
+should halt execution completely.
+\end{description}
+Of course, other error results can be returned, but if so,
+then the interpretation is stopped and the error returned
+as the value of the run method.
+
+If the reenter procedure succeeds, then it returns an object
+in the {\em \_object} field of the interpreter object.
+Once we have an object to execute,
+the first action (label {\bf dereffed:}) is to test if the object
+should be traced.
+If tracing is not currently enabled, then go on to execute the object.
+If {\_traceskip} is on, then turn it off and go on to execute
+the object.  As a last resort, go to label {\bf traceit:} to
+arrange for the object to be traced.
+Next, if the object does not have
+its executable flag set, then just push it onto the operand stack
+(goto the code at label {\em stackit}).
+If it is executable,
+then the first level discrimination is made by a switch controlled
+by the type of the object.
+For most types of objects, the default arm is taken.
+The action here is to just push the object onto the operand
+stack and then cause the outer loop to re-execute to find the next
+object.  Note that the object types that reach here are pushed
+even if they are marked as executable.  Thus, setting the executable
+flag on an integer has no effect.
+
+Executable objects of
+type operator ({\em TPSTYPE\_OPERATOR})
+and
+type name ({\em TPSTYPE\_NAME})
+are treated specially.
+For an executable operator object (label {\bf safe1:})
+or for an executable name (label {\bf safe2:})
+if the operator value
+has its unsafe flag set, then we need to do a controlled
+entry into unsafe mode.
+First, tracing is turned off.
+Then, if we are entering unsafe mode from safe mode,
+the current state of the safe mode flag is pushed onto the operand stack,
+and a safety frame is pushed onto the exec stack.
+This last action causes the interpreter mode to be set to unsafe
+and the dict stack is changed to match the safe mode flag.
+
+Whatever the mode, at label {\bf getop:}
+the operator (op) structure is extracted
+and consulted to see
+the minimum number of operands that needed (i.e., the operand stack depth).
+If the operand stack does not have enough values
+to fulfill the required arity, then signal stack underflow.
+Finally, the operator is invoked with a pointer to the top
+operand on the operand stack and the specified arity of the operator.
+If the operator returns an error condition, then it is handled
+by going to the label {\em handle\_error}.
+
+If the object being executed is an executable name (label {\bf exname:}),
+then the processing
+requires that the name be looked up in the dict stack
+to find its associated value.  If that value is itself
+an executable name, then the search is repeated.
+If eventually, an executable name with no definition is
+reached, then it is treated as error.
+If the same name is encountered, then there is a loop in the
+lookup, and an error is signaled.
+
+Eventually, the name lookup grounds in something that is not
+an executable name.
+There are two cases to be considered.
+If the grounding value is an executable array,
+then an exec frame of type {\em source} is created
+to step through the array an operator at a time
+for later execution.
+Safety is also handled at this point ({\bf safe2:}).
+
+If the grounding value is not an executable array, then
+it replaces the currently executing object, and the new object
+is processed by returning to label {\bf dereffed:}.
+Note that this last case is actually an optimization.
+If the object were treated like the executable array
+and a source frame created for it, then it would
+execute correctly on the next
+pass through the run loop.
+This optimization just avoids creating an exec frame
+that would immediately be popped off again.
+
+The code at label {\bf traceit:} primarily shows how tracing is handled.
+It assumes, we are going to trace the object by calling {\em tracetrap}.
+So, push the object to trace onto the stack and
+push a trace frame onto the exec stack (to turn off further tracing)
+Then push a frame onto the exec stack to cause {\em tracetrap} to be executed,
+and cycle the interpreter.
+
+The code at label {\bf handle\_error:} primarily shows how errors are handled.
+Certain errors (interrupt, quit, vmerror, and systemerror)
+cannot be handled, and so lead to loop termination.
+For all other errors, the name of the error is pushed onto the
+operand stack.  Then the {\em errortrap} operator is set up
+to execute (untraced) and the interpreter continues its loop.
+
+\input{run.code}
+\clearpage
+
+\begin{figure}[b]\centering
+\horizontalline
+\input{exec.code}
+\caption{Base Execution Stack Frame Structure}
+\label{execf1}
+\end{figure}
+\subsection{The Execution Stack}
+\label{exec}
+The execution stack consists of a sequence of {\em frame} structures.
+All frames are subtypes of the {\em Tps\_Frame}
+structure shown in Figure \ref{execf1}.
+This structure contains only a pointer to a structure
+of type {\em Tps\_Handler}, also shown in Figure \ref{execf1}.
+
+A Frame Handler struct defines how to manage any given frame.
+It consists of one pointer to a struct plus
+a set of function pointers for various actions.
+In effect, it is the "virtual" for that frame; but virtual
+and subtyping were not used to avoid compiler dependencies.
+
+The first field of the handler is a pointer to a struct
+defining the following information.
+\begin{itemize}
+\item {\em length} --
+the length, in bytes, of a frame of this kind.
+\item {\em name} --
+a unique name for this kind of frame.
+\item {\em exportlength} --
+the length, in value, needed on the operand stack
+to materialize the contents of the frame.
+\end{itemize}
+
+Every stack frame handler must support the following actions:
+\begin{itemize}
+\item {\em unwind} --
+    Clean up a specified frame.
+\item {\em reenter} --
+    Called when the frame is being reentered for execution.
+    For a source frame, for example, it might return the next
+    object in an executable array and then move its index to the
+    next word of the array.
+\item {\em trace} --
+    Print out a trace of the contents of a stack frame.
+\item {\em export} --
+    Place a representation of the current frame state onto the operand stack.
+\item {\em import} --
+    Get a representation of a frame state from the operand stack
+    and fill in a frame on the exec stack.
+\end{itemize}
+An examination of the file {\em exec.H} will show
+a variety of macros for accessing the various functions in a handler.
+
+Also shown in the Figure are two procedures.
+The {\em Tps\_create\_frame} procedure
+creates a frame on the exec stack.  It allocates a specified total
+size and it initializes the handler for the frame.
+The {\em Tps\_unwind\_frame} procedure
+cleans up a frame and removes it from the exec stack
+(which means it must be the top frame on the stack).
+
+\begin{figure}[t]\centering
+\input{sframe.code}
+\caption{Source Frame}
+\label{execf2}
+\end{figure}
+\begin{figure}[t]\centering
+\input{tframe.code}
+\caption{Trace Frame}
+\label{execf3}
+\horizontalline
+\end{figure}
+
+Figure \ref{execf2} shows the structure of a {\em source frame}.
+A source frame is used to hold sources of executable code.
+The interpreter {\em run} method extracts objects to execute
+by calling the {\em reenter} operation on a source frame.
+The source frame has two fields over and above the standard frame.
+It has a {\em \_body} which contains the object serving as the source
+of executable objects.  The {\em \_index} field
+indicates the place in the
+{\em \_body}
+to find the next object
+to execute.
+If the
+{\em \_index} is negative, then it is assumed that the
+{\em \_body}
+contains a single object that is returned on {\em reenter}.
+If the
+{\em \_index} is non-negative, then it is assumed that the
+{\em \_body}
+contains an executable array and
+{\em \_index} indicates the place to pick the next object
+out of the array.
+
+The {\em Tps\_handler\_source} object is the
+handler instance used by all source frames.
+
+The {\em Tps\_create\_source} procedure
+creates a source frame on the exec stack
+with a specified object for a body.
+Note that one might want to create a source frame
+with a single object (index less than zero)
+but where the object is actually an executable array.
+In this case, the {\em singular} argument can be passed
+as {\em true} to cause this to happen.
+
+Figure \ref{execf3} shows the structure of a {\em trace frame}.
+A trace frame is used to save the value of the {\em \_tracing}
+flag from the interpreter structure.
+The {\em reenter} handler always  returns {\em TPSSTAT\_POPFRAME}
+since this kind of frame has no objects to execute.
+The {\em unwind} handler restores the interpreter {\em \_tracing}
+flag to the value contained in the frame.
+
+The {\em Tps\_handler\_trace} object is the
+handler instance used by all trace frames.
+
+The {\em Tps\_create\_trace} procedure
+creates a trace frame on the exec stack.
+It saves the current trace state in that frame
+and set the trace state as specified by its second argument.
+
+Source and trace frames are two frame types.
+An examination of
+{\em exec.H} and {\em exec.C} will also show {\em safety} frames
+and {\em statemark} frames defined.
+
+An examination of
+{\em primitives.H}
+and
+{\em primitives.C}
+will show a variety of other frame types and handlers defined
+for the following operators:
+{\em catch},
+{\em stopped},
+{\em runstream},
+{\em loop},
+{\em repeat},
+{\em forall},
+{\em while},
+and {\em for}.
+
+It is possible to define new frame types, even on the fly,
+by creating a handler for the frame type and defining
+one or more operators to create instances of the frame.
+But, in order for the interpreter to recognize
+the new frame handler, it must be added to the list
+of known frames using the operators defined
+in Figure \ref{handops}.
+These operators manipulate the {\em \_handlers}
+field of the Interp class.
+\begin{figure}[t]\centering
+\input{handler.code}
+\caption{Exec Frame Handler Operations}
+\label{handops}
+\horizontalline
+\end{figure}
+
+\subsection{Garbage Collection}
+\label{gc}
+Tps does garbage collection over its allocated objects.
+Only objects of type array, string, dict, and stream
+are collected.  Currently, names and operators are not collected, but
+rather, remain around even if unused.
+
+All collectible objects inherit from type {\em Tps\_Collection}.
+All collectible objects are kept on a two-way linked list
+of container objects.
+Collection is via a traditional 2-pass mark and scan algorithm.
+Marking is done from the following ``roots''.
+\begin{itemize}
+\item The currently executing object.
+\item Operand stack.
+\item Dict stack.
+\item Exec stack.  Note that each frame has a method for
+marking anything it points to.
+\item System dict.
+\item Safe mode user dict.
+\item Unsafe mode user dict.
+\item Name table.
+\item Various stream buffers.
+\item Various file buffers (stdin, stdout, etc.).
+\end{itemize}
+After marking, the linked list of containers is traversed
+and any unmarked objects are reclaimed.
+
+Tps does not appear to generate a lot of garbage during normal use.
+The primary ``offenders'' are programs that create
+lots of anonymous container objects.
+
+Currently, the garbage collector is never called automatically.
+Allocated space just keeps growing.  The collector must be explicitly
+called based on external information.
+
+\section{Pre-Defined Non-Primitive Operators}
+\label{nonprimops}
+A number of the ``pre-defined'' operators are defined
+not as primitives, but as Tps code.
+Figures \ref{nonprima} and \ref{nonprimb}
+show the definitions of those operators.
+They have the following semantics.
+\begin{description}
+\item[run :]
+This defines the equivalent of the Postscript {\em run operator}
+in terms of the Tps {\em stream} and {\em runstream} operators.
+\item[runstring :]
+Arrange to ``run'' from a string as opposed to a file.
+\item[flush :]
+Defines the Postscript flush operator to flush stdout.
+\item[file :]
+Open a file by name and mode.
+\item[= :]
+Defines the Postscript {\em =} operator, which prints out the
+top item on the stack.
+\item[print :]
+Print a value onto stdout.  If the value is an integer, 
+then print it as a character, else convert to a string
+and print out the string.
+\item[printline :]
+Print and item and then print an end of line.
+\item[pstack,. :]
+Print all the items on the stack using the {\em ==} operator.
+The dot operator (``.'') is an alias for pstack.
+\item[stack :]
+Print all the items on the stack using the {\em =} operator.
+\item[start:]
+This is the initial operator executed by the interpreter.
+It is defined to invoke the {\em eval} operation.
+\item[eval :]
+The eval operation provides a rudimentary
+command line interface to the interpreter.
+It reads a single line of text from stdout, converts it to an array of
+input values, and executes the resulting array.
+It uses two sub procedures.
+    \begin{description}
+	\item[prompt :]
+	Print out a prompt string to stdout.
+	\item[tokenizeline :]
+	Given a line of text, convert to a array of Tps values.
+    \end{description}
+\item[platformdict:]
+Return a dict containing various platform parameters.
+Currently defines {\em version}, {\em targetarch}, and {\em targetos}.
+\item[configurationdict:]
+Return a dict containing various configuration parameters.
+It contains the platform dict.
+\end{description}
+
+\begin{figure}[p]\centering
+\begin{verbatim}
+/platformdict {configurationdict /platformdict get} def
+
+/version {platformdict /version get} def
+
+/run {/r /file stream runstream {handleerror} if} def
+
+/runstring {/r /string stream runstream {handleerror} if} def
+
+/flush {stdout flushstream} def
+
+/file {/file stream} def
+
+/= {null cvts print stdout} def
+
+/print {dup type /integertype eq
+        {stdout exch write}
+        {dup type /stringtype neq {null cvs} if stdout exch writestring}
+        ifelse
+} def
+
+/printline {print eol print} def
+
+/pstack {                  % any(n-1)...any(0)
+        count 1 sub        % any(n-1)...any(0) n-1
+        -1 0               % any(n-1)...any(0) n-1 -1 0
+        {                  % any(n-1)...any(0) i
+        index              % any(n-1)...any(0) any(i)
+        ==                 % any(n-1)...any(0)
+        " " print          % any(n-1...any(0)
+        }
+        for
+        eol print          % any(n-1...any(0)
+} def
+
+/stack {                   % any(n-1)...any(0)
+        count 1 sub        % any(n-1)...any(0) n-1
+        -1 0               % any(n-1)...any(0) n-1 -1 0
+        {                  % any(n-1)...any(0) i
+        index              % any(n-1)...any(0) any(i)
+        =                  % any(n-1)...any(0)
+        " " print          % any(n-1...any(0)
+        }
+        for
+        eol print          % any(n-1...any(0)
+} def
+\end{verbatim}
+\caption{Pre-Defined Non-Primitive Operators}
+\label{nonprima}
+\end{figure}
+\begin{figure}[p]\centering
+\begin{verbatim}
+/start {eval} def
+
+/eval {
+    {
+        {
+            prompt stdin null readline         % string t | f
+            not {exit} if                      % string
+            tokenizeline                       % {tokens...} t|f
+            not {"syntaxerror" printline } if  % {tokens...}
+            gc
+            {stateexec} stopped {handleerror} if
+            gc
+        } catch
+    {"uncaught throw" printline print "" printline}
+        if
+   } loop
+} def
+
+/prompt {">" print flush} def
+
+/tokenizeline % string -> {tokens...} t|f
+{ % string
+    [ exch        % mark string
+    {
+        {token}
+        stopped
+        { % string ; assume syntax error
+            cleartomark
+            pop false exit
+        } if                 % mark ... string object t
+    not {exit} if            % mark ... string object
+    exch                     % mark ... object string
+    } loop
+    ]  cvx true              % {tokens...} true
+} def
+\end{verbatim}
+\caption{Pre-Defined Non-Primitive Operators (cont.)}
+\label{nonprimb}
+\end{figure}
+\clearpage
+
+\section{Global Initialization}
+Before any interpreters can be created,
+the overall system must be initialized to
+fill in global data in tpsg.
+This is accomplished by calling Tps\_initialize().
+When completely finished, Tps\_finalize() should be called.
+
+Most of the initialization is specified by a collection of
+tables in {\em init.C} plus associated procedures
+for processing the tables.
+The tables are as follows.
+\begin{description} 
+\item[safeprimitives :]
+This is a table of all the primitive operators
+to be initially defined in the system dict.
+\item[unsafeprimitives :]
+This is a table of all the primitive operators
+to be initially defined in the system dict
+and that are to be marked as unsafe.
+\item[Tps\_\_constants\_static :]
+This is the table containing constant values of type (Tps\_Value).
+This table is strongly connected to the sequence
+of constants defined in {\em init.h}
+starting at TPS\_ENM\_OFFSET and ending at TPS\_ALLCONSTANTS\_COUNT.
+Adding a constant requires (1) defining an entry,
+say after TPS\_NMEXITTRACE with value (39 + GNMO),
+and (2) adding a name entry after the exittrace entry
+in the constants table.  But in order to do this,
+the next item must be a hole, and it must be removed
+to keep the indexing correct.
+\item[textdefs :]
+This table is in {\em textdefs.C}, and it contains
+system dict operators that are defined by Tps code. 
+\item[utextdefs :]
+This table is in {\em textdefs.C}, and it contains
+unsafe system dict operators that are defined by Tps code. 
+\item[alias\_defs :]
+Some operators are just aliases for other operators.
+This table defines those aliases.
+\item[constant\_defs :]
+Some constant values (true, false, mark, etc.)
+need to be constructed and inserted into the
+system dict.
+\item[misc\_defs :]
+Miscellaneous other constants.
+\item[unsafemisc :]
+Miscellaneous non-operator values,
+and presumably already defined in system dict,
+need to be marked as unsafe.
+\end{description} 
+
+\section{User-Defined Operators}
+\label{userdefops}
+It is possible for users to define their own primitive operators.
+Figure \ref{appendop} shows the {\em append} operator
+as an example.
+All operators are defined to return a value of type Tps\_Status,
+indicating the success of invoking the operation.
+There are three arguments to the operator.
+\begin{enumerate}
+\item intrp -- This is a pointer to the interpreter engine
+object.
+\item args -- This is a pointer to the top operator on
+the operand stack.  Since the operand stack grows ``down''
+(i.e., toward lower addresses), this pointer also allows
+access to all other operands.
+Thus
+{\em args[0]} is the top operand,
+{\em args[1]} is the next to the top operand,
+and so on.
+\item nargs -- This is the number of values currently
+on the operand stack; its depth, if you will.
+\end{enumerate}
+On entry, it is guaranteed that the operand stack will
+contain enough operands to satisfy the arity of the operator.
+There may be more operands than needed, but there are at least
+as many as needed.
+
+One can access the operands directly
+using the {\em args} argument, or
+through the interpreter using the methods of \ref{interpmethb}.
+Note that if the interpreter
+operand stack is manipulated using, for example, the {\em push}
+method, then {\em args} will not be correct and will need
+to be modified if used subsequently.
+
+Typically, an operator starts by verifying the types
+of its arguments.
+If it can take multiple types of arguments, then
+it can do a switch based on some argument type.
+In the append operator, for example,
+the left (next-to-top) operand is the one to which the right (top)
+operand is to be appended.
+Thus, the code switches based on the left operand type.
+If it is a string, then the right arg type be either a string
+or an integer (representing a single character).
+In either case, it is extracted and appended to the left arg.
+If the left arg is an array, then the right arg is
+appended by extending the left arg by one element,
+even if the right arg is itself an array.
+
+In either case, the right arg is popped from the operand stack
+using TPS\_POPN, which is a shorthand for
+intrp$\rightarrow$popn.
+Note that at this point, {\em args} is no longer correct.
+
+If the left arg type is not a string or an array, then
+a typecheck error is signalled.
+
+\subsection{Defining Operators}
+\label{opdef}
+Once the code for an operator is defined,
+an operator object needs to be created.
+Two interpreter class methods (newoperator and destroyoperator)
+are normally used for this purpose.
+For the appendoperator, creation would take the following form.
+\begin{quote}
+interp$\rightarrow$newoperator("append",2,Tps\_op\_append)
+\end{quote}
+
+The actions taken by newoperator in creating an operator
+consists roughly of the following steps (minus error checking).
+\begin{enumerate}
+\item Create the operator object using ``new Tps\_Operator''
+and specifying a name, an arity (zero if unlimited) and
+a procedure to execute.
+\item Create an operator value using TPS\_MAKEVALUE.
+\item Create the operator name in the name table.
+\item Insert the (name,operator-value) pair
+into the systemdict.
+\item Create the operator name but prefixed by "\_\_".
+\item Insert the (prefixed-name,operator-value) pair
+into the systemdict.
+\end{enumerate}
+The last two steps are to make sure that statesave can
+handle bound references to the operator.
+\begin{figure}[p]\centering
+\begin{verbatim}
+Tps_Status
+Tps_op_append(Tps_Interp* intrp, Tps_Value* args, long nargs)
+{
+    register Tps_Status ok;
+    register Tps_Typeid typ0;
+
+    if(TPS_DEPTH(intrp) < 2) return(TPSSTAT_STACKUNDERFLOW);
+    typ0 = TPS_TYPE(args[1]);
+    switch (typ0) {
+        case TPSTYPE_STRING: {
+            register Tps_String* s0;
+            if(TPS_ISTYPE(args[0],TPSTYPE_STRING)) {
+                register Tps_String* s1;
+                s0 = TPS_STRING_OF(args[1]);
+                s1 = TPS_STRING_OF(args[0]);
+                ok = s0->append(s1);
+            } else if(TPS_ISTYPE(args[0],TPSTYPE_INTEGER)) {
+                register char c;
+                s0 = TPS_STRING_OF(args[1]);
+                c = TPS_INTEGER_OF(args[0]);
+                ok = s0->append(c);
+            }
+            if(ok != TPSSTAT_OK) return ok;
+            TPS_POPN(intrp,1);
+            break;
+        case TPSTYPE_ARRAY: {
+            register Tps_Array* a0;
+            a0 = TPS_ARRAY_OF(args[1]);
+            ok = a0->append(args[0]);
+            if(ok != TPSSTAT_OK) return ok;
+            TPS_POPN(intrp,1);
+            break;
+        }
+        default:
+            return TPSSTAT_TYPECHECK;
+        }/*switch*/
+    }
+    return TPSSTAT_OK;
+}
+\end{verbatim}
+\caption{Primitive Append Operator}
+\label{appendop}
+\end{figure}
+\clearpage
+
+\bibliographystyle{plain}
+\bibliography{tps}
+
+\newpage
+\appendix
+\section*{Appendices}
+\section{Summary Change Log}
+Patchlevels are indicated with parenthesized letters.
+
+\subsection{Changes incorporated into version 2.1}
+\begin{itemize}
+\item (a) Misc. changes to remove various type conflicts
+\item (a) Began the process of cleaning up the various headers.
+\item (a) Added experimental OO programming support;
+controlled by OO compile time flag.
+\item (a) Modified platform command to use uname to get platform info.
+\item (b) Fixed a bug in the INVENTORY and installation.
+\item (b) Fixed userdict operator.
+\item (b) Added platformdict and configurationdict to bring together
+various items such as version, copyright, etc.
+\item (c) Incorporated many of the fixes of
+Martin Fong (mwfong@std.sri.com).
+Of note are the following:
+    \begin{itemize}
+	\item When the interpreter needs to output to std{in,out,err},
+	      it tries to find a definition for the stream on the dict stack;
+	      this allows them to be re-directed.  See Interp::stdstream.
+	\item More consistent use of parens for PSMIMIC flag.
+    \end{itemize}
+I did not include the following:
+    \begin{itemize}
+	\item Garbage collection with multiple interpreters;
+		I need to think about this for a while.
+	\item The new error TPSSTAT\_INCOMPLETE\_INPUT is not included;
+		not clear to me that this adds anything over syntaxerror.
+	\item Changing all the %d's to %ld's.  Not clear why this would be
+		needed.
+	\item Modified prompt routine (but see below).
+    \end{itemize}
+\item (c) Added an interactive flag to the global structure.
+\item (c) Added a boolean interactive flag (``interactive'')
+	  and a string indicating the default init rc file (``.tpsrc'').
+	  If ``interactive'' is true, then the startup operation
+	  will try to read from the ``.tpsrc'' file.
+\item (c) Added shared library support for hpux and osf1.
+\end{itemize}
+
+\subsection{Changes incorporated into version 2.0}
+\begin{itemize}
+\item (a) Add features to support safe tps;
+this required many pervasive changes.
+\item (a) Major modification to error handling to simplify interaction
+with safe mode.
+\item Added the stack manipulations to the Interp interface.
+\item (a) Support compilation under Sgi+Irix5.
+\item (a) Added single quote for character integers.
+\item (a) Merged Tps\_Interp and Tps\_Engine and did other kinds of cleanup.
+\item (b) Made changes to allow compilation under solaris2.
+\item (b) Modified usertime and realtime ops to return microseconds.
+\item (b) Inlined selected procedures for speed improvements.
+See flag NOINLINE in source.
+\item (c) Support compilation under HP9000/7xx+hpux.
+\end{itemize}
+
+\subsection{Changes incorporated into version 1.0}
+\begin{itemize}
+\item (a) This is the original version.
+\item (b) Numerous changes to the tps.tex documentation.
+\item (b) Fixed the INSTALL file to refer to tps.
+\item (b) Merged tps\_std.h and tps\_types.h into tps\_sysdep.h.
+\item (b) Inserted calls to GLOBAL\_LOCK and UNLOCK.
+\item (b) Added trace set/get to the interpreter interface.
+\item (b) Added loop check when dereferencing names.
+\item (b) Fixed bug in traceexec.
+\item (b) Make primitive operators untraceable at the name level.
+\item (c) Provide an local replacement for strdup.
+\item (c) Modify Makefile to not use PIC flag unless
+a solaris1 shared library is desired.
+\end{itemize}
+
+\newpage
+\section{Known Bugs and Deficiencies}
+\begin{enumerate}
+\item The GLOBAL\_LOCK mechanism needs to be instantiated.
+\item Consider breaking staterestore into two parts:
+one to convert the string into values and one to
+load the state.
+\item One user has had the where operator return --nulltype-- true
+instead of --dicttype-- true.  I cannot duplicate the error.
+\end{enumerate}
+
+%\section{To Do}
+%\begin{enumerate}
+%\item The error dict needs to be duplicated for each interpreter,
+%or the modifiable fields therein must be inserted
+%into the user dict.
+%\item The GLOBAL\_LOCK mechanism needs to be instantiated.
+%\item Add safe execution mechanisms.
+%\item Adapt the encode/decode to support loading of
+%``packages.''
+%\item map operators to name for export?
+%\item remove tempbuf from tpsg
+%\end{enumerate}
+
+\section{Supported Configurations}
+This version of Tps has been successfully compiled and executed
+under the combinations of architectures, operating systems,
+and compilers in Table \ref{instances}.
+Information about how to compile under other platforms
+is solicited.
+
+Some ``weirdnesses'' exist for various configurations.
+\begin{itemize}
+\item On some version of osf, the include files for g++
+have a flaw and require a definition for clockid\_t.
+Look at the front of interp.H for this definition and enable it.
+\item On some versions of hpux, rint is defined, but is missing
+from any math library I can find.  See Tps\_op\_round.
+\end{itemize}
+
+\begin{table}[h]\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\multicolumn{1}{|c}{Hdw.} &
+\multicolumn{1}{|c}{OS} &
+\multicolumn{1}{|c|}{\CC{}} \\ \hline\hline
+Sparc & Solaris1 & g++ \\ \hline
+Sparc & Solaris1 & Cfront 3.0.3 \\ \hline
+Sparc & Solaris2 & g++ \\ \hline
+Alpha & OSF1 & g++ \\ \hline
+Alpha & OSF1 & cxx \\ \hline
+Sgi Indigo (mips) & Irix 5 & g++ \\ \hline
+HP9000/7xx (pa\_risc) & HPUX & g++ \\ \hline
+Pentium (i86pc) 120 & Solaris2 & g++ \\ \hline
+Pentium (i86pc) 120 & Solaris2 & Sun spro c++ \\ \hline
+\end{tabular}
+\caption{Supported Configurations}
+\label{instances}
+\end{table}
+
+\newpage
+\section{Performance}
+Table \ref{oct} shows selected performance numbers
+calculated using the procedures and resources of
+Table \ref{pfcode1}.
+The fourth column of Table \ref{oct} shows the user time to perform a loop
+10000 times with no body for the loop.
+The fifth column shows the time when the body contains a noop operation.
+The difference (column six) provides an approximation of the basic cycle
+time of the interpreter when using name lookup.
+The seventh, eighth, and ninth columns are the same as four, five, and six,
+but the executed code has had the dictionary lookups removed
+by applying the {\em bind} operation.
+Taking the difference (the last column) provides an estimate of the cost
+for doing name lookup in the dictionary stack.
+
+Table \ref{fibperf} shows the cost to perform the Fibonacci
+function (see Table \ref{pfcode1})
+with argument 20, both bound and unbound.
+
+Finally, table \ref{tclperf} shows timings of the equivalent
+functions for Tcl.  Obviously binding deltas are not relevant to Tcl.
+
+From the figures in the tables, and from  other timings,
+we can say the following.
+\begin{itemize}
+\item The basic cycle time for executing an operator object
+directly is about 2 microseconds on a Sparc 10/30
+and about .5 microseconds on an Alpha2100/275.
+\item The basic cycle time for executing a named object
+is about 6 microseconds on a Sparc 10/30.
+Thus, the core cost of looking up
+a name to execute it is about 4 microseconds.
+On the Alpha, it is about 1.8 microseconds.
+\item Based on the fibonacci programs (4a and 4b),
+Tps is 10 (unbound) to 20 (bound) times faster than Tcl.
+\end{itemize}
+Obviously, the {\em bind} operation provides significant speed
+improvements in Tps programs.
+\begin{table}[b]\centering
+\begin{tabular}{|c|p{5in}|}
+\hline
+\multicolumn{1}{|c}{Program} & \multicolumn{1}{|c|}{Code} \\ \hline
+1a & \{usertime 10000 \{\} repeat usertime exch sub 10 div\} exec \\ \hline
+1b & \{usertime 10000 \{\} repeat usertime exch sub 10 div\} bind exec \\ \hline
+2a & \{usertime 10000 \{noop\} repeat usertime exch sub 10 div\} exec \\ \hline
+2b & \{usertime 10000 \{noop\} repeat usertime exch sub 10 div\} bind exec \\ \hline
+3a & proc x1 \{\} \{set t1 [usertime]; set i 10000; while \{\$i $>$ 0\} \{incr i -1;\}; set t2 [usertime]; set d1 [expr \{(\$t2 - \$t1)\}]; return \$d1;\} \\ \hline
+4a & proc x1 \{\} \{set t1 [usertime]; set i 10000; while \{\$i $>$ 0\} \{incr i -1; noop;\}; set t2 [usertime]; set d1 [expr \{(\$t2 - \$t1)\}]; return \$d1;\} \\ \hline
+5a & 
+/fib $\{$dup 2 ge $\{$dup 2 sub fib exch 1 sub fib add$\}$ if$\}$ def \\
+& /fibtime $\{$usertime exch fib usertime exch pop exch sub$\}$ def \\ \hline
+5b & 
+/fib $\{$dup 2 ge $\{$dup 2 sub fib exch 1 sub fib add$\}$ if$\}$ bind def \\
+& /fibtime $\{$usertime exch fib usertime exch pop exch sub$\}$ bind def \\ \hline
+6a &
+proc fib $\{$n$\}$ $\{$
+   if\ $\{$\$n$<$2$\}$\ $\{$
+      return\ \$n
+   $\}$ $\{$
+      return [expr\ $\{$[fib\ [expr\ \$n-2]]+[fib\ [expr\ \$n-1]]$\}$]
+     $\}$
+$\}$ \\ \hline
+\end{tabular}
+\caption{Timing Codes}
+\label{pfcode1}
+\end{table}
+
+\begin{table}[p]\centering
+\begin{tabular}{|l|l|l|r|r|r|r|r|r|r|}
+\hline
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{|c}{} &
+\multicolumn{3}{|c}{Unbound} &
+\multicolumn{3}{|c}{Bound} &
+\multicolumn{1}{|c|}{} \\
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{c}{} &
+\multicolumn{1}{c}{Cycle} &
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{c}{} &
+\multicolumn{1}{c}{Cycle} &
+\multicolumn{1}{|c|}{Binding} \\
+\multicolumn{1}{|c}{Machine} &
+\multicolumn{1}{|c}{OS} &
+\multicolumn{1}{|c}{\CC{}} &
+\multicolumn{1}{|c}{Nil (1a)} &
+\multicolumn{1}{|c}{Noop (2a)} &
+\multicolumn{1}{|c}{Time} &
+\multicolumn{1}{|c}{Nil (1b)} &
+\multicolumn{1}{|c}{Noop (2b)} &
+\multicolumn{1}{|c}{Time} &
+\multicolumn{1}{|c|}{Delta} \\ \hline\hline
+Sparc10/30 & Sun4.X & g++
+    & 29000 & 87000 & 5.9 & 29000 & 47000 & 1.8 & 4.1 \\ \hline
+Alpha2100/275 & OSF1 & cxx
+    & 6930 & 28109 & 2.1 & 6832 & 12005 & 0.5 & 1.6 \\ \hline
+Sgi Indigo & IRIX 5 & g++
+    & 22883 & 79155 & 6 & 22856 & 36286 & 1.3 & 4.7 \\ \hline
+HP715/80 & HPUX & g++
+    & 19000 & 78000 & 6 & 20000 & 33000 & 1.4 & 4.6 \\ \hline
+% these numbers come from using -KPIC and shared libs
+Pentium 120 & Solaris2 & g++
+    & 15000 & 51000 & 3.8 & 12000 & 19000 & 0.9 & 2.9 \\ \hline
+Pentium 120 & Solaris2 & spro c++
+    & 10000 & 37000 & 2.8 & 9000 & 18000 & 0.7 & 2.1 \\ \hline
+\end{tabular}
+\caption{Operation Cycle Times ($\mu$-secs.)}
+\label{oct}
+\end{table}
+
+\begin{table}[p]\centering
+\begin{tabular}{|l|l|l|r|r|}
+\hline
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{|c}{} &
+\multicolumn{1}{|c}{Fib(20)} &
+\multicolumn{1}{|c|}{Fib(20)} \\
+\multicolumn{1}{|c}{Machine} &
+\multicolumn{1}{|c}{OS} &
+\multicolumn{1}{|c}{\CC{}} &
+\multicolumn{1}{|c|}{Unbound (5a)} &
+\multicolumn{1}{|c|}{Bound (5b)} \\ \hline\hline
+Sparc10/30 & Sun4.X & g++ & 1160000 & 540000 \\ \hline
+Alpha2100/275 & OSF1 & cxx & 367952 & 189344 \\ \hline
+Sgi Indigo & IRIX 5 & g++ & 958373 & 456524 \\ \hline
+HP715/80 & HPUX & g++ & 950000 & 470000 \\ \hline
+Pentium 120 & Solaris2 & g++ & 590000 & 270000 \\ \hline
+\end{tabular}
+\caption{Fibonacci(20) Timings ($\mu$-secs.)}
+\label{fibperf}
+\end{table}
+
+\begin{table}[p]\centering
+\begin{tabular}{|l|l|l|r|r|r|r|}
+\hline
+\multicolumn{1}{|c}{Machine} &
+\multicolumn{1}{|c}{OS} &
+\multicolumn{1}{|c}{\CC{}} &
+\multicolumn{1}{|c}{Nil (3a)} &
+\multicolumn{1}{|c}{Noop (4a)} &
+\multicolumn{1}{|c}{Cycle Time} &
+\multicolumn{1}{|c|}{Fib(20) (6a)} \\ \hline\hline
+Sparc10/30 & Sun4.X & g++ & 1859000 & 1981000 & 8 & 14380000 \\ \hline
+Alpha2100/275 & OSF1 & c89 & 421000 & 437000 & 1.6 & 2539000 \\ \hline
+\end{tabular}
+\caption{Comparative Tcl Timings ($\mu$-secs.)}
+\label{tclperf}
+\end{table}
+
+\clearpage
+\pagenumbering{roman}
+\setcounter{page}{1}
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+\end{document}

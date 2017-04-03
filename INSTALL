@@ -1,0 +1,109 @@
+In order to INSTALL this system, you should be able to
+do the following sequence of actions:
+
+1. Edit the file ``Config.Imake''
+   and modify the definitions defined there.
+   The primary modifications that you may need to make
+   concern the following:
+        a. Tool locations (e.g. for ar, imake, etc.).
+           The best thing is to make sure your path includes all the needed
+           tools, but if you choose to put in absolute paths,
+           then you should modify Config.Imake at the indicated point.
+           For example:
+                AR=/usr/ccs/ar
+                IMAKE=/usr/bin/X11/imake
+                MAKEDEPEND=/usr/bin/X11/makedepend
+                MAKE=/bin/make
+                ...
+	b. Many systems do not use ranlib for library archives.
+	   For such systems, you must define RANLIB and RANLIBT
+	   to call some kind of no-op, such as the touch command.
+
+2. Examine the beginning of src/Imakefile.  There may be some
+   conditionals that you would like to set.  Except for the shared
+   library flag, you should not need to make any changes.
+   The src/Imakefile defines a flag SHAREDLIB.  If defined, then
+   it will allow construction of a shared library.
+   It appears to work for solaris1, solaris2, hpux, and osf1
+
+3. Execute
+   (1) ``platform''
+   or
+   (2) ``platform -a <architecture> -o <os> -gnu''
+   or
+   (3) ``platform -a <architecture> -o <os> -nognu -c++ <c++ compiler>''
+
+   This command will copy Config.Imake to Imake.config and substitute
+   some strings using sed.
+   Example: ``platform -a sun4 -o solaris1''
+
+   If just the platform command is given with no args, then the platform
+   command uses the ``uname'' command to attempt to figure out
+   the architecture and operating system.  You should try this first
+   to see if it works (it usually does).
+
+   The <architecture> field specifies the hardware architecture.
+   It is generally only used for name construction and for
+   feature tests, so the particular name is not critical.
+   Example names are: sun3, sun4, decmips, and alpha.
+
+   The <os> field specifies the major operating system version.
+   It is generally only used for name construction and for
+   feature tests, so the particular name is not critical.
+   Example names are: solaris1, solaris2, ultrix, osf1, and hpux.
+
+   The <os> field specifies the major operating system version.
+   It is generally only used for name construction and for
+   feature tests, so the particular name is not very important.
+   Example names are: solaris1, solaris2, ultrix, osf1, and hpux.
+
+   The -gnu flag indicates that the gnu compilers (gcc, g++) will
+   be used.
+
+   The <c++> field specifies the C++ compiler to use.
+   This choice is important because various C++ compilers
+   use different name manglers.
+
+4. Execute ``imake'' to produce Makefile from Imake.config.
+
+5. Execute ``make imakeall'' to propagate the imake to all subdirectories.
+
+6. Execute ``make clean'' (optional; not needed if starting from scratch).
+
+7. Execute ``make all''.
+
+8. Execute ``make install''.  Note that this installs
+   various things within the top level of the source subtree,
+   it does not attempt to insert anything into outside directories,
+   so it is always safe to do this action.
+
+   The installation is inserted into a subtree
+   rooted in the source directory top level and with name
+   <architecture>.<os>.<c++>.
+   Note that the C++ compiler is relevant because code compiled
+   with various C++ compilers cannot necessarily be mixed together
+   (because of name mangling differences).
+   As a convenience, a directory named <architecture>
+   is symbolically linked to the <architecture>.<os>.<c++> directory.
+
+Misc. Notes:
+
+1. If you wish to make a distribution tar of this directory,
+   execute: ``make srctar''.
+
+2. The depend action in the src subdirectory has been
+   made a no-op since the Imakefile contains a usable set
+   of dependencies.
+   These dependencies have had all references to /usr/include
+   removed to make the dependency set somewhat more portable.
+   If you really need to redo the dependencies, go to the src
+   directory and execute the
+	``make Depend''
+   command.
+   If you are doing this, you may want to edit the old dependencies
+   out of the Imakefile and insert the ones you generate.
+
+3. In tps.H, there are a number of macros for redefining
+   various Unix procedures that often vary from OS to OS.
+   For example, STRDUP is defined to use a Tps specific strdup.
+   You may want to redefine some of these to get the compilers to shut up.

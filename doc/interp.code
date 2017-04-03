@@ -1,0 +1,28 @@
+\begin{verbatim}
+class Tps_Interp {
+  ...
+  public:
+    struct timeval    _realtime;
+    struct timeval    _usertime;
+    Tps_Dict*         _userdicts[2];
+    Tps_Value         __userdicts[2];
+    Tps_Stream_String _inbuf;
+    Tps_Stream_String _tokenbuf;
+    Tps_Stream_String _tempbuf;
+    Tps_Status        _status;
+    boolean           _step;
+    boolean           _tracing;
+    boolean           _traceskip;
+    Tps_Value         _object;
+    Tps_Value         _throwflag;
+    boolean           _safe;
+    char*             _allstacks;
+    long              _allstacks_alloc;
+    Tps_Stack         _stack;
+    Tps_Dstack*       _dstack;
+    Tps_Dstack        _dstacks[2];
+    Tps_Estack        _estack;
+    long              _framecount;
+    long              _uidcounter;
+};
+\end{verbatim}

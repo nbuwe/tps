@@ -1,0 +1,22 @@
+##################################################
+# Define the local files to be used in tars and version construction
+
+SUPPORTDIRS=
+
+IMAKEFILES=Imakefile Imake.tmpl Config.Imake
+
+MISCFILES=README INSTALL CHANGES INVENTORY platform
+
+LOCALFILES=$(IMAKEFILES) $(MISCFILES) $(SUPPORTDIRS)
+
+##################################################
+# Provide tar for distribution
+
+srctar:
+	tarcmd($(SRCTARNAME),INVENTORY)
+
+/* Following is only good at CU */
+CUFTP=/cs/ftp/distribs/arcadia
+cuftp: $(SRCTARNAME)
+        compress < $(SRCTARNAME) >$(CUFTP)/$(SRCTARNAME).Z
+        cp $(SYSPREFIX).txt $(CUFTP)/$(SYSFULLNAME).txt

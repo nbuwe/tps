@@ -1,0 +1,8 @@
+\begin{verbatim}
+struct Tps_Frame_Trace : Tps_Frame {
+    boolean    _tracing;
+};
+
+Tps_Handler Tps_handler_trace;
+Tps_Status Tps_create_trace(Tps_Interp*,boolean);
+\end{verbatim}

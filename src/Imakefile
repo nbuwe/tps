@@ -1,0 +1,569 @@
+#undef SHAREDLIB /* Allow building of shared lib;
+		This is automatically turned on for those operating systems
+		for which shared library building process is known.
+		(see below)
+	     */
+#if !defined SHAREDLIB && (defined solaris1 || defined solaris2 || defined hpux || defined osf1)
+#define SHAREDLIB
+#endif
+
+#undef PROFILE
+#undef REPLACEMALLOC
+#define DEBUG 0 /* vs. level 1 or 2 */
+
+/**************************************************/
+
+#ifdef solaris2
+## NETLIBS=-L/usr/lib -lsocket -lnsl
+NETLIBS=
+#else
+NETLIBS=
+#endif /*solaris2*/
+
+#ifdef rs6000
+AIXFLAGS=-D_BSD
+#else
+AIXFLAGS=
+#endif
+
+#ifdef hpux
+HPFLAGS=-D_HPUX_SOURCE=1
+#else
+HPFLAGS=
+#endif
+MACHDEPFLAGS=$(AIXFLAGS) $(HPFLAGS)
+
+/* The PIC flag is needed if you try to build a shared library */
+#ifdef SHAREDLIB
+#  if USEGNU
+PICFLAG=-fPIC
+#  else /*!gcc | g++ */
+PICFLAG=-PIC /*default*/
+#    ifdef solaris2
+PICFLAG=-KPIC /* Assume we are using sun's spro compiler */
+#    endif
+#    ifdef hpux
+PICFLAG=+z
+#    endif
+#  endif
+#else /*!SHAREDLIB*/
+PICFLAG=
+#endif /*SHAREDLIB*/
+
+#if USEGNU
+STATIC=-static
+#else
+STATIC=-Bstatic /* default */
+#  if defined solaris1 || defined solaris2
+STATIC=-Bstatic
+#endif
+#  ifdef alpha
+STATIC=-non_shared
+#  endif
+#  ifdef hpux
+STATIC=-Wl,-a,archive
+#  endif
+#endif
+
+#ifdef SHAREDLIB
+STATIC=
+#endif
+
+#ifdef REPLACEMALLOC
+MALREPFLAG=-DMALLOCREPLACE=1
+#else
+MALREPFLAG=
+#endif /*REPLACEMALLOC*/
+
+#if DEBUG > 1
+#  if defined alpha || defined solaris2
+VERBOSEFLAG=-DVERBOSE=1
+MALLOCLIB=
+#  else
+VERBOSEFLAG=-DVERBOSE=1
+DEBMALFLAG=-DDEBUGMALLOC=1
+MALLOCLIB=/usr/lib/debug/malloc.o
+#  endif
+#else
+VERBOSEFLAG=
+DEBMALFLAG=
+MALLOCLIB=
+#endif
+
+#if defined(PROFILE) && USEGNU
+PROFFLAG=-pg
+n#else
+PROFFLAG=
+#endif
+
+#if DEBUG || USEGNU
+DEBUGFLAG=-g
+#else
+DEBUGFLAG=
+#endif
+
+#if !DEBUG || USEGNU
+OFLAG=-O
+#else
+OFLAG=
+#endif
+
+OPTFLAG=$(OFLAG) $(DEBUGFLAG) $(PROFFLAG)
+
+CONFIGFLAGS=-D$(TARGETOS)=1
+
+DFLAGS= $(MACHDEPFLAGS) \
+	$(MALREPFLAG) \
+	$(VERBOSEFLAG) \
+	$(DEBMALFLAG) \
+	$(CONFIGFLAGS)
+
+IFLAGS=-I.
+
+CPPFLAGS=$(DFLAGS) $(IFLAGS)
+CFLAGS=$(PICFLAG) $(OPTFLAG) $(CPPFLAGS)
+CCFLAGS=$(CFLAGS)
+
+MISCLIBS=-lm $(MALLOCLIB) $(NETLIBS)
+
+TMPFILE=./.tempfile
+
+VERSION=$(SYSVERSION)$(SYSPATCHLEVEL)
+
+/**************************************************/
+ALLSRC=\
+	Sysdep.H \
+	array.H \
+	chartab.H \
+	container.H \
+	debug.H \
+	dict.H \
+	exec.H \
+	export.H \
+	init.H \
+	interp.H \
+	isolate.H \
+	lex.H \
+	mem.H \
+	name.H \
+	operator.H \
+	primitives.H \
+	str.H \
+	stream.H \
+	textdefs.H \
+	tps.H \
+	util.H \
+	value.H \
+	array.C \
+	chartab.C \
+	dict.C \
+	exec.C \
+	export.C \
+	gc.C \
+	init.C \
+	interp.C \
+	lex.C \
+	name.C \
+	primitives.C \
+	str.C \
+	stream.C \
+	textdefs.C \
+	tsh.C \
+	util.C \
+	$(MALREPFILE)
+
+/* Place where version string is materialized: .H, .C and .tmpl*/
+PLATFORMPREFIX=tps_platform
+
+PLATFORMTMPL= $(PLATFORMPREFIX).H.tmpl $(PLATFORMPREFIX).C.tmpl
+PLATFORMSRC= $(PLATFORMPREFIX).H $(PLATFORMPREFIX).C
+
+EVERYTHING= Imakefile Imake.tmpl .dbxinit $(PLATFORMTMPL) $(ALLSRC)
+
+/**************************************************/
+/* Define Headers that will be installed */
+
+INSTALLABLEHDRS= \
+	Sysdep.H \
+	array.H \
+	constants.H \
+	container.H \
+	debug.H \
+	dict.H \
+	exec.H \
+	init.H \
+	interp.H \
+	isolate.H \
+	lex.H \
+	name.H \
+	operator.H \
+	primitives.H \
+	str.H \
+	tps.H \
+	value.H \
+	stream.H\
+	$(PLATFORMPREFIX).H
+
+HDRS= \
+	$(INSTALLABLEHDRS) \
+	chartab.H \
+	export.H \
+	mem.H \
+	textdefs.H \
+	util.H
+
+CORESRCS= \
+	array.C \
+	chartab.C \
+	dict.C \
+	export.C \
+	exec.C \
+	gc.C \
+	init.C \
+	interp.C \
+	lex.C \
+	name.C \
+	primitives.C \
+	str.C \
+	util.C \
+	stream.C \
+	textdefs.C \
+	$(PLATFORMPREFIX).C
+
+COREOBJS=$(CORESRCS:.C=.o)
+
+# LIBOJBS is everything other than the core object files
+LIBSRCS= debug.C mem.C
+LIBOBJS=$(LIBSRCS:.C=.o)
+
+DRIVER=tsh
+DRIVERSRCS= $(DRIVER).C
+DRIVEROBJS=$(DRIVER).o
+
+SRCS=$(CORESRCS) $(CORECSRCS) $(LIBSRCS) $(DRIVERSRCS)
+
+INTERP=$(SYSPREFIX).o
+
+SYSLIBNAME=lib$(SYSPREFIX)
+
+SYSLIB=$(SYSLIBNAME).a
+
+SYSCORE=$(SYSPREFIX).o
+
+#ifdef SHAREDLIB
+# if defined solaris1
+SYSLIBSHARED=$(SYSLIBNAME).so
+SHAREDLDFLAGS=-assert pure-text
+# endif
+# ifdef solaris2
+SYSLIBSHARED=$(SYSLIBNAME).so
+SHAREDLDFLAGS=-G -dy
+# endif
+#  if defined osf1
+SYSLIBSHARED=$(SYSLIBNAME).so
+SHAREDLDFLAGS=-shared -soname $(SYSLIBDIR)/$(SYSLIBSHARED)
+#  endif
+# if defined hpux
+SYSLIBSHARED=$(SYSLIBNAME).sl
+SHAREDLDFLAGS=-b
+# endif
+/* Define absolute path; assuming installed library */
+ABSHAREDLIB=$(SYSLIBDIR)/$(SYSLIBSHARED)
+#else /*!SHAREDLIB*/
+SYSLIBSHARED=
+#endif /*SHAREDLIB*/
+
+SYSSRCS=postinit.x
+
+/*****************************************************/
+/* Define the files needed in the build subdirectory */
+/*****************************************************/
+
+BUILDSRCS=$(HDRS) $(CHDRS) $(SRCS) $(PLATFORMTMPL)
+BUILDMISC=.dbxinit Makefile
+BUILDMAKES=$(SYSPREFIX) platformfiles
+
+/**************************************************/
+/* FINAL PRODUCTS */
+
+PRODUCTS= $(SYSLIB) $(SYSLIBSHARED) $(DRIVER)
+
+/************************************************/
+/*	Default rules				*/
+/************************************************/
+
+.SUFFIXES: .C
+
+.C.o:
+	$(CPLUS) -c $(CCFLAGS) $*.C
+
+/************************************************/
+/*	GENERIC BUILD RULES 			*/
+/************************************************/
+
+all: $(TARGET)
+	DOIT(all.target)
+
+install: installincl installlib installbin
+
+installcode: installlib installbin
+
+installincl:
+	DOIT(installincl.target)
+
+installlib:
+	DOIT(installlib.target)
+
+installbin:
+	DOIT(installbin.target)
+
+clean: $(TARGET)
+	DOIT(clean.target)
+
+/************************************************/
+/*	SPECIFIC BUILD RULES 			*/
+/************************************************/
+
+all.target: $(PRODUCTS)
+
+all.sharedlib: $(SYSLIBSHARED)
+
+/* Make the install directory infrastructure */
+$(SYSTARGET):
+	@echo "Installing directories"
+	MAKEDIR($(SYSTARGET))
+	ln -s $(SYSTARGET) $(SYSTARGETSHORT)
+	ln -s $(SYSTARGET) $(SYSTARGETSHORT2)
+	MAKEDIR($(SYSLIBDIR))
+	MAKEDIR($(SYSBIN))
+
+installincl.target: $(SYSTARGET)
+	@echo "Installing includes"
+	REMOVE($(SYSINCLUDES))
+	MAKEDIR($(SYSINCLUDES))
+	MAKEDIR($(SYSINCLUDES)/$(SYSPREFIX))
+	DOINSTALL($(INSTALLABLEHDRS),$(SYSINCLUDES))
+	(cd $(SYSINCLUDES)/$(SYSPREFIX); ln -s ../$(STAR).[hH] .)
+
+installstaticlib.target: $(SYSTARGET)
+	@echo "Installing static library"
+	REMOVE($(SYSLIBDIR)/$(SYSLIB))
+	DOINSTALL($(SYSLIB),$(SYSLIBDIR))
+	$(RANLIBT) $(SYSLIBDIR)/$(SYSLIB)
+
+#ifdef SHAREDLIB
+installsharedlib.target: $(SYSTARGET)
+	@echo "Installing shared library"
+	REMOVE($(SYSLIBDIR)/$(SYSLIBSHARED))
+	DOINSTALL($(SYSLIBSHARED),$(SYSLIBDIR))
+
+installlib.target: installstaticlib.target installsharedlib.target
+#else
+installlib.target: installstaticlib.target
+#endif
+
+installbin.target: $(SYSTARGET)
+	@echo "Installing shell"
+	REMOVE($(SYSBIN)/$(DRIVER))
+	DOINSTALL($(DRIVER),$(SYSBIN))
+
+clean.target:
+	for i in a.out core $(STAR)..c $(STAR).o $(PRODUCTS) ; do \
+		REMOVE($$i); done
+
+/************************************************/
+
+Clean:
+	rm -fr $(TARGET)
+	rm -fr $(SYSPREFIX)
+
+$(TARGET):
+	@echo "creating"  $(TARGET) "directory"
+	MAKEDIR($(TARGET))
+	rm -f $(TARGETSHORT); ln -s $(TARGET) $(TARGETSHORT)
+	rm -f $(TARGETSHORT2); ln -s $(TARGET) $(TARGETSHORT2)
+	(cd $(TARGET); \
+		rm -f $(STAR) ; \
+		for i in $(BUILDSRCS) ; do ln -s ../$$i . ; done ; \
+		for i in $(BUILDMISC) ; do ln -s ../$$i . ; done ; \
+		for i in $(BUILDMAKES) ; do make $$i ; done \
+	)
+
+$(SYSPREFIX):
+	MAKEDIR($(SYSPREFIX))
+	(cd $(SYSPREFIX) ; \
+		rm -f $(STAR) ; \
+		for i in $(HDRS) ; do ln -s ../$$i . ; done ; \
+	)
+
+/************************************************/
+/* Product construction rules */
+
+$(SYSLIB): $(COREOBJS) $(LIBOBJS)
+	@echo "building $(SYSLIB)"
+	$(AR) $(ARFLAGS) $(SYSLIB) $(COREOBJS) $(LIBOBJS)
+	$(RANLIB) $(SYSLIB)
+
+#ifdef SHAREDLIB
+$(SYSLIBSHARED): $(COREOBJS) $(LIBOBJS)
+        ld $(SHAREDLDFLAGS) -o $(SYSLIBSHARED) $(COREOBJS) $(LIBOBJS)
+#endif
+
+$(SYSCORE): $(COREOBJS)
+	ld -r -o $(SYSCORE) $(COREOBJS)
+
+/* Always load the shell using static libs so we don't
+   have to worry about load paths
+*/ 
+$(DRIVER): $(DRIVEROBJS) $(SYSLIB)
+	$(CPLUS) $(STATIC) $(CFLAGS) -o $(DRIVER) $(DRIVEROBJS) debug.o $(SYSLIB) $(MISCLIBS)
+
+
+/************************************************/
+/* Special construction rules */
+
+/* Consruct tps_platform.{H,C} */
+ 
+platformfiles: $(PLATFORMTMPL)
+	@echo making $(PLATFORMSRC)
+	@rm -f $(PLATFORMSRC)
+	@rm -f $(TMPFILE)
+	@echo "/?VERSION?/s@?VERSION?@$(VERSION)@g" >> $(TMPFILE)
+	@echo "/?TARGETARCH?/s@?TARGETARCH?@$(TARGETARCH)@g" >> $(TMPFILE)
+	@echo "/?TARGETOS?/s@?TARGETOS?@$(TARGETOS)@g" >> $(TMPFILE)
+	@echo "/?TARGETCC?/s@?TARGETCC?@$(TARGETCC)@g" >> $(TMPFILE)
+	@echo "/?TARGETCPLUS?/s@?TARGETCPLUS?@$(TARGETCPLUS)@g" >> $(TMPFILE)
+	@sed -f $(TMPFILE) < $(PLATFORMPREFIX).H.tmpl > $(PLATFORMPREFIX).H
+	@sed -f $(TMPFILE) < $(PLATFORMPREFIX).C.tmpl > $(PLATFORMPREFIX).C
+	@rm -f $(TMPFILE)
+
+/************************************************/
+
+#ifdef osf1
+TCLINC=/srl/Tcl/include
+TCLLIB=/srl/Tcl/lib/libtcl.a
+#endif
+#ifdef solaris1
+TCLINC=/homes/arcadia/src/tcl7.3/sun4/include
+TCLLIB=/homes/arcadia/src/tcl7.3/sun4/lib/libtcl.a
+#endif
+
+tclsh: tclAppInit.c
+	$(CC) $(STATIC) -I$(TCLINC) -o tclsh $(CFLAGS) tclAppInit.c $(TCLLIB) -lm
+
+/************************************************/
+/*
+This file includes a usable set of dependencies,
+so under normal circumstances, we do not want to do
+a make depend.  This is ``ensured'' by making depend
+be a no-op and defining a ``Depend'' operation.
+*/
+
+depend:
+
+Depend: $(SYSPREFIX) platformfiles $(BUILDSRCS)
+	$(MAKEDEPEND) -- $(CPPFLAGS) $(CFLAGS) -- $(BUILDSRCS)
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+
+array.o: container.H
+dict.o: container.H
+str.o: container.H
+tps.o: Sysdep.H tps_platform.H
+tps.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+tps.o: lex.H interp.H
+tps.o: init.H exec.H isolate.H
+stream.o: container.H
+array.o: tps.H
+array.o: Sysdep.H tps_platform.H
+array.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+array.o: lex.H interp.H
+array.o: init.H exec.H isolate.H mem.H
+chartab.o: Sysdep.H chartab.H
+dict.o: tps.H
+dict.o: Sysdep.H tps_platform.H
+dict.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+dict.o: lex.H interp.H
+dict.o: init.H exec.H isolate.H mem.H
+export.o: tps.H
+export.o: Sysdep.H tps_platform.H
+export.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+export.o: lex.H interp.H
+export.o: init.H exec.H isolate.H export.H chartab.H
+export.o: util.H
+exec.o: tps.H
+exec.o: Sysdep.H tps_platform.H
+exec.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+exec.o: lex.H interp.H
+exec.o: init.H exec.H isolate.H util.H
+gc.o: tps.H
+gc.o: Sysdep.H tps_platform.H
+gc.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+gc.o: lex.H interp.H
+gc.o: init.H exec.H isolate.H
+init.o: tps.H
+init.o: Sysdep.H tps_platform.H value.H array.H
+init.o: container.H dict.H name.H operator.H str.H stream.H
+init.o: lex.H interp.H
+init.o: init.H exec.H isolate.H primitives.H util.H
+init.o: chartab.H textdefs.H
+interp.o: tps.H
+interp.o: Sysdep.H tps_platform.H
+interp.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+interp.o: lex.H interp.H
+interp.o: init.H exec.H isolate.H primitives.H util.H
+interp.o: mem.H export.H
+lex.o: tps.H
+lex.o: Sysdep.H tps_platform.H
+lex.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+lex.o: lex.H interp.H
+lex.o: init.H exec.H isolate.H mem.H chartab.H
+name.o: tps.H
+name.o: Sysdep.H tps_platform.H
+name.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+name.o: lex.H interp.H
+name.o: init.H exec.H isolate.H mem.H
+primitives.o: tps.H
+primitives.o: Sysdep.H tps_platform.H value.H array.H
+primitives.o: container.H dict.H name.H operator.H str.H stream.H
+primitives.o: lex.H interp.H
+primitives.o: init.H exec.H
+primitives.o: isolate.H primitives.H util.H mem.H export.H
+str.o: tps.H
+str.o: Sysdep.H tps_platform.H
+str.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+str.o: lex.H interp.H
+str.o: init.H exec.H isolate.H mem.H
+util.o: tps.H
+util.o: Sysdep.H tps_platform.H
+util.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+util.o: lex.H interp.H
+util.o: init.H exec.H isolate.H util.H chartab.H
+util.o: debug.H
+stream.o: tps.H
+stream.o: Sysdep.H tps_platform.H value.H array.H
+stream.o: container.H dict.H name.H operator.H str.H stream.H
+stream.o: lex.H interp.H
+stream.o: init.H exec.H isolate.H mem.H
+textdefs.o: tps.H
+textdefs.o: Sysdep.H
+textdefs.o: tps_platform.H value.H array.H container.H dict.H name.H
+textdefs.o: operator.H str.H stream.H
+textdefs.o: lex.H interp.H
+textdefs.o: init.H exec.H
+textdefs.o: isolate.H textdefs.H
+debug.o: tps.H
+debug.o: Sysdep.H tps_platform.H
+debug.o: value.H array.H container.H dict.H name.H operator.H str.H stream.H
+debug.o: lex.H interp.H
+debug.o: init.H exec.H isolate.H util.H mem.H debug.H
+mem.o: tps.H
+mem.o: Sysdep.H tps_platform.H value.H array.H
+mem.o: container.H dict.H name.H operator.H str.H stream.H
+mem.o: lex.H interp.H
+mem.o: init.H exec.H isolate.H mem.H
+tsh.o: tps.H
+tsh.o: Sysdep.H tps_platform.H value.H array.H container.H dict.H name.H
+tsh.o: operator.H str.H stream.H lex.H interp.H
+tsh.o: init.H exec.H
+tsh.o: isolate.H

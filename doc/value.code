@@ -1,0 +1,27 @@
+\begin{verbatim}
+struct Tps_Value {
+        Tps_Flags    _flags;
+        Tps_Valueset _value;
+} Tps_Value;
+
+struct Tps_Flags {
+        u_int             _ignore:11;
+        u_int             _unsafe:1
+        u_int             _traceoff:1
+        u_int             _execute:1
+        Tps_Access_Flags  _access:2
+        Tps_Typeid        _typeid:16;
+} Tps_Flags;
+
+typedef union Tps_Valueset {
+        boolean               _boolean;
+        long32                _integer;
+        float                 _real;
+        Tps_Nameid            _name;
+        struct Tps_String*    _string;
+        struct Tps_Array*     _array;
+        struct Tps_Dict*      _dict;
+        struct Tps_Stream*    _stream;
+        struct Tps_Operator*  _operator;
+} Tps_Valueset;
+\end{verbatim}

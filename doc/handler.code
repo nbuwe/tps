@@ -1,0 +1,10 @@
+\begin{verbatim}
+struct Tps_Handler_List {
+        struct Tps_Handler_List* _next;
+        struct Tps_Handler* _handler;
+};
+
+Tps_Status Tps_add_handler(Tps_Handler*);
+Tps_Status Tps_remove_handler(Tps_Handler*);
+Tps_Handler* Tps_lookup_handler(char*);
+\end{verbatim}

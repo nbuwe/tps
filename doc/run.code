@@ -1,0 +1,228 @@
+\begin{figure}[b]\centering
+\begin{verbatim}
+Tps_Status
+Tps_Interp::run()
+{
+    register Tps_Status ok;
+    register Tps_Frame* frame;
+    register boolean traceoff;
+    register long nargs;
+    register Tps_Operator *op;
+    register Tps_Value* args;
+    register Tps_Nameid nm;
+    Tps_Value object;
+
+    /* run forever, unless stepping, or until quit */
+loopstart:
+    do {
+retry:
+        if(TPS_EFRAMECOUNT(this) == 0) {
+            ok = TPSSTAT_QUIT;
+            goto quiting;
+        }
+\end{verbatim}
+\caption{Run Method Body}
+\label{runmeth1}
+\end{figure}
+\begin{figure}[p]\centering
+\begin{verbatim}
+        frame = (Tps_Frame*)TPS_ETOSP(this);
+        /* invoke the frame specific reenter function */
+getobj:
+        ok = TPS_FRAME_REENTER(this,frame); // result in _object
+        switch (ok) {
+            case TPSSTAT_OK:
+                /* Found an object; frame not finished */
+                break;
+            case TPSSTAT_RETRYFRAME:
+                /* new frame established, retry */
+                goto retry;
+            case TPSSTAT_POPFRAME:
+                /* completed frame encountered before obtaining object */
+                /* pop to an appropriate frame */
+                (void)unwind_thru(frame,FALSE);
+                goto retry;
+            case TPSSTAT_TAILFRAME:
+                /* completed frame encountered as well as providing object */
+                /* pop to an appropriate frame */
+                (void)unwind_thru(frame,FALSE);
+                break;
+            case TPSSTAT_INTERRUPT:
+            case TPSSTAT_QUIT:
+                goto quiting;
+            default:
+                /* presume that this is some form of fatal error */    
+                goto fatal;
+        }
+\end{verbatim}
+\caption{Run Method Body (cont.)}
+\label{runmeth2}
+\end{figure}
+\begin{figure}[p]\centering
+\begin{verbatim}
+        /* execute the object */
+        object = _object;
+    dereffed:
+        /* trace processing */
+        traceoff = TPS_ISTRACEOFF(object);
+        if(_tracing) {
+            if(!_traceskip) goto traceit;
+            _traceskip = 0;
+        }
+        if(!TPS_ISEXECUTABLE(object)) goto stackit;
+        switch(TPS_TYPE(object)) {
+            case TPSTYPE_OPERATOR:
+                /* check safety of the operator */
+safe1:          if(TPS_ISUNSAFE(object)) {
+                    /* turn off tracing */
+                    ok = Tps_create_trace(this,0);
+                    if(ok != TPSSTAT_OK) goto handle_error;
+                    /* conditionally enter unsafe mode */
+                    TPS_GUARANTEE(this,1);
+                    if(safe()) {
+                        /* push safety state */
+                        TPS_PUSH(this,TPS__CONST(TPS__TRUE));
+                        ok = Tps_create_safety(this,0);
+                        if(ok != TPSSTAT_OK) goto handle_error;
+                    } else {
+                        TPS_PUSH(this,TPS__CONST(TPS__FALSE));
+                    }
+                }
+getop:          op = TPS_OPERATOR_OF(object);
+                nargs = TPS_DEPTH(this);
+                args = TPS_ARGBASE(this);
+                /* check for correct arity */
+                if(op->arity() > nargs) {
+                    ok = TPSSTAT_STACKUNDERFLOW;
+                    goto handle_error;
+                }
+                if(op->arity() > 0) nargs = op->arity();
+                ok = op->invoke(this,args,nargs);
+                if(ok != TPSSTAT_OK) goto handle_error;
+                break;
+\end{verbatim}
+\caption{Run Method Body (cont.)}
+\label{runmeth3}
+\end{figure}
+\begin{figure}[p]\centering
+\begin{verbatim}
+exname:     case TPSTYPE_NAME: /* actually, executable names only */
+                /* lookup and retry; == inline version of trackname */
+                nm = TPS_NAME_OF(object);
+                do {/* unref executable name one level for each pass*/
+		    Tps_Dictpair* pairp;
+		    long where;
+		    ok = Tps_dictstack_lookup(TPS_DTOSP(this),
+						TPS_DDEPTH(this),
+						object,&where,&pairp);
+		    if(ok != TPSSTAT_OK) goto handle_error;
+                    object = pairp->_value;
+                    if(TPS_NAME_OF(object) == nm) {
+                        /* loop in name lookup */
+                        ok = TPSSTAT_INVALIDACCESS;
+                        goto handle_error;
+                    }
+                } while(TPS_ISTYPE(object,TPSTYPE_NAME)
+                        && TPS_ISEXECUTABLE(object));
+\end{verbatim}
+\caption{Run Method Body (cont.)}
+\label{runmeth4}
+\end{figure}
+\begin{figure}[p]\centering
+\begin{verbatim}
+                /* check for executable array */
+                if(!TPS_ISEXARRAY(object)) {
+                    _object = object;
+                    goto dereffed;
+                }
+                /* check safety of the operator */
+safe2:          if(TPS_ISUNSAFE(object)) {
+                    /* turn off tracing */
+                     ok = Tps_create_trace(this,0);
+                     if(ok != TPSSTAT_OK) goto handle_error;
+                    TPS_GUARANTEE(this,1);
+                    if(safe()) {
+                        /* push safety state */
+                        TPS_PUSH(this,TPS__CONST(TPS__TRUE));
+                        ok = Tps_create_safety(this,0);
+                        if(ok != TPSSTAT_OK) goto handle_error;
+                    } else {
+                        TPS_PUSH(this,TPS__CONST(TPS__FALSE));
+                    }
+                }
+                ok = Tps_create_source(this,object);
+                if(ok != TPSSTAT_OK) goto handle_error;
+                goto retry;
+
+            default:
+stackit:
+                TPS_GUARANTEE(this,1);
+                TPS_PUSH(this,object);
+                break;
+        }
+loopcont:
+        continue; /* while(!_step)*/
+\end{verbatim}
+\caption{Run Method Body (cont.)}
+\label{runmeth5}
+\end{figure}
+\begin{figure}[p]\centering
+\begin{verbatim}
+traceit:
+    /* turn off tracing and invoke tracetrap */
+    ok = Tps_create_trace(this,0);
+    if(ok != TPSSTAT_OK) goto handle_error;
+    /* push object being traced */
+    TPS_GUARANTEE(this,1);
+    TPS_PUSH(this,object);
+    /* arrange for ``tracetrap'' to be executed untraced */
+    object = TPS__NM(TPS_NMTRACETRAP);
+    TPS_SET_EXECUTABLE(object,1);
+    ok = Tps_create_source(this,object);
+    if(ok != TPSSTAT_OK) goto handle_error;
+    /* continue execution */
+    goto retry;
+\end{verbatim}
+\caption{Run Method Body (cont.)}
+\label{runmeth6}
+\end{figure}
+\begin{figure}[p]\centering
+\begin{verbatim}
+handle_error:
+        if(ok == TPSSTAT_INTERRUPT) goto quiting;
+        if(ok == TPSSTAT_QUIT) goto quiting;
+        if(ok == TPSSTAT_VMERROR) goto vmerr;
+        if(ok == TPSSTAT_SYSTEMERROR) goto syserr;
+        /* stack current object and the error */
+        TPS_GUARANTEE(this,2);
+        TPS_PUSH(this,object);
+        TPS_PUSH(this,TPS__ENM(ok));
+        /* cause execution of errortrap with tracing suppressed */
+        ok = Tps_create_trace(this,0);
+        if(ok != TPSSTAT_OK) goto handle_error;
+        object = TPS__NM(TPS_NMERRTRAP);
+        TPS_SET_EXECUTABLE(object,1);
+        ok = Tps_create_source(this,object);
+        if(ok != TPSSTAT_OK) goto handle_error;
+        goto retry;
+
+/* vmerr and syserr are not fixable */
+vmerr:
+        ok = TPSSTAT_VMERROR;
+        goto fatal;
+syserr:
+        ok = TPSSTAT_SYSTEMERROR;
+        goto fatal;                
+fatal:
+        return ok;
+quiting:
+        return ok;
+
+loopend:
+    } while(!_step);
+    return TPSSTAT_OK;
+}
+\end{verbatim}
+\caption{Run Method Body (cont.)}
+\label{runmeth7}
+\end{figure}

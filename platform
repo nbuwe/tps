@@ -1,0 +1,164 @@
+#!/bin/sh
+
+USAGE1='platform [-a[rch] <architecture>] [-os <os>] [-gnu] [-cc <ccompiler>] [-c++ <c++compiler>] [-ada <adacompiler>] [-s[ite] <site>]'
+
+# This program will not work right without the commands uname and expr.
+if [ -f /usr/bin/uname ] ; then
+    UNAME=/usr/bin/uname
+else
+if [ -f /bin/uname ] ; then
+    UNAME=/bin/uname
+else
+    echo "/usr/bin/uname command not found"
+fi
+fi
+if [ -f /bin/expr ] ; then
+    EXPR=/bin/expr
+else
+    echo "/bin/expr command not found"
+fi
+
+tmpfile=./..platform
+
+# Start with last ditch defaults
+default_site=DISTRIBUTION
+default_os=solaris1
+default_arch=sun4
+default_usegnu=1
+default_CCOMP=gcc
+default_CPLUSCOMP=g++
+default_ACOMP=sunada1.1
+
+osname=`$UNAME -s`
+osrel=`$UNAME -r`
+arch=`$UNAME -m`
+
+# do various fixups
+
+# Detect various versions of sun4 architecture
+if [ `$EXPR $arch : 'sun4*'` -eq 4 ] ; then
+  arch=sun4
+fi
+# rename sparc architecture to sun4 also
+if [ $arch = sparc ] ; then
+  arch=sun4
+fi
+# rename HP 9000/? to be pa-risc
+if [ $osname = "HP-UX" -a `$EXPR $arch : '9000/*'` -eq 5 ] ; then
+  arch=pa-risc
+fi
+if [ `$EXPR $osrel : '4.1*'` -eq 3 ] ; then
+  osrel=4.1
+fi
+if [ $osname = SunOS -a $osrel = 4.1 ] ; then
+  os=solaris1
+fi
+if [ $osname = SunOS -a $osrel =  5.4 ] ; then
+  os=solaris2
+fi
+if [ $osname = OSF1 ] ; then
+  os=osf1
+fi
+if [ $osname = IRIX ] ; then
+  os=irix
+fi
+if [ $osname = HP-UX ] ; then
+  os=hpux
+fi
+
+if [ $SITEID ] ; then
+  site=SITEID
+else
+  if [ $ARCADIASITE ] ; then site=$ARCADIASITE; fi
+fi
+
+while [ $# -gt 0 ]
+do
+       case $1 in
+  	-s | -site) shift; site=$1 ;;
+  	-a | -arch) shift ; arch=$1 ;;
+  	-o | -os) shift ; os=$1 ;;
+  	-cc | -CC) shift ; CCOMP=$1 ;;
+  	-c++ | -C++) shift ; CPLUSCOMP=$1 ;;
+  	-ada | -ADA) shift ; ACOMP=$1 ;;
+  	-gnu) usegnu=1 ;;
+  	-nognu) usegnu=0 ;;
+  	\?) echo $USAGE1; exit 2 ;;
+      esac
+      shift
+done
+
+if [ ! "$os" -a "$arch" ] ; then
+	if [ $arch = "dec-mips" ] ; then os="ultrix" ; fi
+	if [ $arch = "decmips" ] ; then os="ultrix" ; fi
+	if [ $arch = "sun3" ] ; then os="solaris1" ; fi
+	if [ $arch = "sun4" ] ; then
+            if [ -d /opt ] ; then
+              os="solaris2"
+	    else
+		os="solaris1"
+            fi
+        fi
+	if [ $arch = "sparc" ] ; then os="solaris1" ; fi
+	if [ $arch = "alpha" ] ; then os="osf1" ; fi
+	if [ $arch = "pa-risc" ] ; then os="hpux" ; fi
+	if [ $arch = "sgi-mips" ] ; then os="irix" ; fi
+	if [ $arch = "sgi-1" ] ; then os="irix" ; fi
+fi
+
+# Begin the defaulting process
+if [ ! "$usegnu" ] ; then
+    usegnu=1
+    if [ "$CCOMP" ] ; then
+        if [ $CCOMP != "gcc"  ] ; then usegnu=0 ; fi
+    fi
+    if [ "$CPLUSCOMP" ] ; then
+        if [ $CPLUSCOMP != "g++"  ] ; then usegnu=0 ; fi
+    fi
+fi
+
+if [ "$usegnu" = 1 ] ; then
+	if [ ! "$CCOMP" ] ; then CCOMP=gcc ; fi
+	if [ ! "$CPLUSCOMP" ] ; then CPLUSCOMP=g++ ; fi
+fi
+
+# complete the defaulting proces
+if [ ! "$site" ] ; then site=$default_site ; fi
+if [ ! "$os" ] ; then os=$default_os ; fi
+if [ ! "$arch" ] ; then arch=$default_arch ; fi
+if [ ! "$CCOMP" ] ; then CCOMP=$default_CCOMP ; fi
+if [ ! "$CPLUSCOMP" ] ; then CPLUSCOMP=$default_CPLUSCOMP ; fi
+if [ ! "$ACOMP" ] ; then ACOMP=$default_ACOMP ; fi
+
+# split trailing version number from ada vendor name
+ACVERS=`echo $ACOMP | sed -e 's/[a-zA-Z_]*//'`
+ACVENDOR=`echo $ACOMP | sed -e "s/$ACVERS//"`
+
+if [ -d Imake.config ] ; then
+  rm -f Imake.config.bak
+  mv Imake.config Imake.config.bak
+fi
+
+# calculate the current working directory
+thisdir=`pwd`
+
+rm -f $tmpfile
+# It is possible that the escape characters in the following
+# (currently the @) may need to change if it occurs
+# in the values substituted.
+echo "/!TARGETSITE!/s@!TARGETSITE!@$site@g" > $tmpfile
+echo "/!TARGETARCH!/s@!TARGETARCH!@$arch@g" >> $tmpfile
+echo "/!TARGETOS!/s@!TARGETOS!@$os@g" >> $tmpfile
+echo "/!TARGETADA!/s@!TARGETADA!@$ACOMP@g" >> $tmpfile
+echo "/!TARGETADAVERSION!/s@!TARGETADAVERSION!@$ACVERS@g" >> $tmpfile
+echo "/!TARGETADAVENDOR!/s@!TARGETADAVENDOR!@$ACVENDOR@g" >> $tmpfile
+echo "/!TARGETCC!/s@!TARGETCC!@$CCOMP@g" >> $tmpfile
+echo "/!TARGETCPLUS!/s@!TARGETCPLUS!@$CPLUSCOMP@g" >> $tmpfile
+echo "/!USEGNU!/s@!USEGNU!@$usegnu@g" >> $tmpfile
+echo "/!CWD!/s@!CWD!@$thisdir@g" >> $tmpfile
+sed -f $tmpfile < Config.Imake >Imake.config
+rm -f $tmpfile
+
+echo arch= $arch, os= $os, cc= $CCOMP, c++= $CPLUSCOMP, ada= $ACOMP, gnu= $usegnu "(site= $site)"
+
+exit

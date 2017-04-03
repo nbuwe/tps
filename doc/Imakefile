@@ -1,0 +1,34 @@
+.SUFFIXES: .tex .dvi .ps
+
+INPUTS=cuarcadia.sty \
+	exec.code global.code handler.code imethods.code \
+        interp.code load.code run.code \
+        sframe.code tframe.code value.code \
+	trace.id
+
+TEXSRC=$(SYSPREFIX).tex
+
+TEXDVI=$(TEXSRC:.tex=.dvi)
+
+TEXPS=$(TEXSRC:.tex=.ps)
+
+MISCSRC=Imakefile Imake.tmpl README
+
+# Try to pass along the .ps file if possible.
+SRC=$(TEXSRC) $(INPUTS) \
+    $(TEXPS)
+
+##################################################
+# Disable all.
+
+all:
+
+ps $(TEXPS)::
+	latex $(TEXSRC)
+	bibtex $(SYSPREFIX)
+	latex $(TEXSRC)
+	latex $(TEXSRC)
+	$(DVIPS) -o $(TEXPS) $(TEXDVI)
+clean:
+	rm -f *.dvi *.aux *.log *.bbl *.blg
+

@@ -1,0 +1,11 @@
+EXTERNC void AC(debugobject1,(Tps_Value obj, Tps_Stream* accum, long deep, long ic));
+EXTERNC char* AC(debugobject,(Tps_Value));
+EXTERNC char* AC(debugdict,(Tps_Dict*));
+EXTERNC char* AC(debugdictall,(Tps_Dict*));
+EXTERNC char* AC(debugstack0,(Tps_Interp*));
+EXTERNC char* AC(debugstack,(Tps_Interp*));
+EXTERNC char* AC(debugdstack0,(Tps_Interp*));
+EXTERNC char* AC(debugdstack,(Tps_Interp*));
+EXTERNC char* AC(debugdstacks,(Tps_Interp*));
+EXTERNC char* AC(debugexec0,(Tps_Interp*, long depth));
+EXTERNC char* AC(debugexec,(Tps_Interp*));

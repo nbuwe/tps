@@ -1,0 +1,26 @@
+language:       Tps (Tiny/Transportable Postscript)
+package:        Tps
+version:        2.1
+parts:          interpreter, documentation.
+author:         Dennis Heimbigner <dennis@cs.colorado.edu>
+location:       ftp://ftp.cs.colorado.edu/pub/cs/distribs/arcadia/tps.tar.Z
+description:    Embedded, Transportable, Agent Language based on Postscript.
+conformance:    N.A.
+features:       + Safety.
+		+ State Accessibility.
+		+ Multiple Interpreters.
+		+ Extensible types.
+		+ Extensible execution stack frames.
+bugs:           Send bug reports to author.
+requires:       c++ compiler.
+ports:          Variety of Unix platforms: Solaris(1,2), IRIX, HPUX, OSF1.
+status:         active, supported.
+help:           from author.
+support:        from author.
+announcements:  comp.lang.misc
+updated:        8/8/95
+cref:		distributed
+cref:		embeddable
+cref:		scripting languages
+cref:		Forth family languages
+lref:           Postscript

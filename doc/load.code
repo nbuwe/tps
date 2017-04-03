@@ -1,0 +1,14 @@
+\begin{verbatim}
+Tps_Status Tps_Interp::load(char* proc="start")
+{
+    Tps_Value v;
+    register Tps_Status ok;
+
+    if(!code || strlen(code) == 0) return TPSSTAT_TYPECHECK;
+    (void)_inbuf.open(code);
+    ok = Tps_get_token(_tokenbuf,&_inbuf,&v,0); /* get a token */
+    (void)_inbuf.close();
+    if(ok == TPSSTAT_OK) {ok = Tps_create_source(this,v);}
+    return ok;
+}
+\end{verbatim}

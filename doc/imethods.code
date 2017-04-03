@@ -1,0 +1,74 @@
+\begin{figure}[p]\centering
+\begin{verbatim}
+class Tps_Interp {
+    public:
+        Tps_Interp();
+        ~Tps_interp();
+    public:
+        virtual void reset();
+        virtual void gc();
+        virtual Tps_Status load(char* code="start");
+        virtual Tps_Value* stack(long& depth);
+        virtual Tps_Status run();
+        virtual Tps_Status save(char*& state);
+        virtual Tps_Status restore(char*);
+        virtual Tps_Status restore(int fd);
+	Tps_Status newoperator(char*, long, Tpsstatfcn);
+	Tps_Status destroyoperator(char*);
+    public:
+        Tps_Status status();
+        void status(Tps_Status s);
+        int step();
+        void step(boolean b);
+        int tracing();
+        void tracing(boolean b);
+        int safe();
+        void safe(boolean b);
+    public:
+        Tps_Status unwind_throw(void);
+        Tps_Status unwind_thru(struct Tps_Frame* lastframe, boolean thrown);
+        Tps_Status export_exec(struct Tps_Frame* lastframe, long& ecount);
+        Tps_Status import_exec(long count);
+\end{verbatim}
+\caption{Interpreter Class Methods}
+\label{interpmetha}
+\end{figure}
+\begin{figure}[p]\centering
+\begin{verbatim}
+    public: /* stack manipulators */
+        /* operand stack */
+        u_long depth(void);
+        u_long room(void);
+        Tps_Value push(Tps_Value value);
+        Tps_Value* pushn(long n);
+        Tps_Value pop(void);
+        Tps_Value* popn(long n);
+        Tps_Value top(void);
+        Tps_Value* tosp(void);
+        void settosp(Tps_Value* argptr);
+        Tps_Value* base(void);
+        void clear(void);
+        /* dict stack */
+        u_long ddepth(void);
+        u_long droom(void);
+        Tps_Value dpush(Tps_Value value);
+        Tps_Value* dpushn(long n);
+        Tps_Value dpop(void);
+        Tps_Value* dpopn(long n);
+        Tps_Value dtop(void);
+        Tps_Value* dtosp(void);
+        void dclear(void);
+        /* exec stack */
+        u_long edepth(void);
+        u_long eroom(void);
+        char* epushn(long n);
+        char* epopn(long n);
+        char* etosp(void);
+        char* ebase(void);
+        void eclear(void);
+...
+};
+\end{verbatim}
+\caption{Interpreter Class Methods (cont.)}
+\label{interpmethb}
+\end{figure}
