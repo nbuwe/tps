@@ -52,7 +52,7 @@ Tps_String::Tps_String(char* initstr, long len) : Tps_Container(TPSTYPE_STRING)
 Tps_String::Tps_String(char* initstr)
 	    : Tps_Container(TPSTYPE_STRING)
 {
-    register len = strlen(initstr);
+    register size_t len = strlen(initstr);
     initialize(len);
     MEMCPY(_contents,initstr,len);
 }

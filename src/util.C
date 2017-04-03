@@ -170,7 +170,7 @@ Tps_cvts1(Tps_Stream& outbuf, Tps_Value object, boolean deep, long addrctr)
 	    break;
 	case TPSTYPE_ARRAY:
 	    if(deep){
-		register isexec = TPS_ISEXECUTABLE(object);
+		register boolean isexec = TPS_ISEXECUTABLE(object);
 		register long i = isexec?LBRACE:LBRACKET;
 		register Tps_Array* a;
 		ok = outbuf.write(i);
