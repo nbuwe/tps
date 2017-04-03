@@ -288,7 +288,7 @@ Tps_Stream_String::open(const char* s, long slen) // for reading only
 	}
 	_modeflags = Tps_stream_r;
 	_good = (_isopen = TRUE);
-	_finger = (_contents = s);
+	_finger = (_contents = (char*)s); // XXX: const_cast
 	_alloc = slen;
 	_eos = _contents + _alloc;
     }
