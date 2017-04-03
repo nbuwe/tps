@@ -408,13 +408,13 @@ Tps_Stream_String::printf(const char* fmt...)
     (void) vsprintf(_finger, fmt, args);
     va_end(args);
     /* advance _finger to eos */
-    fmt = (char*)MEMCHR(_finger,'\0',(_eos - _finger));
-    if(!fmt) {
+    char* s = (char*)MEMCHR(_finger,'\0',(_eos - _finger));
+    if(!s) {
 	/* uh-oh, overwrote available memory */
 	_good = FALSE;
 	return TPSSTAT_SYSTEMERROR;
     }
-    _finger = fmt;
+    _finger = s;
     return TPSSTAT_OK;
 }
 
