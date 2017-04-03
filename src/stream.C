@@ -169,7 +169,7 @@ Tps_Stream_File::write(long c)
 }
 
 Tps_Status
-Tps_Stream_File::write(char* s, long slen)
+Tps_Stream_File::write(const char* s, long slen)
 {
     if(!_good) {
 	return TPSSTAT_IOERROR;
@@ -228,7 +228,7 @@ Tps_Stream_File::bytesavailable()
 
 /*VARARGS0*/
 Tps_Status
-Tps_Stream_File::printf(char* fmt...)
+Tps_Stream_File::printf(const char* fmt...)
 {
     va_list args;
     register FILE* f = (FILE*)_f;
@@ -337,7 +337,7 @@ Tps_Stream_String::write(long c)
 }
 
 Tps_Status
-Tps_Stream_String::write(char* s, long slen)
+Tps_Stream_String::write(const char* s, long slen)
 {
     if(!_good) {
 	return TPSSTAT_IOERROR;
@@ -395,7 +395,7 @@ Tps_Stream_String::bytesavailable()
 
 /*VARARGS0*/
 Tps_Status
-Tps_Stream_String::printf(char* fmt...)
+Tps_Stream_String::printf(const char* fmt...)
 {
     va_list args;
     register long len;
@@ -458,11 +458,11 @@ Tps_Status Tps_Stream::open() {return TPSSTAT_SYSTEMERROR;}
 Tps_Status Tps_Stream::close() {return TPSSTAT_SYSTEMERROR;}
 long Tps_Stream::read() {return -1;}
 Tps_Status Tps_Stream::write(long) {return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Stream::write(char*, long) {return TPSSTAT_SYSTEMERROR;}
+Tps_Status Tps_Stream::write(const char*, long) {return TPSSTAT_SYSTEMERROR;}
 Tps_Status Tps_Stream::pushback(long) {return TPSSTAT_SYSTEMERROR;}
 Tps_Status Tps_Stream::flush() {return TPSSTAT_SYSTEMERROR;}
 Tps_Status Tps_Stream::rewind() {return TPSSTAT_SYSTEMERROR;}
 long Tps_Stream::bytesavailable() {return -1;}
-Tps_Status Tps_Stream::printf(char* ...) {return TPSSTAT_SYSTEMERROR;}
+Tps_Status Tps_Stream::printf(const char* ...) {return TPSSTAT_SYSTEMERROR;}
 Tps_Status Tps_Stream::ends() {return TPSSTAT_SYSTEMERROR;}
 #endif /*__sgi*/

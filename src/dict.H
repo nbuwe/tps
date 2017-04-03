@@ -41,7 +41,7 @@ class Tps_Dict : public Tps_Container {
 	void mark(void);
 	Tps_Dictkind kind(void) {return _kind;}
     public:
-	char* name() { return _name?_name:"<dict>"; }	
+	const char* name() { return _name?_name:"<dict>"; }	
 	void name(char* nm) {_name = nm;}
     protected:
 	virtual u_long hashfcn(Tps_Value key)

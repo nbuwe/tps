@@ -53,7 +53,7 @@ class Tps_Interp {
     public:
 	virtual void reset();
 	virtual void gc(); // in gc.C
-	virtual Tps_Status load(char* code="start");
+	virtual Tps_Status load(const char* code="start");
 	virtual Tps_Value* stack(long& depth)
 		{depth = _stack._last - _stack._tos; return _stack._tos;}
 	virtual Tps_Status run();

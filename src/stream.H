@@ -52,19 +52,19 @@ class Tps_Stream : public Tps_Container {
     public:
 	virtual long read()				VIRTUAL;
 	virtual Tps_Status write(long c)		VIRTUAL;
-	virtual Tps_Status write(char*, long)		VIRTUAL;
+	virtual Tps_Status write(const char*, long)	VIRTUAL;
 	virtual Tps_Status pushback(long c)		VIRTUAL;
 	virtual Tps_Status flush()			VIRTUAL;
 	virtual Tps_Status rewind()			VIRTUAL;
 	virtual long bytesavailable()			VIRTUAL;
     public:
-	virtual Tps_Status printf(char* fmt...)		VIRTUAL;
+	virtual Tps_Status printf(const char* fmt...)	VIRTUAL;
 	virtual Tps_Status ends()			VIRTUAL;
     public:
-	Tps_Status write(char* s) {return write(s,s?strlen(s):0);}
+	Tps_Status write(const char* s) {return write(s,s?strlen(s):0);}
 	Tps_Status endl() {(void)ends(); return flush();}
     public:
-	char* name() {return _name;}
+	const char* name() {return _name;}
 	boolean isopen() {return _isopen;}
 	Tps_Status good() {return (_isopen && _good)?TPSSTAT_OK:TPSSTAT_IOERROR;}
 	boolean operator!() {return good() != TPSSTAT_OK;}
@@ -101,16 +101,16 @@ class Tps_Stream_File : public Tps_Stream {
     public:
 	virtual long read();
 	virtual Tps_Status write(long c);
-	virtual Tps_Status write(char*,long);
+	virtual Tps_Status write(const char*,long);
 	virtual Tps_Status pushback(long c);
 	virtual Tps_Status flush();
 	virtual Tps_Status rewind();
 	virtual long bytesavailable();
     public:
-	virtual Tps_Status printf(char* fmt...);
+	virtual Tps_Status printf(const char* fmt...);
 	virtual Tps_Status ends() {return TPSSTAT_OK;} /* avoid nulls*/
     public:
-	Tps_Status write(char* s) {return write(s,s?strlen(s):0);}
+	Tps_Status write(const char* s) {return write(s,s?strlen(s):0);}
 	int fd() {return _fd;}
 	long attached() {return _attached;}
     protected:
@@ -134,16 +134,16 @@ class Tps_Stream_String : public Tps_Stream {
     public:
 	virtual long read();
 	virtual Tps_Status write(long c);
-	virtual Tps_Status write(char*,long);
+	virtual Tps_Status write(const char*,long);
 	virtual Tps_Status pushback(long c);
 	virtual Tps_Status flush();
 	virtual Tps_Status rewind();
 	virtual long bytesavailable();
     public:
-	virtual Tps_Status printf(char* fmt...);
+	virtual Tps_Status printf(const char* fmt...);
 	virtual Tps_Status ends() {return write((long)0);}
     public:
-	Tps_Status write(char* s) {return write(s,s?strlen(s):0);}
+	Tps_Status write(const char* s) {return write(s,s?strlen(s):0);}
 	char* contents() {return _contents;}
 	long length() {return _finger - _contents;}
     public:

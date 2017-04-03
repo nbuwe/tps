@@ -616,7 +616,7 @@ quiting:
 /**************************************************/
 
 Tps_Status
-Tps_Interp::load(char* code)
+Tps_Interp::load(const char* code)
 {
     Tps_Value v;
     register Tps_Status ok;
