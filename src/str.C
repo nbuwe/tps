@@ -43,13 +43,13 @@ Tps_String::Tps_String(long sz) : Tps_Container(TPSTYPE_STRING)
     initialize(sz);
 }
 
-Tps_String::Tps_String(char* initstr, long len) : Tps_Container(TPSTYPE_STRING)
+Tps_String::Tps_String(const char* initstr, long len) : Tps_Container(TPSTYPE_STRING)
 {
     initialize(len);
     MEMCPY(_contents,initstr,len);
 }
 
-Tps_String::Tps_String(char* initstr)
+Tps_String::Tps_String(const char* initstr)
 	    : Tps_Container(TPSTYPE_STRING)
 {
     register size_t len = strlen(initstr);

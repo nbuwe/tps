@@ -19,8 +19,8 @@ Base strings can be extended dynamically, pseudo strings cannot.
 class Tps_String : public Tps_Container {
     public:
 	Tps_String(long sz=0);
-	Tps_String(char* initstr, long slen);
-	Tps_String(char* initstr);
+	Tps_String(const char* initstr, long slen);
+	Tps_String(const char* initstr);
 	virtual ~Tps_String();
     public:
 	long length() {return _len;}
