@@ -20,6 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <errno.h>
 #include "tps.H"
 #include "mem.H"
 
@@ -208,7 +209,9 @@ Tps_Status
 Tps_Stream_File::flush()
 {
     if(!_good) return TPSSTAT_IOERROR;
-    _good = (::fsync(_fd) >= 0);
+    _good = (::fsync(_fd) >= 0
+	     // XXX: fsync doesn't work e.g. on stdout (tty)
+	     || errno == EINVAL);
     return good();
 }
 
