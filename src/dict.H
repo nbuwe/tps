@@ -24,7 +24,7 @@ struct Tps_Dictpair {
 
 class Tps_Dict : public Tps_Container {
     public:
-	Tps_Dict(Tps_Dictkind k, char* nm=0) : Tps_Container(TPSTYPE_DICT)
+	Tps_Dict(Tps_Dictkind k, const char* nm=0) : Tps_Container(TPSTYPE_DICT)
 		{_kind=k; _name = nm;}
     public:
 	virtual Tps_Status lookup(Tps_Value key, Tps_Dictpair** pairp) VIRTUAL;
@@ -42,7 +42,7 @@ class Tps_Dict : public Tps_Container {
 	Tps_Dictkind kind(void) {return _kind;}
     public:
 	const char* name() { return _name?_name:"<dict>"; }	
-	void name(char* nm) {_name = nm;}
+	void name(const char* nm) {_name = nm;}
     protected:
 	virtual u_long hashfcn(Tps_Value key)
 	    {return (TPS_ISTYPE(key,TPSTYPE_STRING))
@@ -62,7 +62,7 @@ class Tps_Dict : public Tps_Container {
 	boolean stringmatch(Tps_String*, Tps_String*);
     protected:
 	Tps_Dictkind	_kind;
-	char*		_name; /* optional for tracing */
+	const char*	_name; /* optional for tracing */
 };
 
 
@@ -94,7 +94,7 @@ struct Tps_Bucket {
 
 class Tps_Dict_Tcl : public Tps_Dict {
     public:
-	Tps_Dict_Tcl(long bucketcount=0, char* nm=0);
+	Tps_Dict_Tcl(long bucketcount=0, const char* nm=0);
 	virtual ~Tps_Dict_Tcl(void);
     public:
 	virtual Tps_Status lookup(Tps_Value key, Tps_Dictpair** pairp);

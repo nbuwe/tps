@@ -49,8 +49,8 @@ typedef float Tps_Real;
 
 /**************************************************/
 
-typedef char* Tps_Nameid; /* this works because it points to the string
-			 in the name table */
+typedef const char* Tps_Nameid; /* this works because it points to the string
+				   in the name table */
 
 /**************************************************/
 /*

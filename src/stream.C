@@ -48,7 +48,7 @@ Tps_mode_of(const char* modestring, const long modelen)
     return md;
 }
 
-char*
+const char*
 Tps_modestring_of(const Tps_Stream_Mode md)
 {
     switch (md) {

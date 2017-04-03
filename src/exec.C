@@ -59,7 +59,7 @@ Tps_trace0(Tps_Interp* intrp,
 	   Tps_Frame* f)
 {
     register long len = TPS_FRAME_LENGTH(intrp,f);
-    register char* nam = TPS_FRAME_NAME(intrp,f);
+    register const char* nam = TPS_FRAME_NAME(intrp,f);
     register long depth = Tps_framedepth(intrp,f);
 
     strm->printf("(%2ld)",depth);

@@ -66,7 +66,7 @@ Tps_cvts1(Tps_Stream& outbuf, Tps_Value object, boolean deep, long addrctr)
     register Tps_Status ok;
     register Tps_Typeid rtyp;
     register Tps_String* s1;
-    register char* s;
+    register const char* s;
     register long len;
     register long i;
     register long c;
@@ -307,8 +307,8 @@ Tps_compare(Tps_Value opl, Tps_Value opr)
 {
     register Tps_Typeid tr;
     register Tps_Typeid tl;
-    register char* sl;
-    register char* sr;
+    register const char* sl;
+    register const char* sr;
     register long lenl;
     register long lenr;
     register long ir;
@@ -406,7 +406,7 @@ intresult:
 Tps_Status
 Tps_string_or_name(Tps_Value v, char** sp, long* lenp)
 {
-    register char* s;
+    register const char* s;
     register long len;
     switch(TPS_TYPE(v)) {
 	case TPSTYPE_STRING:

@@ -50,7 +50,7 @@ Tps_Nametable::~Tps_Nametable(void)
 
 /* Assume that the arg is null terminated */
 Tps_Nameid
-Tps_Nametable::newname(char* nm, boolean ro)
+Tps_Nametable::newname(const char* nm, boolean ro)
 {
     register Tps_Nameid s = 0;
     register long len;
@@ -71,8 +71,9 @@ Tps_Nametable::newname(char* nm, boolean ro)
 	    s = nm;
 	} else {
 	    len = strlen(nm);
-	    s = new char[len+1];
-	    strcpy(s,nm);
+	    char *buf = new char[len+1];
+	    strcpy(buf,nm);
+	    s = buf;
 	}
 	TPS_MAKEVALUE(pair._key,TPSTYPE_NAME,s);
 	if(ro) TPS_SET_ACCESS(pair._key,Tps_access_readonly);
@@ -82,7 +83,7 @@ Tps_Nametable::newname(char* nm, boolean ro)
     }
 #else /*!NOINLINE*/
     /* inline combined lookup + possible insert */
-    register char* knm;
+    register const char* knm;
     register u_long h,c,index;
     register Tps_HashEntry* hPtr;
 
@@ -101,8 +102,9 @@ Tps_Nametable::newname(char* nm, boolean ro)
 	    s = nm;
 	} else {
 	    len = strlen(nm);
-	    s = new char[len+1];
-	    strcpy(s,nm);
+	    char *buf = new char[len+1];
+	    strcpy(buf,nm);
+	    s = buf;
 	}
 	/* inline insert */
 	hPtr = (Tps_HashEntry *) ckalloc((unsigned)(sizeof(Tps_HashEntry)));
@@ -126,7 +128,7 @@ Tps_Nametable::newname(char* nm, boolean ro)
 /* inlined elsewhere; see NOINLINE conditionals */
 
 u_long
-Tps_Nametable::namehash(char* kn)
+Tps_Nametable::namehash(const char* kn)
 {
     u_long h = 0;
     register int c;

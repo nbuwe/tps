@@ -10,7 +10,7 @@ struct Tps_Nametable : public Tps_Dict_Tcl {
 	Tps_Nametable(long);
 	virtual ~Tps_Nametable(void);
     public:
-	Tps_Nameid newname(char* nm, boolean ro=FALSE);
+	Tps_Nameid newname(const char* nm, boolean ro=FALSE);
     public:
 	Tps_Nametable* duplicate(); // duplicate this nametable
     public: // virtual overrides
@@ -26,7 +26,7 @@ struct Tps_Nametable : public Tps_Dict_Tcl {
 	virtual boolean match(Tps_Value key, Tps_Value e)
 	    {return strcmp(TPS_NAME_OF(key),TPS_NAME_OF(e))==0;}
     protected:
-	virtual u_long namehash(char*);
+	virtual u_long namehash(const char*);
 };
 
 #endif /*NAME_HH*/

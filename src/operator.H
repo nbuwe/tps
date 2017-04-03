@@ -25,7 +25,7 @@ struct Tps_Operator {
 	void arity(long a) {_arity = a;}
 	void proc(Tpsstatfcn p) {_proc = p;}
 	void flags(Tps_Operator_Flags f) {_flags = f;}
-	void name(char* s) {_name = s;}
+	void name(const char* s) {_name = s;}
     public:
 	Tps_Status invoke(TPS_OPERATOR_ARGS)
 	    {return (_proc)(interp,args,nargs);}

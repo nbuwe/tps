@@ -30,7 +30,7 @@ import:
 /**************************************************/
 
 struct Tps_Frame_Parameters {
-	char*	_name;
+	const char*	_name;
 };
 
 /**************************************************/
@@ -108,7 +108,7 @@ struct Tps_Handler_List {
 
 EXTERNC Tps_Status Tps_add_handler(Tps_Handler*);
 EXTERNC Tps_Status Tps_remove_handler(Tps_Handler*);
-EXTERNC Tps_Handler* Tps_lookup_handler(char*);
+EXTERNC Tps_Handler* Tps_lookup_handler(const char*);
 
 /**************************************************/
 

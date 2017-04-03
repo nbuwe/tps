@@ -1,6 +1,6 @@
 struct Tps_Operator_Defines {
-	char*	_name;
-	char*	_body;
+	const char*	_name;
+	const char*	_body;
 }; 
 
 /* safe operators defined in system dict */

@@ -25,10 +25,10 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 /**************************************************/
 
-char*
+const char*
 debugobject(Tps_Value object)
 {
-    char* s;
+    const char* s;
 
     TPS_TEMPBUF->rewind();
     (void)Tps_cvts1(*TPS_TEMPBUF,object,TRUE,-1);
@@ -38,10 +38,10 @@ debugobject(Tps_Value object)
     return s;
 }
 
-char*
+const char*
 debugdict(Tps_Dict* dict)
 {
-    char* s;
+    const char* s;
 
     TPS_TEMPBUF->rewind();
     (void)Tps_cvts1_dict_deep(*TPS_TEMPBUF,dict,FALSE);
@@ -51,10 +51,10 @@ debugdict(Tps_Dict* dict)
     return s;
 }
 
-char*
+const char*
 debugdictall(Tps_Dict* dict)
 {
-    char* s;
+    const char* s;
 
     TPS_TEMPBUF->rewind();
     (void)Tps_cvts1_dict_deep(*TPS_TEMPBUF,dict,TRUE);
@@ -64,10 +64,10 @@ debugdictall(Tps_Dict* dict)
     return s;
 }
 
-char*
+const char*
 debugstack0(Tps_Interp* interp)
 {
-    char* s;
+    const char* s;
     register long i;
     register Tps_Value* vp;
 
@@ -84,10 +84,10 @@ debugstack0(Tps_Interp* interp)
     return s;
 }
 
-char*
+const char*
 debugstack(Tps_Interp* interp)
 {
-    char* s;
+    const char* s;
     register long i;
     register Tps_Value* vp;
 
@@ -104,10 +104,10 @@ debugstack(Tps_Interp* interp)
     return s;
 }
 
-char*
+const char*
 debugdstack0(Tps_Interp* interp)
 {
-    char* s;
+    const char* s;
     register long i;
     Tps_Value* dp = TPS_DTOSP(interp);
     long dl = TPS_DDEPTH(interp);
@@ -124,10 +124,10 @@ debugdstack0(Tps_Interp* interp)
     return s;
 }
 
-char*
+const char*
 debugdstack(Tps_Interp* interp)
 {
-    char* s;
+    const char* s;
     register long i;
     Tps_Value* dv;
     register long dlen;
@@ -147,10 +147,10 @@ debugdstack(Tps_Interp* interp)
     return s;
 }
 
-char*
+const char*
 debugdstacks(Tps_Interp* interp)
 {
-    char* s;
+    const char* s;
     register long i;
     register long sf;
     Tps_Value* dv;
@@ -175,13 +175,13 @@ debugdstacks(Tps_Interp* interp)
     return s;
 }
 
-char*
+const char*
 debugexec0(Tps_Interp* interp, long nframes)
 {
     register char* ep = TPS_ETOSP(interp);
     register char* elast = interp->_estack._last;
     register Tps_Frame* eframe;
-    char* s;
+    const char* s;
 
     TPS_TEMPBUF->rewind();
     if(nframes > interp->_framecount) nframes = interp->_framecount;
@@ -197,7 +197,7 @@ debugexec0(Tps_Interp* interp, long nframes)
     return s;
 }
 
-char*
+const char*
 debugexec(Tps_Interp* interp)
 {
     return debugexec0(interp,TPS_EFRAMECOUNT(interp));

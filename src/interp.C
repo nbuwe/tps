@@ -65,10 +65,10 @@ Define the default parameters.
 
 static
 long
-findparm(char* pname, char* alternate)
+findparm(const char* pname, const char* alternate)
 {
     register long value;
-    register char* parm;
+    register const char* parm;
     parm = getenv(pname);
     if(!parm) {
 	if(!alternate) return -1;
@@ -719,7 +719,7 @@ Tps_Interp::restore(int fd)
 
 /**************************************************/
 Tps_Status
-Tps_Interp::newoperator(char* nm, long ar, Tpsstatfcn pr)
+Tps_Interp::newoperator(const char* nm, long ar, Tpsstatfcn pr)
 {
     register Tps_Operator* op;
     register Tps_Nameid id;

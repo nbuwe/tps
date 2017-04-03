@@ -268,7 +268,7 @@ Tps_Operator safeprimitives[] = {
 {"clonedeep",Tps_op_clonedeep,0,Tps_operator_static},
 #endif
 
-{(char*)0, (Tpsstatfcn)0, 0L, (Tps_Operator_Flags)0} /* terminator */
+{(const char*)0, (Tpsstatfcn)0, 0L, (Tps_Operator_Flags)0} /* terminator */
 };
 
 /* System dict operators that should be marked unsafe */
@@ -277,7 +277,7 @@ Tps_Operator unsafeprimitives[] = {
 
 {"stream",Tps_op_stream,3,Tps_operator_static},
 
-{(char*)0, (Tpsstatfcn)0, 0L, (Tps_Operator_Flags)0} /* terminator */
+{(const char*)0, (Tpsstatfcn)0, 0L, (Tps_Operator_Flags)0} /* terminator */
 };
 
 /**************************************************/
@@ -567,8 +567,8 @@ buildtextoperators()
 /* alias defs */
 static
 struct Tps_Operator_Alias {
-	char*	_name;
-	char*	_target;
+	const char*	_name;
+	const char*	_target;
 } alias_defs[] = {
 {"flushfile","flushstream"},
 {"closefile","closestream"},
@@ -577,7 +577,7 @@ struct Tps_Operator_Alias {
 {"trace","traceexec"},
 {".","pstack"},
 {"neq","ne"},
-{(char*)NULL, (char*)NULL}
+{(const char*)NULL, (const char*)NULL}
 };
 
 static
@@ -621,7 +621,7 @@ buildoperatoraliases()
 */
 static
 struct Tps_Constant_Defs {
-	char*		_name;
+	const char*	_name;
 	int		_index;
 } constant_defs[] = {
 {"null",TPS__NULL},
@@ -632,7 +632,7 @@ struct Tps_Constant_Defs {
 {LBRACKETSTR,TPS__MARK},
 {LBRACESTR,TPS__MARK},
 {LLANGLESTR,TPS__MARK},
-{(char*)NULL,0}
+{(const char*)NULL,0}
 };
 
 static
@@ -710,12 +710,12 @@ buildmisc()
 /* misc non-operator values to mark as unsafe for various reasons */
 static
 struct Tps_unsafe {
-	char*		_name;
+	const char*	_name;
 } unsafemisc[] = {
 {"stdin"},
 {"stdout"},
 {"stderr"},
-{(char*)0}
+{(const char*)0}
 };
 
 static
@@ -745,19 +745,19 @@ buildunsafemisc()
 /**************************************************/
 static
 struct Tps_platform {
-	char*		_name;
+	const char*	_name;
 	Tps_Typeid	_type;
 	void*		_value;
 } platform_defs[] = {
 {"version",TPSTYPE_STRING,(void*)Tps_versionstring},
 {"targetarch",TPSTYPE_STRING,(void*)Tps_targetarch},
 {"targetos",TPSTYPE_STRING,(void*)Tps_targetos},
-{(char*)NULL,TPSTYPE_NULL}
+{(const char*)NULL,TPSTYPE_NULL}
 };
 
 static
 struct Tps_config {
-	char*		_name;
+	const char*	_name;
 	Tps_Typeid	_type;
 	void*		_value;
 	boolean		_indirect;
@@ -766,7 +766,7 @@ struct Tps_config {
 {"safefileprefix",TPSTYPE_STRING,(void*)Tps_safefileprefix,0},
 {"interactive",TPSTYPE_BOOLEAN,(void*)&tpsg._interactive,1}, // override
 {".tpsrc",TPSTYPE_STRING,(void*)Tps_tpsrc,0},
-{(char*)NULL,TPSTYPE_NULL,0}
+{(const char*)NULL,TPSTYPE_NULL,0}
 };
 
 static
@@ -1122,7 +1122,7 @@ done:
 }
 
 Tps_Handler*
-Tps_lookup_handler(char* s)
+Tps_lookup_handler(const char* s)
 {
     register Tps_Handler_List* h;
     register Tps_Handler* hd = (Tps_Handler*)0;

@@ -70,7 +70,7 @@ class Tps_Interp {
 	int safe() { return _safe;}
 	void safe(boolean b) {_safe=(b)?1:0;}
     public:
-	Tps_Status newoperator(char*, long, Tpsstatfcn);
+	Tps_Status newoperator(const char*, long, Tpsstatfcn);
 	Tps_Status destroyoperator(char*);
     public:
 	Tps_Status where(Tps_Value key, Tps_Value* valp=0, Tps_Value* where=0);

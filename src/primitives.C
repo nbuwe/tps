@@ -902,7 +902,7 @@ Tps_op_cvs(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     register Tps_Typeid typdst;
     register Tps_String* ss;
     long len;
-    char* result;
+    const char* result;
     Tps_Value src;
 
     if((typdst = TPS_TYPE(args[0])) != TPSTYPE_STRING && typdst != TPSTYPE_NULL)

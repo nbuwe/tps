@@ -123,7 +123,7 @@ Tps_Dict::mark(void)
  *----------------------------------------------------------------------
  */
 
-Tps_Dict_Tcl::Tps_Dict_Tcl(long bucketcount, char* nm)
+Tps_Dict_Tcl::Tps_Dict_Tcl(long bucketcount, const char* nm)
 	: Tps_Dict(Tps_tcldict,nm)
 {
     buckets = staticBuckets;
