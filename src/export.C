@@ -874,10 +874,11 @@ Tps_equal1(Tps_Value v1, Tps_Value v2)
     switch (TPS_TYPE(v1)) {
 	case TPSTYPE_NULL:
 	case TPSTYPE_MARK: return TRUE;
-	case TPSTYPE_BOOLEAN:
+	case TPSTYPE_BOOLEAN: {
 	    register boolean b1 = TPS_BOOLEAN_OF(v1)?1:0;
 	    register boolean b2 = TPS_BOOLEAN_OF(v2)?1:0;
 	    return b1 == b2;
+	}
 	case TPSTYPE_INTEGER:
 	    return TPS_INTEGER_OF(v1) == TPS_INTEGER_OF(v2);	
 	case TPSTYPE_REAL:
@@ -888,12 +889,13 @@ Tps_equal1(Tps_Value v1, Tps_Value v2)
 	    return TPS_OPERATOR_OF(v1) == TPS_OPERATOR_OF(v2);	
 	case TPSTYPE_STREAM:
 	    return TRUE;
-	case TPSTYPE_STRING:
+	case TPSTYPE_STRING: {
 	    register Tps_String* s1 = TPS_STRING_OF(v1);
 	    register Tps_String* s2 = TPS_STRING_OF(v2);
 	    if(s1->length() != s2->length()) return FALSE;
 	    return (MEMCMP(s1->contents(),s2->contents(),s1->length())==0)?1:0;
-	case TPSTYPE_ARRAY:
+	}
+	case TPSTYPE_ARRAY: {
 	    register Tps_Array* a1 = TPS_ARRAY_OF(v1);
 	    register Tps_Array* a2 = TPS_ARRAY_OF(v2);
 	    if(a1->length() != a2->length()) return FALSE;
@@ -905,7 +907,8 @@ Tps_equal1(Tps_Value v1, Tps_Value v2)
 		    return FALSE;
 	    }
 	    return TRUE;
-	case TPSTYPE_DICT:
+	}
+	case TPSTYPE_DICT: {
 	    register Tps_Dict* d1 = TPS_DICT_OF(v1);
 	    register Tps_Dict* d2 = TPS_DICT_OF(v2);
 	    if(d1->length() != d2->length()) return FALSE;
@@ -932,6 +935,7 @@ Tps_equal1(Tps_Value v1, Tps_Value v2)
 		if(!b) return FALSE;
 	    }
 	    return TRUE;
+	}
 	default: return FALSE;
     }
 }
