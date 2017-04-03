@@ -3281,11 +3281,11 @@ Tps_Status
 Tps_op_stream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
     register Tps_Status ok;
-    char* which;
+    const char* which;
     long wlen;
-    char* fname;
+    const char* fname;
     long flen;
-    char* md;
+    const char* md;
     long mdlen;
 
     /*

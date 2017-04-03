@@ -404,7 +404,7 @@ intresult:
 /**************************************************/
 
 Tps_Status
-Tps_string_or_name(Tps_Value v, char** sp, long* lenp)
+Tps_string_or_name(Tps_Value v, const char** sp, long* lenp)
 {
     register const char* s;
     register long len;
