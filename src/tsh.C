@@ -30,7 +30,7 @@ main(int argc, char** argv)
     if(argc == 3 && strcmp(argv[1],"-restore")==0) {
 	int fd = ::open(argv[2],O_RDONLY);
 	if(!fd) {
-	    fprintf(stderr,"%s: cannot read %s\n",argv[2]);
+	    fprintf(stderr,"cannot read %s\n",argv[2]);
 	    return (1);
 	}
 	if(pi->restore(fd) != TPSSTAT_OK) {
