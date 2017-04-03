@@ -51,8 +51,8 @@ class Tps_Dict : public Tps_Container {
 	/* This function is inlined elsewhere; look for ifdef NOINLINE */
 	virtual boolean match(Tps_Value key, Tps_Value e)
 	    {return TPS_TYPE(key) == TPS_TYPE(e)
-		    && (TPS_ISTYPE(key,TPSTYPE_STRING)
-			  && stringmatch(TPS_STRING_OF(key),TPS_STRING_OF(e))
+		    && ((TPS_ISTYPE(key,TPSTYPE_STRING)
+			  && stringmatch(TPS_STRING_OF(key),TPS_STRING_OF(e)))
 			|| TPS_ANY_OF(key) == TPS_ANY_OF(e));}
     protected:
 	inline u_long randomize(u_long n) {return (n)*1103515245;}

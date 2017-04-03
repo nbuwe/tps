@@ -273,8 +273,8 @@ Tps_Dict_Tcl::lookup(Tps_Value key, Tps_Dictpair** pairp)
 #else /*!NOINLINE*/
 	Tps_Value e = hPtr->pair._key;
 	if(h == hPtr->hashvalue && kid == TPS_TYPE(e)
-	   && (kid == TPSTYPE_STRING
-		  && stringmatch(TPS_STRING_OF(key),TPS_STRING_OF(e))
+	   && ((kid == TPSTYPE_STRING
+		  && stringmatch(TPS_STRING_OF(key),TPS_STRING_OF(e)))
 	       || TPS_ANY_OF(key) == TPS_ANY_OF(e)))
 #endif /*NOINLINE*/
 	{
