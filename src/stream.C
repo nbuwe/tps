@@ -276,7 +276,7 @@ Tps_Stream_String::open() // for writing
 }
 
 Tps_Status
-Tps_Stream_String::open(char* s, long slen) // for reading only
+Tps_Stream_String::open(const char* s, long slen) // for reading only
 {
     if(slen < 0) {
 	_good = FALSE;

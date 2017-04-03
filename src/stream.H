@@ -34,7 +34,7 @@ const long Tps_stream_w	= 1<<O_WRONLY;
 const long Tps_stream_a	= 1<<O_APPEND;
 
 EXTERNC Tps_Stream_Mode Tps_mode_of(const char* modestring, const long modelen);
-EXTERNC char* Tps_modestring_of(const Tps_Stream_Mode);
+EXTERNC const char* Tps_modestring_of(const Tps_Stream_Mode);
 
 class Tps_Stream : public Tps_Container {
     public:
@@ -69,7 +69,7 @@ class Tps_Stream : public Tps_Container {
 	Tps_Status good() {return (_isopen && _good)?TPSSTAT_OK:TPSSTAT_IOERROR;}
 	boolean operator!() {return good() != TPSSTAT_OK;}
 	Tps_Stream_Mode mode() {return _modeflags;}
-	char* modestring() {return Tps_modestring_of(_modeflags);}
+	const char* modestring() {return Tps_modestring_of(_modeflags);}
 	Tps_Stream_Type stream_type() {return _type;}
 	boolean r() {return (_modeflags & Tps_stream_r)?1:0;}
 	boolean w() {return (_modeflags & (Tps_stream_w | Tps_stream_a))?1:0;}
@@ -128,8 +128,8 @@ class Tps_Stream_String : public Tps_Stream {
 	virtual ~Tps_Stream_String();
     public:
 	virtual Tps_Status open(); // for writing and reading
-	virtual Tps_Status open(char* buf, long buflen); // for reading only
-	Tps_Status open(char* buf) {return open(buf,strlen(buf));}
+	virtual Tps_Status open(const char* buf, long buflen); // for reading only
+	Tps_Status open(const char* buf) {return open(buf,strlen(buf));}
 	virtual Tps_Status close();
     public:
 	virtual long read();
