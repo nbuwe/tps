@@ -178,7 +178,6 @@ EVERYTHING= Imakefile Imake.tmpl .dbxinit $(PLATFORMTMPL) $(ALLSRC)
 INSTALLABLEHDRS= \
 	Sysdep.H \
 	array.H \
-	constants.H \
 	container.H \
 	debug.H \
 	dict.H \

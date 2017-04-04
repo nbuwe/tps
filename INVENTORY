@@ -39,7 +39,6 @@ src/Sysdep.H
 src/array.H
 src/chartab.H
 src/debug.H
-src/constants.H
 src/container.H
 src/dict.H
 src/export.H
