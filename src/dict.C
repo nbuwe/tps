@@ -552,24 +552,3 @@ Tps_Dict_Tcl::copy(Tps_Dict* src)
     }
     return TPSSTAT_OK;
 }
-
-#ifdef irix
-Tps_Status Tps_Dict::lookup(Tps_Value, Tps_Dictpair**)
-	{return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Dict::insert(Tps_Dictpair&, Tps_Value*, boolean)
-	{return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Dict::remove(Tps_Value, Tps_Dictpair*)
-	{return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Dict::ith(long, Tps_Dictpair*&)
-	{return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Dict::copy(Tps_Dict*)
-	{return TPSSTAT_SYSTEMERROR;}
-void Tps_Dict::clear(void)
-	{return;}
-long Tps_Dict::length(void)
-	{return 0;}
-long Tps_Dict::maxlength(void)
-	{return 0;}
-long Tps_Dict::range(void)
-	{return 0;}
-#endif

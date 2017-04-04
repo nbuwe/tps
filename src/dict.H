@@ -27,16 +27,16 @@ class Tps_Dict : public Tps_Container {
 	Tps_Dict(Tps_Dictkind k, const char* nm=0) : Tps_Container(TPSTYPE_DICT)
 		{_kind=k; _name = nm;}
     public:
-	virtual Tps_Status lookup(Tps_Value key, Tps_Dictpair** pairp) VIRTUAL;
-	virtual Tps_Status insert(Tps_Dictpair& pairp, Tps_Value* oldvalue, boolean suppress=FALSE) VIRTUAL;
-	virtual Tps_Status remove(Tps_Value key, Tps_Dictpair* pairp) VIRTUAL;
-	virtual Tps_Status ith(long i, Tps_Dictpair*& pairp) VIRTUAL;
-	virtual Tps_Status copy(Tps_Dict* src) VIRTUAL;
-	virtual void clear(void) VIRTUAL;
+	virtual Tps_Status lookup(Tps_Value key, Tps_Dictpair** pairp) = 0;
+	virtual Tps_Status insert(Tps_Dictpair& pairp, Tps_Value* oldvalue, boolean suppress=FALSE) = 0;
+	virtual Tps_Status remove(Tps_Value key, Tps_Dictpair* pairp) = 0;
+	virtual Tps_Status ith(long i, Tps_Dictpair*& pairp) = 0;
+	virtual Tps_Status copy(Tps_Dict* src) = 0;
+	virtual void clear(void) = 0;
     public:
-	virtual long length(void) VIRTUAL; // # defined pairs in table
-	virtual long maxlength(void) VIRTUAL; // current capacity
-	virtual long range(void) VIRTUAL; // range (0..range()) for ith() method
+	virtual long length(void) = 0; // # defined pairs in table
+	virtual long maxlength(void) = 0; // current capacity
+	virtual long range(void) = 0; // range (0..range()) for ith() method
     public:
 	void mark(void);
 	Tps_Dictkind kind(void) {return _kind;}

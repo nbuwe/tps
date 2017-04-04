@@ -186,13 +186,6 @@ typedef int boolean;
 #define STRTOL(s,p,r) strtol(s,p,(int)r)
 #define STRDUP(s) Tps_strdup(s)
 
-/* Looks like virtual functions dont always work with g++ */
-#ifdef __sgi
-#define VIRTUAL
-#else
-#define VIRTUAL = 0
-#endif
-
 /*
 It appears that under cxx compiler and osf1,
 that __STDC__ has some value other than 1.

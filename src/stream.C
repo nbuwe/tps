@@ -453,19 +453,3 @@ Tps_Stream_String::guarantee(long need)
     }
     return TRUE;
 }
-
-/**************************************************/
-/* Looks like virtual functions dont always work with g++ */
-#ifdef __sgi
-Tps_Status Tps_Stream::open() {return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Stream::close() {return TPSSTAT_SYSTEMERROR;}
-long Tps_Stream::read() {return -1;}
-Tps_Status Tps_Stream::write(long) {return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Stream::write(const char*, long) {return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Stream::pushback(long) {return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Stream::flush() {return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Stream::rewind() {return TPSSTAT_SYSTEMERROR;}
-long Tps_Stream::bytesavailable() {return -1;}
-Tps_Status Tps_Stream::printf(const char* ...) {return TPSSTAT_SYSTEMERROR;}
-Tps_Status Tps_Stream::ends() {return TPSSTAT_SYSTEMERROR;}
-#endif /*__sgi*/

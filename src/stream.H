@@ -47,19 +47,19 @@ class Tps_Stream : public Tps_Container {
 	}
 	virtual ~Tps_Stream() {};
     public:
-	virtual Tps_Status open() 			VIRTUAL;
-	virtual Tps_Status close()			VIRTUAL;
+	virtual Tps_Status open() = 0;
+	virtual Tps_Status close() = 0;
     public:
-	virtual long read()				VIRTUAL;
-	virtual Tps_Status write(long c)		VIRTUAL;
-	virtual Tps_Status write(const char*, long)	VIRTUAL;
-	virtual Tps_Status pushback(long c)		VIRTUAL;
-	virtual Tps_Status flush()			VIRTUAL;
-	virtual Tps_Status rewind()			VIRTUAL;
-	virtual long bytesavailable()			VIRTUAL;
+	virtual long read() = 0;
+	virtual Tps_Status write(long c) = 0;
+	virtual Tps_Status write(const char*, long) = 0;
+	virtual Tps_Status pushback(long c) = 0;
+	virtual Tps_Status flush() = 0;
+	virtual Tps_Status rewind() = 0;
+	virtual long bytesavailable() = 0;
     public:
-	virtual Tps_Status printf(const char* fmt...)	VIRTUAL;
-	virtual Tps_Status ends()			VIRTUAL;
+	virtual Tps_Status printf(const char* fmt...) = 0;
+	virtual Tps_Status ends() = 0;
     public:
 	Tps_Status write(const char* s) {return write(s,s?strlen(s):0);}
 	Tps_Status endl() {(void)ends(); return flush();}
