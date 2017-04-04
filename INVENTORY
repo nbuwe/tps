@@ -69,7 +69,6 @@ src/init.C
 src/interp.C
 src/lex.C
 src/mem.C
-src/missing.C
 src/name.C
 src/primitives.C
 src/str.C
