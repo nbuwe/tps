@@ -120,15 +120,4 @@ typedef int boolean;
 #define STRTOL(s,p,r) strtol(s,p,(int)r)
 #define STRDUP(s) Tps_strdup(s)
 
-/*
-It appears that under cxx compiler and osf1,
-that __STDC__ has some value other than 1.
-*/
-#if defined(__osf__) && defined(__cplusplus)
-#  if !defined(__GNUC__) && defined(__STDC__)
-#    undef __STDC__
-#    define __STDC__ 1
-#  endif
-#endif
-
 #endif /*SYSDEP_HH*/
