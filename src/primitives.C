@@ -86,14 +86,14 @@ struct Tps_Frame_For : Tps_Frame_Loop {
 	Tps_Value	_incr;
 };
 
-EXTERNC Tps_Status AC(Tps_create_catch,(Tps_Interp*,Tps_Value));
-EXTERNC Tps_Status AC(Tps_create_stopped,(Tps_Interp*,Tps_Value));
-EXTERNC Tps_Status AC(Tps_create_runstream,(Tps_Interp*,Tps_Stream*));
-EXTERNC Tps_Status AC(Tps_create_loop,(Tps_Interp*));
-EXTERNC Tps_Status AC(Tps_create_while,(Tps_Interp*));
-EXTERNC Tps_Status AC(Tps_create_repeat,(Tps_Interp*,int));
-EXTERNC Tps_Status AC(Tps_create_forall,(Tps_Interp*,Tps_Value));
-EXTERNC Tps_Status AC(Tps_create_for,(Tps_Interp*,Tps_Value,Tps_Value,Tps_Value));
+EXTERNC Tps_Status Tps_create_catch(Tps_Interp*, Tps_Value);
+EXTERNC Tps_Status Tps_create_stopped(Tps_Interp*, Tps_Value);
+EXTERNC Tps_Status Tps_create_runstream(Tps_Interp*, Tps_Stream*);
+EXTERNC Tps_Status Tps_create_loop(Tps_Interp*);
+EXTERNC Tps_Status Tps_create_while(Tps_Interp*);
+EXTERNC Tps_Status Tps_create_repeat(Tps_Interp*, int);
+EXTERNC Tps_Status Tps_create_forall(Tps_Interp*, Tps_Value);
+EXTERNC Tps_Status Tps_create_for(Tps_Interp*, Tps_Value, Tps_Value, Tps_Value);
 
 /**************************************************/
 

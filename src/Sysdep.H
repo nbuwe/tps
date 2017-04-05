@@ -30,11 +30,6 @@
 #    define EXTERNC extern "C"
 #  endif
 
-/* use the following for defining external parameters */
-#  ifndef AC
-#    define AC(fcn,args) fcn args
-#  endif
-
 
 #else /*!CPLUSPLUS*/
 #ifdef __STDC__
@@ -59,25 +54,8 @@
 #    define inline static
 #  endif
 
-/* use the following for defining external parameters */
-#  ifndef AC
-#    define AC(fcn,args) fcn args
-#  endif
-
 #endif /*__STDC__*/
 #endif /*_CPLUSPLUS*/
-
-#ifdef __STDC__
-/* use the following for declaring function headers */
-#define ACD1(t1,a1) (t1 a1)
-#define ACD2(t1,a1,t2,a2) (t1 a1, t2 a2)
-#define ACD3(t1,a1,t2,a2,t3,a3) (t1 a1, t2 a2, t3 a3)
-#define ACD4(t1,a1,t2,a2,t3,a3,t4,a4) (t1 a1, t2 a2, t3 a3, t4 a4)
-#define ACD5(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5) (t1 a1, t2 a2, t3 a3, t4 a4, t5 a5)
-#define ACD6(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5,t6,a6) (t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6)
-#define ACD7(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5,t6,a6,t7,a7) (t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7)
-#define ACD8(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5,t6,a6,t7,a7,t8,a8) (t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8)
-#endif /*__STDC__*/
 
 #ifndef EXTERN
 #define EXTERN extern

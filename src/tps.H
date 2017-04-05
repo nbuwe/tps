@@ -110,7 +110,7 @@ typedef unsigned long Tps_Userdata;
 struct Tps_Interp; /* forward */
 struct Tps_Value; /* forward */
 
-typedef Tps_Status AC((*Tpsstatfcn),(struct Tps_Interp*,struct Tps_Value*,long));
+typedef Tps_Status (*Tpsstatfcn)(struct Tps_Interp*, struct Tps_Value*, long);
 
 /**************************************************/
 

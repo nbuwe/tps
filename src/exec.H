@@ -69,12 +69,12 @@ struct Tps_Handler; /*Forward*/
 #define TPS_IMPORT_ARGS1 struct Tps_Interp* intrp, struct Tps_Handler* h, long& cnt, struct Tps_Frame* fr, Tps_Exec_Pass
 #define TPS_IMPORT_ARGS struct Tps_Interp* intrp, struct Tps_Handler* h, long& cnt, struct Tps_Frame* fr, Tps_Exec_Pass flags
 
-typedef Tps_Status AC((*Tps_Unwindfcn),(TPS_UNWIND_ARGS0));
-typedef Tps_Status AC((*Tps_Reenterfcn),(TPS_REENTER_ARGS0));
-typedef Tps_Status AC((*Tps_Tracefcn),(TPS_TRACE_ARGS0));
-typedef Tps_Status AC((*Tps_Markfcn),(TPS_MARK_ARGS0));
-typedef Tps_Status AC((*Tps_Exportfcn),(TPS_EXPORT_ARGS0));
-typedef Tps_Status AC((*Tps_Importfcn),(TPS_IMPORT_ARGS0));
+typedef Tps_Status (*Tps_Unwindfcn)(TPS_UNWIND_ARGS0);
+typedef Tps_Status (*Tps_Reenterfcn)(TPS_REENTER_ARGS0);
+typedef Tps_Status (*Tps_Tracefcn)(TPS_TRACE_ARGS0);
+typedef Tps_Status (*Tps_Markfcn)(TPS_MARK_ARGS0);
+typedef Tps_Status (*Tps_Exportfcn)(TPS_EXPORT_ARGS0);
+typedef Tps_Status (*Tps_Importfcn)(TPS_IMPORT_ARGS0);
 
 /**************************************************/
 struct Tps_Handler {
@@ -112,19 +112,19 @@ EXTERNC Tps_Handler* Tps_lookup_handler(const char*);
 
 /**************************************************/
 
-EXTERNC Tps_Status AC(Tps_nullfcn_mark,(TPS_MARK_ARGS0));
-EXTERNC Tps_Status AC(Tps_nullfcn_export,(TPS_EXPORT_ARGS0));
-EXTERNC Tps_Status AC(Tps_nullfcn_import,(TPS_IMPORT_ARGS0));
+EXTERNC Tps_Status Tps_nullfcn_mark(TPS_MARK_ARGS0);
+EXTERNC Tps_Status Tps_nullfcn_export(TPS_EXPORT_ARGS0);
+EXTERNC Tps_Status Tps_nullfcn_import(TPS_IMPORT_ARGS0);
 
 /**************************************************/
 /* Misc. */
 /**************************************************/
 
 /* Generic Trace support */
-EXTERNC Tps_Status AC(Tps_trace0,(Tps_Interp*, Tps_Stream*,Tps_Frame*));
+EXTERNC Tps_Status Tps_trace0(Tps_Interp*, Tps_Stream*, Tps_Frame*);
 
 /* Given a frame ptr, figure out its depth (in terms of frames) in exec stack*/
-EXTERNC int AC(Tps_framedepth,(Tps_Interp*,Tps_Frame*));
+EXTERNC int Tps_framedepth(Tps_Interp*, Tps_Frame*);
 
 /**************************************************/
 /*
@@ -139,8 +139,8 @@ struct Tps_Frame {
 
 #define TPS_FRAME_LENGTH(interp,f) ((f)->_framelength)
 
-EXTERNC Tps_Frame* AC(Tps_create_frame,(Tps_Interp*, Tps_Handler*, long));
-EXTERNC Tps_Status AC(Tps_unwind_frame,(Tps_Interp*,Tps_Frame*));
+EXTERNC Tps_Frame* Tps_create_frame(Tps_Interp*, Tps_Handler*, long);
+EXTERNC Tps_Status Tps_unwind_frame(Tps_Interp*, Tps_Frame*);
 
 /**************************************************/
 /*
@@ -158,8 +158,8 @@ struct Tps_Frame_Source : Tps_Frame {
 
 /* Define the frame handler and creator */
 EXTERNC Tps_Handler Tps_handler_source;
-EXTERNC Tps_Status AC(Tps_create_source,(Tps_Interp*,Tps_Value,
-					 boolean singular=FALSE));
+EXTERNC Tps_Status Tps_create_source(Tps_Interp*, Tps_Value,
+				     boolean singular=FALSE);
 
 /**************************************************/
 /*
@@ -176,7 +176,7 @@ struct Tps_Frame_Trace : Tps_Frame {
 
 /* Define the frame handler and creator */
 EXTERNC Tps_Handler Tps_handler_trace;
-EXTERNC Tps_Status AC(Tps_create_trace,(Tps_Interp*,boolean));
+EXTERNC Tps_Status Tps_create_trace(Tps_Interp*, boolean);
 
 /**************************************************/
 /*
@@ -191,7 +191,7 @@ struct Tps_Frame_Statemark : Tps_Frame {};
 
 /* Define the frame handler and creator */
 EXTERNC Tps_Handler Tps_handler_statemark;
-EXTERNC Tps_Status AC(Tps_create_statemark,(Tps_Interp*));
+EXTERNC Tps_Status Tps_create_statemark(Tps_Interp*);
 
 /**************************************************/
 /*
@@ -208,7 +208,7 @@ struct Tps_Frame_Safety : Tps_Frame {
 
 /* Define the frame handler and creator */
 EXTERNC Tps_Handler Tps_handler_safety;
-EXTERNC Tps_Status AC(Tps_create_safety,(Tps_Interp*,boolean));
+EXTERNC Tps_Status Tps_create_safety(Tps_Interp*, boolean);
 
 /**************************************************/
 /*
@@ -224,7 +224,7 @@ struct Tps_Frame_OO : Tps_Frame {
 
 /* Define the frame handler and creator */
 EXTERNC Tps_Handler Tps_handler_OO;
-EXTERNC Tps_Status AC(Tps_create_OO,(Tps_Interp*,Tps_Value));
+EXTERNC Tps_Status Tps_create_OO(Tps_Interp*, Tps_Value);
 #endif /*OO*/
 
 #endif /*TPS_EXEC_H*/

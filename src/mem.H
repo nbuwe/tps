@@ -18,22 +18,22 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 /**************************************************/
 
-EXTERNC char* AC(Tps_strdup,(const char*));
+EXTERNC char* Tps_strdup(const char*);
 
 /**************************************************/
 
 #ifdef sun
 #  ifdef DEBUGMALLOC
-EXTERNC int AC(malloc_verify,());
-EXTERNC int AC(malloc_debug,(const int level));
+EXTERNC int malloc_verify();
+EXTERNC int malloc_debug(const int level);
 #  endif
 #endif
 
 /**************************************************/
 /* Allow for overriding use of malloc */
 #ifdef MALLOCREPLACE
-EXTERNC char* AC(Tps_malloc,(const long len));
-EXTERNC void AC(Tps_free,(char* obj));
+EXTERNC char* Tps_malloc(const long len);
+EXTERNC void Tps_free(char* obj);
 
 #ifdef __cplusplus
 EXTERN void* operator new(const size_t);

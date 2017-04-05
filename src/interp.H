@@ -17,7 +17,7 @@ struct Tps_Frame; /* forward */
 /**************************************************/
 /* Define the factory procedure for this class */
 
-EXTERNC Tps_Interp* AC(Tps_interp_create,(void));
+EXTERNC Tps_Interp* Tps_interp_create(void);
 
 /**************************************************/
 /* Define some auxilliary types */
