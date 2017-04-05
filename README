@@ -1,0 +1,14 @@
+This is Tps (Tiny/Transportable PostScript)
+by Dennis Heimbigner <dennis.heimbigner@gmail.com>
+
+I had the tarball of tps 2.1c in my archives and it looked like it was
+one of the very few extant copies.  I thought it was prudent to
+publish it before it's lost in an accident or something.
+
+I have imported tps 2.1c release as-is and polished it up a bit to
+compile with modern compilers (mostly adding a lot of const).  The
+imake build needs to be replaced and the code still has some
+portability provisions that haven't been relevant for the last 20
+years, so I plan to do some more work in those areas.
+
+-uwe
