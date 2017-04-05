@@ -22,10 +22,9 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef TPS_HH
 #define TPS_HH  1
 
-#include <stdlib.h>
 #include <sys/types.h>
+#include <stdlib.h>
 #include <string.h>
-#include <memory.h>
 
 #include "Sysdep.H"
 #include "tps_platform.H"
