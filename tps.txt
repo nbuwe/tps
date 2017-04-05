@@ -2,136 +2,151 @@ CU Arcadia Project Software System
 
 Tps: Embedded, Transportable, Agent Language
 
-Last Updated: 3 January 1996
+  Last Updated: 3 January 1996
 
-Latest Version: tps2.1c
+  Latest Version: tps2.1c
 
-Location:
+  Location:
 
-   *  README:
-     ftp://ftp.cs.colorado.edu/pub/cs/distribs/arcadia/tps2.1c.txt
-   *  SOURCE:
-     ftp://ftp.cs.colorado.edu/pub/cs/distribs/arcadia/tps2.1c.tar.Z
+     * README:
+       ftp://ftp.cs.colorado.edu/pub/cs/distribs/arcadia/tps2.1c.txt
+     * SOURCE:
+       ftp://ftp.cs.colorado.edu/pub/cs/distribs/arcadia/tps2.1c.tar.Z
 
-Major Changes in Version 2.1
+  Major Changes in Version 2.1
 
-Patch levels are indicated in parentheses. See doc/tps.tex for complete list of
-changes.
+   Patch levels are indicated in parentheses. See doc/tps.tex for complete
+   list of changes.
+     * (a) Misc. changes to remove various type conflicts
+     * (a) Began the process of cleaning up the various headers.
+     * (a) Added experimental OO programming support; controlled by OO
+       compile time flag.
+     * (a) Modified platform command to use uname to get platform info.
+     * (b) Fixed a bug in the INVENTORY and installation.
+     * (b) Fixed a bugs with userdict operator.
+     * (b) Added platformdict and configurationdict.
+     * (c) Incorporated many of the fixes of Martin Fong
+       (mwfong@std.sri.com).
+     * (c) Added shared library support for hpux and osf1.
+     * (c) Added a boolean interactive flag (``interactive'') and a string
+       indicating the default init rc file (``.tpsrc'').
 
-   *  (a) Misc. changes to remove various type conflicts
-   *  (a) Began the process of cleaning up the various headers.
-   *  (a) Added experimental OO programming support; controlled by OO compile
-     time flag.
-   *  (a) Modified platform command to use uname to get platform info.
-   *  (b) Fixed a bug in the INVENTORY and installation.
-   *  (b) Fixed a bugs with userdict operator.
-   *  (b) Added platformdict and configurationdict.
-   *  (c) Incorporated many of the fixes of Martin Fong (mwfong@std.sri.com).
-   *  (c) Added shared library support for hpux and osf1.
-   *  (c) Added a boolean interactive flag (``interactive'') and a string
-     indicating the default init rc file (``.tpsrc'').
+  Description:
 
-Description:
+   Tps (Tiny/Transportable Postscript) provides an embedded interpreter
+   for a language that looks much like a version of Postscript with all of
+   the graphics operators removed. The resulting system is roughly the
+   same size and for the same purposes as Tcl, and the myriad of other
+   embedded language interpreters.
 
-Tps (Tiny/Transportable Postscript) provides an embedded interpreter for a
-language that looks much like a version of Postscript with all of the graphics
-operators removed. The resulting system is roughly the same size and for the
-same purposes as Tcl, and the myriad of other embedded language interpreters.
+   Obviously the question is: why another embedded language interpreter?
+   For Tps, the answer is Heterogeneous State Transportability. This term
+   covers to two abilities. First, it is possible to interrupt an
+   executing Tps program, and save the state of the computation in a
+   persistent form. Later, in some other interpreter, that state can be
+   re-constituted and the computation can continue. Second, the state can
+   be restored to a different kind of machine than the one from which the
+   state was saved, thus allowing for computation to cross between
+   heterogeneous platforms. Note that this differs from the simpler
+   mechanisms of invoking a program, which cannot accumulate state, or
+   saving the complete address space of a Unix process and later restoring
+   it, which is not heterogeneous.
 
-Obviously the question is: why another embedded language interpreter? For Tps,
-the answer is Heterogeneous State Transportability. This term covers to two
-abilities. First, it is possible to interrupt an executing Tps program, and
-save the state of the computation in a persistent form. Later, in some other
-interpreter, that state can be re-constituted and the computation can continue.
-Second, the state can be restored to a different kind of machine than the one
-from which the state was saved, thus allowing for computation to cross between
-heterogeneous platforms. Note that this differs from the simpler mechanisms of
-invoking a program, which cannot accumulate state, or saving the complete
-address space of a Unix process and later restoring it, which is not
-heterogeneous.
+   The key is to be able to package up the current state of a computation
+   and transport it to some other site where it can continue execution.
+   Basically, it is possible to stop the interpreter and save the state,
+   or start an interpreter and cause it to continue execution of some
+   previously saved state.
 
-The key is to be able to package up the current state of a computation and
-transport it to some other site where it can continue execution. Basically, it
-is possible to stop the interpreter and save the state, or start an interpreter
-and cause it to continue execution of some previously saved state.
+   In addition to state transportability, there are several other features
+   of Tps that differentiate it with respect to many of the other
+   available systems.
 
-In addition to state transportability, there are several other features of Tps
-that differentiate it with respect to many of the other available systems.
+   Safety.
+          The Tps interpreter provides a safe subset (similar in purpose
+          to Safe-Tcl) with controlled access to unsafe facilities.
 
-Safety.
-     The Tps interpreter provides a safe subset (similar in purpose to
-     Safe-Tcl) with controlled access to unsafe facilities.
-Documentation.
-     Because Tps is so similar to Postscript, it can build on the many books
-     describing Postscript and how to program in it.
-State Accessibility.
-     The computational state of a Tps program execution is very visible. It
-     essentially consists of the operand stack, the dictionary stack, and the
-     execution stack. This is one of the essential supports for state
-     transportability.
-Stepping Behavior.
-     Most other embedded languages intertwine their execution stack with the C
-     process stack. In particular, when the embedded language needs to recurse,
-     it does so by recursively calling its interpreter procedure, which is
-     generally a C procedure. One of the consequences is that (assuming no
-     threading), it is difficult to stop a computation and later resume it. The
-     Tps interpreter does not intertwine stacks, and so can be stopped and
-     resumed in between any operator invocation. This provides, among other
-     things, general single step execution for Tps programs, which is a
-     significant aid to debugging.
-Multiple Interpreters.
-     It is possible to create multiple interpreters executing simultaneously.
-     This capability is actually surprisingly rare. Tcl, for example, is one of
-     the few other systems that provides it. It is rare because many
-     interpreters were written with the assumption that they were in control
-     and that only one instance was needed. Most Scheme interpreters seem to
-     suffer from this delusion of being in control.
-Extensible types.
-     The types provided by Tps are, for the most part, similar to the
-     non-graphics types of Postscript. This set currently includes null, mark,
-     boolean, integer, real, name, string, array, dict, and stream. The stream
-     is a generalization of the Postscript file type. Adding a new type is
-     generally not very difficult.
-Extensible execution stack frames.
-     The execution stack consists of a series of frames holding control
-     information. Thus, when a stopped operator is executed, it puts a special
-     frame on the execution stack to implement the stopped operator semantics.
-     Similarly, the repeat operator keeps its current count in a frame on the
-     execution stack. Adding new kinds of frames is relatively simple, and can
-     even be done on the fly.
+   Documentation.
+          Because Tps is so similar to Postscript, it can build on the
+          many books describing Postscript and how to program in it.
 
-The file doc/tps.tex contains a more detailed description of the capabilities
-of Tps.
+   State Accessibility.
+          The computational state of a Tps program execution is very
+          visible. It essentially consists of the operand stack, the
+          dictionary stack, and the execution stack. This is one of the
+          essential supports for state transportability.
 
-Supported Platforms:
+   Stepping Behavior.
+          Most other embedded languages intertwine their execution stack
+          with the C process stack. In particular, when the embedded
+          language needs to recurse, it does so by recursively calling its
+          interpreter procedure, which is generally a C procedure. One of
+          the consequences is that (assuming no threading), it is
+          difficult to stop a computation and later resume it. The Tps
+          interpreter does not intertwine stacks, and so can be stopped
+          and resumed in between any operator invocation. This provides,
+          among other things, general single step execution for Tps
+          programs, which is a significant aid to debugging.
 
-This version of tps has been successfully compiled under the following
-combinations of platforms (hardware, operating system, and C++ compiler).
+   Multiple Interpreters.
+          It is possible to create multiple interpreters executing
+          simultaneously. This capability is actually surprisingly rare.
+          Tcl, for example, is one of the few other systems that provides
+          it. It is rare because many interpreters were written with the
+          assumption that they were in control and that only one instance
+          was needed. Most Scheme interpreters seem to suffer from this
+          delusion of being in control.
 
-   *  sparc X solaris1 x (g++,Cfront-3.0.3)
-   *  alpha X osf1 X (g++,cxx)
-   *  sgi-indigo X irix5.3 X g++
-   *  hp9000 X hpux X g++
-   *  x86 x solaris2 X (g++,sunpro-c++)
+   Extensible types.
+          The types provided by Tps are, for the most part, similar to the
+          non-graphics types of Postscript. This set currently includes
+          null, mark, boolean, integer, real, name, string, array, dict,
+          and stream. The stream is a generalization of the Postscript
+          file type. Adding a new type is generally not very difficult.
 
-Installation:
+   Extensible execution stack frames.
+          The execution stack consists of a series of frames holding
+          control information. Thus, when a stopped operator is executed,
+          it puts a special frame on the execution stack to implement the
+          stopped operator semantics. Similarly, the repeat operator keeps
+          its current count in a frame on the execution stack. Adding new
+          kinds of frames is relatively simple, and can even be done on
+          the fly.
 
-The file INSTALL provides detailed installation instructions.
+   The file doc/tps.tex contains a more detailed description of the
+   capabilities of Tps.
 
-Changes:
+  Supported Platforms:
 
-See the appendix in the file doc/tps.tex for a detailed change history.
+   This version of tps has been successfully compiled under the following
+   combinations of platforms (hardware, operating system, and C++
+   compiler).
+     * sparc X solaris1 x (g++,Cfront-3.0.3)
+     * alpha X osf1 X (g++,cxx)
+     * sgi-indigo X irix5.3 X g++
+     * hp9000 X hpux X g++
+     * x86 x solaris2 X (g++,sunpro-c++)
 
-Mail List:
+  Installation:
 
-If you are interested in receiving occasional mailings about Tps, please send
-your preferred email address to the contact address below.
+   The file INSTALL provides detailed installation instructions.
 
-Acknowledgements
+  Changes:
 
-This work is sponsored by the Air Force Materiel Command, Rome Laboratory, and
-the Advanced Research Projects Agency under Contract Number F30602-94-C-0253.
+   See the appendix in the file doc/tps.tex for a detailed change history.
 
-Contact and Bug Reports:
+  Mail List:
 
-Dennis Heimbigner (dennis@cs.colorado.edu)
+   If you are interested in receiving occasional mailings about Tps,
+   please send your preferred email address to the contact address below.
+
+  Acknowledgements
+
+   This work is sponsored by the Air Force Materiel Command, Rome
+   Laboratory, and the Advanced Research Projects Agency under Contract
+   Number F30602-94-C-0253.
+
+  Contact and Bug Reports:
+
+
+    Dennis Heimbigner (dennis@cs.colorado.edu)
