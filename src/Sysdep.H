@@ -12,12 +12,6 @@
 #  endif
 #endif
 
-#ifndef __STDC__
-#  ifndef __KNR__
-#    define __KNR__
-#  endif
-#endif
-
 #ifdef CPLUSPLUS
 
 #  ifndef DOTS
@@ -84,44 +78,6 @@
 #define ACD7(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5,t6,a6,t7,a7) (t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7)
 #define ACD8(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5,t6,a6,t7,a7,t8,a8) (t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8)
 #endif /*__STDC__*/
-
-#ifdef __KNR__
-
-#  ifndef DOTS
-#    define DOTS
-#  endif
-
-#  ifndef NOARGS
-#    define NOARGS
-#  endif
-
-#  ifndef ANYARGS
-#    define ANYARGS
-#  endif
-
-#  ifndef EXTERNC
-#    define EXTERNC extern
-#  endif
-
-#  ifndef inline
-#    define inline static
-#  endif
-
-#  ifndef AC
-#    define AC(fcn,args) fcn()
-#  endif
-
-/* use the following for declaring function headers */
-#define ACD1(t1,a1) (a1) t1 a1;
-#define ACD2(t1,a1,t2,a2) (a1,a2) t1 a1; t2 a2;
-#define ACD3(t1,a1,t2,a2,t3,a3) (a1,a2,a3) t1 a1; t2 a2; t3 a3;
-#define ACD4(t1,a1,t2,a2,t3,a3,t4,a4) (a1,a2,a3,a4) t1 a1; t2 a2; t3 a3; t4 a4;
-#define ACD5(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5) (a1,a2,a3,a4,a5) t1 a1; t2 a2; t3 a3; t4 a4; t5 a5;
-#define ACD6(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5,t6,a6) (a1,a2,a3,a4,a5,a6) t1 a1; t2 a2; t3 a3; t4 a4; t5 a5; t6 a6;
-#define ACD7(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5,t6,a6,t7,a7) (a1,a2,a3,a4,a5,a6,a7) t1 a1; t2 a2; t3 a3; t4 a4; t5 a5; t6 a6; t7 a7;
-#define ACD8(t1,a1,t2,a2,t3,a3,t4,a4,t5,a5,t6,a6,t7,a7,t8,a8) (a1,a2,a3,a4,a5,a6,a7,a8) t1 a1; t2 a2; t3 a3; t4 a4; t5 a5; t6 a6; t7 a7; t8 a8;
-
-#endif /*__KNR__*/
 
 #ifndef EXTERN
 #define EXTERN extern
