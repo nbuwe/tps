@@ -79,7 +79,7 @@ Tps_Stream_File::init(const char* name, const long namelen,
     if(name && namelen > 0) {
 	_name = Tps_malloc(namelen+1);
 	if(!_name) return TPSSTAT_VMERROR;
-	MEMCPY(_name,name,namelen);
+	memcpy(_name,name,namelen);
 	/* force null termination*/
 	_name[namelen] = 0;
     }
@@ -355,7 +355,7 @@ Tps_Stream_String::write(const char* s, long slen)
 		return TPSSTAT_VMERROR;
 	    }
 	}
-	MEMCPY(_finger,s,slen);
+	memcpy(_finger,s,slen);
 	_finger += slen;
     }
     return good();
@@ -411,7 +411,7 @@ Tps_Stream_String::printf(const char* fmt...)
     (void) vsprintf(_finger, fmt, args);
     va_end(args);
     /* advance _finger to eos */
-    char* s = (char*)MEMCHR(_finger,'\0',(_eos - _finger));
+    char* s = (char*)memchr(_finger,'\0',(_eos - _finger));
     if(!s) {
 	/* uh-oh, overwrote available memory */
 	_good = FALSE;
@@ -439,7 +439,7 @@ Tps_Stream_String::guarantee(long need)
 	newalloc = _alloc + need; // slight overkill
 	newbuf = Tps_malloc(newalloc);
 	if(!newbuf) return FALSE;
-	MEMCPY(newbuf,_contents,_alloc);
+	memcpy(newbuf,_contents,_alloc);
 	Tps_free(_contents);
 	_contents = newbuf;
 	_alloc = newalloc;

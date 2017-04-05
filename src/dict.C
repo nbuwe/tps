@@ -48,7 +48,7 @@ Tps_Dict::stringmatch(Tps_String* sp1, Tps_String* sp2)
 {
     if(sp1->length() != sp2->length()) return FALSE;
     if(sp1->length() == 0) return TRUE; /* differs from bcmp*/
-    return (MEMCMP(sp1->contents(),sp2->contents(),sp1->length())==0);
+    return (memcmp(sp1->contents(),sp2->contents(),sp1->length())==0);
 }
 
 void
@@ -140,7 +140,7 @@ Tps_Dict_Tcl::Tps_Dict_Tcl(long bucketcount, const char* nm)
 	buckets = (Tps_Bucket*) ckalloc((unsigned)
 	    (numBuckets * sizeof(Tps_Bucket)));
     }
-    MEMSET((char*)buckets,0,numBuckets*sizeof(Tps_Bucket));
+    memset((char*)buckets,0,numBuckets*sizeof(Tps_Bucket));
     rebuildSize = REBUILD_MULTIPLIER * numBuckets;
     maxlen = 0;
 }
@@ -380,7 +380,7 @@ Tps_Dict_Tcl::RebuildTable(void)
     numBuckets *= 4;
     buckets = (Tps_Bucket*) ckalloc((unsigned)
 	    (numBuckets * sizeof(Tps_Bucket)));
-    MEMSET((char*)buckets,0,numBuckets*sizeof(Tps_Bucket));
+    memset((char*)buckets,0,numBuckets*sizeof(Tps_Bucket));
     downShift -= 2;
     mask = (mask << 2) + 3;
     rebuildSize *= 4;

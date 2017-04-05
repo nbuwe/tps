@@ -204,7 +204,7 @@ Tps_op_anchorsearch(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     s0 = TPS_STRING_OF(args[0]);
     s1 = TPS_STRING_OF(args[1]);
     if(s0->length() > s1->length()) return(TPSSTAT_INVALIDACCESS);
-    if(MEMCMP(s0->contents(),s1->contents(),s0->length()) == 0) {
+    if(memcmp(s0->contents(),s1->contents(),s0->length()) == 0) {
 	/* match */
 	/* need to construct 2 substrings */
 	Tps_Value mid;
@@ -307,7 +307,7 @@ Tps_op_array(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
     a = new Tps_Array(i);
     if(!a) return(TPSSTAT_RANGECHECK);
     /* null out array */
-    MEMSET((char*)a->contents(),0,a->length()*sizeof(Tps_Value));
+    memset((char*)a->contents(),0,a->length()*sizeof(Tps_Value));
     /* leave the array as top element */
     TPS_MAKEVALUE(args[0],TPSTYPE_ARRAY,a);
     return TPSSTAT_OK;
@@ -548,7 +548,7 @@ Tps_op_copy(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	TPS_PUSHN(intrp,i);
 	pv = TPS_TOSP(intrp); /* base of copies */
 	/* dup the elements */
-	(void)MEMCPY((char*)pv,(char*)args,sizeof(Tps_Value)*i);
+	(void)memcpy((char*)pv,(char*)args,sizeof(Tps_Value)*i);
     } else {
 	if(TPS_DEPTH(intrp) < 2) return(TPSSTAT_STACKUNDERFLOW);
 	/* make args cover the two args */
@@ -571,7 +571,7 @@ Tps_op_copy(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 		if(s1->length() < s0->length()) return(TPSSTAT_RANGECHECK);
 		/* correct length of s1 */
 		s1->setlength(s0->length());
-		(void)MEMCPY(s1->contents(),s0->contents(),s0->length());
+		(void)memcpy(s1->contents(),s0->contents(),s0->length());
 		args[1] = args[0];
 		TPS_POPN(intrp,1);
 	    }
@@ -593,7 +593,7 @@ Tps_op_copy(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 		if(a1->length() < a0->length()) return(TPSSTAT_RANGECHECK);
 		/* correct length of s1 */
 		a1->setlength(a0->length());
-		(void)MEMCPY((char*)a1->contents(),(char*)a0->contents(),
+		(void)memcpy((char*)a1->contents(),(char*)a0->contents(),
 			    sizeof(Tps_Value)*(a0->length()));
 		args[1] = args[0];
 		TPS_POPN(intrp,1);
@@ -957,7 +957,7 @@ Tps_op_cvs(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     }
     /* move result into the arg string, if room */
     if(ss->length() < len) return(TPSSTAT_RANGECHECK);
-    (void)MEMCPY(ss->contents(),result,len);
+    (void)memcpy(ss->contents(),result,len);
     TESTERR(ss->setlength(len));
     TPS_MAKEVALUE(args[1],TPSTYPE_STRING,ss);
     TPS_POPN(intrp,1);
@@ -989,7 +989,7 @@ Tps_op_cvts(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     /* avoid use of strdup */
     len = strlen(intrp->_tokenbuf.contents());
     result = Tps_malloc(len+1);
-    MEMCPY(result,intrp->_tokenbuf.contents(),len+1);
+    memcpy(result,intrp->_tokenbuf.contents(),len+1);
     /* move result into the arg string, if room */
     rtyp0 = TPS_TYPE(args[0]);
     if(rtyp0 == TPSTYPE_STRING) {
@@ -1002,7 +1002,7 @@ Tps_op_cvts(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	TPS_MAKEVALUE(args[0],TPSTYPE_STRING,ss);
     } else
 	return(TPSSTAT_TYPECHECK);
-    (void)MEMCPY(ss->contents(),result,len);
+    (void)memcpy(ss->contents(),result,len);
     ss->setlength(len);
     args[1] = args[0];
     TPS_POPN(intrp,1);
@@ -1229,7 +1229,7 @@ Tps_op_eqeqsign(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     /* avoid use of strdup */
     len = strlen(intrp->_tokenbuf.contents());
     result = Tps_malloc(len+1);
-    MEMCPY(result,intrp->_tokenbuf.contents(),len+1);
+    memcpy(result,intrp->_tokenbuf.contents(),len+1);
     /* write the result to _stdout */
     (void)(intrp->stdstream(Tps_stdout))->write(result);
     Tps_free(result);
@@ -1272,7 +1272,7 @@ Tps_op_execstack(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	a = TPS_ARRAY_OF(v);
 	if(a->length() < count) return TPSSTAT_RANGECHECK;
 	e = TPS_TOSP(intrp);
-	MEMCPY((char*)a->contents(),e,a->length()*sizeof(Tps_Value));
+	memcpy((char*)a->contents(),e,a->length()*sizeof(Tps_Value));
 	a->setlength(count);
 	TPS_POPN(intrp,count);
     }
@@ -2428,7 +2428,7 @@ Tps_op_putinterval(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 		Tps_String* s2 = TPS_STRING_OF(args[0]);
 		Tps_String* s0 = TPS_STRING_OF(args[2]);
 		if(s0->length() < s2->length()+index) return(TPSSTAT_RANGECHECK);
-		MEMCPY(&s0->contents()[index],s2->contents(),s2->length());
+		memcpy(&s0->contents()[index],s2->contents(),s2->length());
 	    }
 	    break;
 	case TPSTYPE_ARRAY:
@@ -2436,7 +2436,7 @@ Tps_op_putinterval(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 		Tps_Array* a2 = TPS_ARRAY_OF(args[0]);
 		Tps_Array* a0 = TPS_ARRAY_OF(args[2]);
 		if(a0->length() < a2->length()+index) return(TPSSTAT_RANGECHECK);
-		MEMCPY(
+		memcpy(
 		      (char*)&a0->contents()[index],(char*)a2->contents(),
 		      sizeof(Tps_Value)*a2->length());
 	    }
@@ -2843,7 +2843,7 @@ Tps_op_roll(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     split = args + count;
     TPS_GUARANTEE(intrp,left);
     args = TPS_PUSHN(intrp,left);
-    MEMCPY((char*)args,(char*)split,left*sizeof(Tps_Value));
+    memcpy((char*)args,(char*)split,left*sizeof(Tps_Value));
     /* need to move the bottom range values up by left spaces */
     /* would prefer to use memcpy, but cant trust it to do overlapping ranges*/
     for(i=0;i<range;i++) {
@@ -3049,7 +3049,7 @@ Tps_op_search(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     for(i=0;i<=r0;i++) {
 	if(*p0 == c0) {
 	    /* see if the whole string occurs */
-	    if(MEMCMP(p1,p0,l0) == 0) { /* success */
+	    if(memcmp(p1,p0,l0) == 0) { /* success */
 		/* need to construct 3 substrings */
 		Tps_Value pre;
 		Tps_Value mid;
@@ -3320,14 +3320,14 @@ Tps_op_stream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     } else
 	return TPSSTAT_TYPECHECK;
 
-    if(STRNCMP(which,TPS_NM(TPS_NMFILE),(int)wlen) == 0) {
+    if(strncmp(which,TPS_NM(TPS_NMFILE),(int)wlen) == 0) {
 	Tps_Stream_File* strm;
 	if(!fname) return TPSSTAT_INVALIDSTREAMACCESS;
 	if(!(strm = new Tps_Stream_File)) return TPSSTAT_VMERROR;
 	strm->open(fname,flen,Tps_mode_of(md,mdlen));
 	if(!(*strm)) return TPSSTAT_INVALIDSTREAMACCESS;
 	TPS_MAKEVALUE(args[2],TPSTYPE_STREAM,strm);
-    } else if(STRNCMP(which,TPS_NM(TPS_NMSTRING),wlen) == 0) {
+    } else if(strncmp(which,TPS_NM(TPS_NMSTRING),wlen) == 0) {
 	Tps_Stream_String* strm;
 	if(!(strm = new Tps_Stream_String)) return TPSSTAT_VMERROR;
 	switch (*md) {

@@ -32,7 +32,7 @@ Tps_String::initialize(long sz)
     alloc = sz?sz:TPS_STRING_MINEXTEND;
     _contents = (char*)Tps_malloc(alloc);
     if(!_contents) return FALSE;
-    if(sz > 0) MEMSET((char*)_contents,0,sz);
+    if(sz > 0) memset((char*)_contents,0,sz);
     _alloc = alloc;
     _len = sz;
     return TRUE;
@@ -46,7 +46,7 @@ Tps_String::Tps_String(long sz) : Tps_Container(TPSTYPE_STRING)
 Tps_String::Tps_String(const char* initstr, long len) : Tps_Container(TPSTYPE_STRING)
 {
     initialize(len);
-    MEMCPY(_contents,initstr,len);
+    memcpy(_contents,initstr,len);
 }
 
 Tps_String::Tps_String(const char* initstr)
@@ -54,7 +54,7 @@ Tps_String::Tps_String(const char* initstr)
 {
     size_t len = strlen(initstr);
     initialize(len);
-    MEMCPY(_contents,initstr,len);
+    memcpy(_contents,initstr,len);
 }
 
 Tps_String::~Tps_String()
@@ -73,8 +73,8 @@ Tps_String::extend(long need)
     if(_alloc >= newalloc) return TPSSTAT_OK;
     newcontents = (char*)Tps_malloc(newalloc*sizeof(char));
     if(!newcontents) return TPSSTAT_SYSTEMERROR;
-    MEMCPY((char*)newcontents,(char*)_contents,_len*sizeof(char));
-    MEMSET(newcontents+_len,'\0',need*sizeof(char));
+    memcpy((char*)newcontents,(char*)_contents,_len*sizeof(char));
+    memset(newcontents+_len,'\0',need*sizeof(char));
     _alloc = newalloc;
     _contents = newcontents;
     return TPSSTAT_OK;
@@ -90,7 +90,7 @@ Tps_String::setlen(long newlen)
 	if(ok != TPSSTAT_OK) return ok;
     }   
     if(newlen > _len) {
-	MEMSET((char*)(_contents+_len),0,(newlen - _len));
+	memset((char*)(_contents+_len),0,(newlen - _len));
     }
     _len = newlen;
     return TPSSTAT_OK;
@@ -104,7 +104,7 @@ Tps_String::append(char* s, long slen)
 	ok = extend(slen);
 	if(ok != TPSSTAT_OK) return ok;
     }
-    MEMCPY(&_contents[_len],s,slen);
+    memcpy(&_contents[_len],s,slen);
     _len += slen;
     return TPSSTAT_OK;
 }

@@ -38,7 +38,7 @@ Tps_Array::Tps_Array(long sz)
     alloc = sz?sz:TPS_ARRAY_MINEXTEND;
     _contents = (Tps_Value*)Tps_malloc(sizeof(Tps_Value)*alloc);
     if(!_contents) return;
-    if(sz > 0) MEMSET((char*)_contents,0,sz*sizeof(Tps_Value));
+    if(sz > 0) memset((char*)_contents,0,sz*sizeof(Tps_Value));
     _alloc = alloc;
     _len = sz;
 }
@@ -59,8 +59,8 @@ Tps_Array::extend(long need)
     if(_alloc >= newalloc) return TPSSTAT_OK;
     newcontents = (Tps_Value*)Tps_malloc(newalloc*sizeof(Tps_Value));
     if(!newcontents) return TPSSTAT_SYSTEMERROR;
-    MEMCPY((char*)newcontents,(char*)_contents,_len*sizeof(Tps_Value));
-    MEMSET((char*)(newcontents+_len),'\0',need*sizeof(Tps_Value));
+    memcpy((char*)newcontents,(char*)_contents,_len*sizeof(Tps_Value));
+    memset((char*)(newcontents+_len),'\0',need*sizeof(Tps_Value));
     _alloc = newalloc;
     _contents = newcontents;
     return TPSSTAT_OK;
@@ -76,7 +76,7 @@ Tps_Array::setlen(long newlen)
 	if(ok != TPSSTAT_OK) return ok;
     }   
     if(newlen > _len) {
-	MEMSET((char*)(_contents+_len),0,(newlen - _len)*sizeof(Tps_Value));
+	memset((char*)(_contents+_len),0,(newlen - _len)*sizeof(Tps_Value));
     }
     _len = newlen;
     return TPSSTAT_OK;
@@ -90,7 +90,7 @@ Tps_Array::append(Tps_Value* vs, long vlen)
 	ok = extend(vlen);
 	if(ok != TPSSTAT_OK) return ok;
     }
-    MEMCPY((char*)&_contents[_len],(char*)vs,vlen*sizeof(Tps_Value));
+    memcpy((char*)&_contents[_len],(char*)vs,vlen*sizeof(Tps_Value));
     _len += vlen;
     return TPSSTAT_OK;
 }

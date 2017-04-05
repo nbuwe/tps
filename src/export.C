@@ -792,7 +792,7 @@ Tps_import(Tps_Interp* intrp, Tps_Stream* f, boolean clr)
     }
     l = marks[4] - marks[3];
     vp = TPS_DPUSHNSF(intrp,1,l);
-    MEMCPY((char*)vp,(char*)TPS_TOSP(intrp),l*sizeof(Tps_Value));
+    memcpy((char*)vp,(char*)TPS_TOSP(intrp),l*sizeof(Tps_Value));
     TPS_POPN(intrp,l);
 
     if(!safeflag) {
@@ -802,7 +802,7 @@ Tps_import(Tps_Interp* intrp, Tps_Stream* f, boolean clr)
 	}
 	l = marks[3] - marks[2];
 	vp = TPS_DPUSHNSF(intrp,0,l);
-	MEMCPY((char*)vp,(char*)TPS_TOSP(intrp),l*sizeof(Tps_Value));
+	memcpy((char*)vp,(char*)TPS_TOSP(intrp),l*sizeof(Tps_Value));
 	TPS_POPN(intrp,l);
     }
 
@@ -893,7 +893,7 @@ Tps_equal1(Tps_Value v1, Tps_Value v2)
 	    Tps_String* s1 = TPS_STRING_OF(v1);
 	    Tps_String* s2 = TPS_STRING_OF(v2);
 	    if(s1->length() != s2->length()) return FALSE;
-	    return (MEMCMP(s1->contents(),s2->contents(),s1->length())==0)?1:0;
+	    return (memcmp(s1->contents(),s2->contents(),s1->length())==0)?1:0;
 	}
 	case TPSTYPE_ARRAY: {
 	    Tps_Array* a1 = TPS_ARRAY_OF(v1);

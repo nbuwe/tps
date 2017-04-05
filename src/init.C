@@ -1077,7 +1077,7 @@ systemerr:
 Tps_Status
 Tps_finalize()
 {
-    (void)MEMSET((char*)&tpsg,0,sizeof(Tps_Global));
+    (void)memset((char*)&tpsg,0,sizeof(Tps_Global));
     return TPSSTAT_OK;
 }
 

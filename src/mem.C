@@ -16,7 +16,7 @@ Tps_strdup(const char* s)
 
     len = strlen(s);
     s2 = Tps_malloc(len+1);
-    MEMCPY(s2,s,len+1);
+    memcpy(s2,s,len+1);
     return s2;
 }
 

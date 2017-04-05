@@ -110,11 +110,6 @@ typedef int boolean;
 #endif
 
 /* Definitions that tend to wander from system to system */
-#define MEMSET(x,y,z) memset(x,y,(int)(z))
-#define MEMCMP(x,y,z) memcmp(x,y,(int)(z))
-#define MEMCPY(x,y,z) memcpy(x,y,(int)(z))
-#define MEMCHR(x,y,z) memchr(x,y,(int)z)
-#define STRNCMP(x,y,z) strncmp(x,y,(int)(z))
 #define SLEEP(n) sleep((int)(n))
 #define SRAND(n) srand((int)(n))
 #define STRTOL(s,p,r) strtol(s,p,(int)r)

@@ -388,7 +388,7 @@ Tps_compare(Tps_Value opl, Tps_Value opr)
     }
 cmpstr:
     minlen = (lenr < lenl)?lenr:lenl;
-    ir = STRNCMP(sl,sr,minlen);
+    ir = strncmp(sl,sr,minlen);
     if(ir == 0) ir = (lenl - lenr);
     goto intresult;
 #if HASFLOAT
