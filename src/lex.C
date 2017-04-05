@@ -153,7 +153,7 @@ done:
 		ss = new Tps_String(tokenlen/2);
 		if(!ss) return(TPSSTAT_SYSTEMERROR);
 		for(i=0,h=hexstr;i<ss->length();i++) {
-		    register u_long d;
+		    u_long d;
 		    for(d=0,j=0;j<2;j++) {		
 			d <<= 4;
 			c = *h++;
@@ -197,7 +197,7 @@ done:
 		    case '0': case '1': case '2':
 		    case '3': case '4': case '5':
 		    case '6': case '7': {
-			register u_long d = (c - '0');
+			u_long d = (c - '0');
 			long i;
 			for(i=0;i<2;i++) {
 			    c = f->read();
@@ -259,7 +259,7 @@ getname:
 			case '0': case '1': case '2':
 			case '3': case '4': case '5':
 			case '6': case '7': {
-			    register u_long d = (c - '0');
+			    u_long d = (c - '0');
 			    long i;
 			    for(i=0;i<2;i++) {
 				c = f->read();
@@ -359,10 +359,10 @@ Tps_Status
 scancompound(Tps_Stream_String& tokenbuf, Tps_Stream* f,
 		  enum Compounds delimiter, Tps_Value* result, int escapes)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     Tps_Value object;
-    register long i;
-    register Tps_Nameid rightside
+    long i;
+    Tps_Nameid rightside
 		= (delimiter == isdict? TPS_NM(TPS_NMRRANGLE) : TPS_NM(TPS_NMRBRACE));
 
     Tps_Array* a; /* will hold both dict and array elements until end */
@@ -407,7 +407,7 @@ failed:
 Tps_Status
 Tps_get_token(Tps_Stream_String& tokenbuf, Tps_Stream* f, Tps_Value* vp, int escapes)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     Tps_Value object;
 
     ok = Tps_get_atom(tokenbuf,f,&object,escapes);

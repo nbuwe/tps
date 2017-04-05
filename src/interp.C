@@ -67,8 +67,8 @@ static
 long
 findparm(const char* pname, const char* alternate)
 {
-    register long value;
-    register const char* parm;
+    long value;
+    const char* parm;
     parm = getenv(pname);
     if(!parm) {
 	if(!alternate) return -1;
@@ -89,7 +89,7 @@ roundup(long value, u_long size)
 
 Tps_Interp::Tps_Interp()
 {
-    register int i;
+    int i;
 
 #if defined hpux || solaris2
     {
@@ -231,7 +231,7 @@ Tps_Interp::tpsrc(char* s)
 Tps_Status
 Tps_Interp::where(Tps_Value key, Tps_Value* valp, Tps_Value* where)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     long w;
     Tps_Dictpair* pairp;
 
@@ -246,7 +246,7 @@ Tps_Interp::where(Tps_Value key, Tps_Value* valp, Tps_Value* where)
 Tps_Status
 Tps_Interp::def(Tps_Value key, Tps_Value val, Tps_Value* where)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     long w;
     Tps_Dictpair pair;
 
@@ -288,13 +288,13 @@ Find an object and execute it
 Tps_Status
 Tps_Interp::run()
 {
-    register Tps_Status ok;
-    register Tps_Frame* frame;
-    register boolean traceoff;
-    register long nargs;
-    register Tps_Operator *op;
-    register Tps_Value* args;
-    register Tps_Nameid nm;
+    Tps_Status ok;
+    Tps_Frame* frame;
+    boolean traceoff;
+    long nargs;
+    Tps_Operator *op;
+    Tps_Value* args;
+    Tps_Nameid nm;
     Tps_Value object;
 
     /* run forever, unless stepping, or until quit */
@@ -308,7 +308,7 @@ retry:
 	/* invoke the frame specific reenter function */
 #ifndef NOINLINE
 	if(frame->_handler->_reenter == Tps_source_reenter) {
-	    register Tps_Frame_Source* f = (Tps_Frame_Source*)frame;
+	    Tps_Frame_Source* f = (Tps_Frame_Source*)frame;
 	    if(f->_index < 0) {
 		/* singular object */
 		object = (_object = f->_body);
@@ -318,7 +318,7 @@ retry:
 		if(f->_index-- != -1) goto retry; /* pop frame */
 		/* tail frame */
 	    } else { /* f->_index >= 0 => array to step thru */
-		register Tps_Array* abody = TPS_ARRAY_OF(f->_body);
+		Tps_Array* abody = TPS_ARRAY_OF(f->_body);
 		if(f->_index >= abody->length()) {
 		    /* unwind this frame directly */
 		    TPS_EPOPN(this,sizeof(Tps_Frame_Source));
@@ -428,7 +428,7 @@ TPS_STDCONS->printf("executing%s%s: %s%s/%d:%d\n",
 			self dict.
 		    */
 		    Tps_Dictpair* pairp;
-		    register Tps_Dict* d = TPS_DICT_OF(_self); /*default*/
+		    Tps_Dict* d = TPS_DICT_OF(_self); /*default*/
 		    if(TPS_DEPTH(this) > 0) {
 			Tps_Value v = TPS_TOP(this);
 			if(TPS_ISTYPE(v,TPSTYPE_DICT) && TPS_ISEXECUTABLE(v)) {
@@ -437,7 +437,7 @@ TPS_STDCONS->printf("executing%s%s: %s%s/%d:%d\n",
 			    TPS_POPN(this,1);
 		    	    d = TPS_DICT_OF(_self);
 			} else if(TPS_ISTYPE(v,TPSTYPE_NAME)) {
-			    register Tps_Nameid nm = TPS_NAME_OF(v);
+			    Tps_Nameid nm = TPS_NAME_OF(v);
 			    if(nm == TPS_NM(TPS_NMSUPER)) {
 				/* find super */
 				if((d)->lookup(v,&pairp) != TPSSTAT_OK
@@ -485,15 +485,15 @@ TPS_STDCONS->printf("executing%s%s: %s%s/%d:%d\n",
 		    if(ok != TPSSTAT_OK) goto handle_error;
 #else /*!NOINLINE*/
 		    /*lookup and retry; == inline version of dictstack lookup*/
-		    register Tps_Value* dp;
-		    register long depth;
+		    Tps_Value* dp;
+		    long depth;
 		    /* look up name in current name environment */
 		    /* inline version ofTps_dictstack_lookup */
 		    /* remember dstack grows down */
 		    dp = TPS_DTOSP(this);
 		    depth = TPS_DDEPTH(this);
 		    while(depth > 0 && TPS_ISTYPE(*dp,TPSTYPE_DICT)) {
-			register Tps_Dict* d = TPS_DICT_OF(*dp);
+			Tps_Dict* d = TPS_DICT_OF(*dp);
 			if((d)->lookup(object,&pairp) == TPSSTAT_OK) {
 			    goto namefound;
 			}
@@ -541,7 +541,7 @@ execarray:
 		ok = Tps_create_source(this,object);
 		if(ok != TPSSTAT_OK) goto handle_error;
 #else /*!NOINLINE*/
-		register Tps_Frame_Source* f;
+		Tps_Frame_Source* f;
 		/* also inline Tps_create_frame */
 		if(TPS_ROOM(this) < sizeof(Tps_Frame_Source)) goto vmerr;
 		f = (Tps_Frame_Source*)TPS_EPUSHN(this,sizeof(Tps_Frame_Source));
@@ -619,7 +619,7 @@ Tps_Status
 Tps_Interp::load(const char* code)
 {
     Tps_Value v;
-    register Tps_Status ok;
+    Tps_Status ok;
 
     if(!code || strlen(code) == 0) return TPSSTAT_TYPECHECK;
     (void)_inbuf.open(code);
@@ -644,11 +644,11 @@ If lastframe is null, try to unwind everything
 Tps_Status
 Tps_Interp::unwind_thru(Tps_Frame* lastframe, boolean thrown)
 {
-    register char* enext;
-    register char* elast;
-    register Tps_Status ok;
-    register Tps_Frame* eframe;
-    register boolean stopsafe;
+    char* enext;
+    char* elast;
+    Tps_Status ok;
+    Tps_Frame* eframe;
+    boolean stopsafe;
 
     elast = lastframe?((char*)lastframe):TPS_EBASE(this);	
     if(lastframe) elast += TPS_FRAME_LENGTH(this,lastframe);
@@ -678,9 +678,9 @@ done:
 Tps_Status
 Tps_Interp::save(char*& state)
 {
-    register Tps_Status ok;
-    register long l;
-    register char* s;
+    Tps_Status ok;
+    long l;
+    char* s;
 
     TPS_GUARANTEE(this,1);
     _tempbuf.rewind();
@@ -697,7 +697,7 @@ Tps_Interp::save(char*& state)
 Tps_Status
 Tps_Interp::restore(char* state)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
 
     ok = _inbuf.open(state);
     if(ok != TPSSTAT_OK) return ok;
@@ -708,7 +708,7 @@ Tps_Interp::restore(char* state)
 Tps_Status
 Tps_Interp::restore(int fd)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     Tps_Stream_File f;
 
     ok = f.attach(fd,"restore");
@@ -721,8 +721,8 @@ Tps_Interp::restore(int fd)
 Tps_Status
 Tps_Interp::newoperator(const char* nm, long ar, Tpsstatfcn pr)
 {
-    register Tps_Operator* op;
-    register Tps_Nameid id;
+    Tps_Operator* op;
+    Tps_Nameid id;
     Tps_Dictpair pair;
     char s[256+3];
 
@@ -754,9 +754,9 @@ Tps_Interp::newoperator(const char* nm, long ar, Tpsstatfcn pr)
 Tps_Status
 Tps_Interp::destroyoperator(char* nm)
 {
-    register Tps_Operator* op;
-    register Tps_Nameid id;
-    register Tps_Status ok;
+    Tps_Operator* op;
+    Tps_Nameid id;
+    Tps_Status ok;
     Tps_Dictpair* pairp;
     Tps_Value v;
     char s[256+3];

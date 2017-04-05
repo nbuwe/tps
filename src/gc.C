@@ -49,13 +49,13 @@ Tps_mark(Tps_Value v)
 void
 Tps_Interp::gc(void)
 {
-    register Tps_Value* vp;
-    register Tps_Dict* dp;
-    register Tps_List* lp;
-    register char* ep;
-    register Tps_Frame* eframe;
-    register long i;
-    register long sf;
+    Tps_Value* vp;
+    Tps_Dict* dp;
+    Tps_List* lp;
+    char* ep;
+    Tps_Frame* eframe;
+    long i;
+    long sf;
 
     GLOBAL_LOCK();
     /* walk the operand stack and mark */
@@ -94,17 +94,17 @@ Tps_Interp::gc(void)
 
     /* go thru and reclaim unused objects, and unmark others */
     for(lp=tpsg._objects->next();lp;lp=lp->next()) {
-	register Tps_Container* q = (Tps_Container*)lp;
+	Tps_Container* q = (Tps_Container*)lp;
 	if(!q->marked()) {
 #if VERBOSE > 2
 	    /* indicate what is being reclaimed */
-	    register Tps_Typeid tid = q->tid();
+	    Tps_Typeid tid = q->tid();
 	    switch (tid) {
 		case TPSTYPE_DICT:
 		case TPSTYPE_ARRAY:
 		case TPSTYPE_STRING:
 		case TPSTYPE_STREAM: {
-		    register char* s;
+		    char* s;
 		    Tps_Value v;
 		    TPS_MAKEVALUE(v,tid,q);
 		    s = debugobject(v);

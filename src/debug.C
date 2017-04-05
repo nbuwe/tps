@@ -68,8 +68,8 @@ const char*
 debugstack0(Tps_Interp* interp)
 {
     const char* s;
-    register long i;
-    register Tps_Value* vp;
+    long i;
+    Tps_Value* vp;
 
     TPS_TEMPBUF->rewind();
     vp = TPS_TOSP(interp);
@@ -88,8 +88,8 @@ const char*
 debugstack(Tps_Interp* interp)
 {
     const char* s;
-    register long i;
-    register Tps_Value* vp;
+    long i;
+    Tps_Value* vp;
 
     TPS_TEMPBUF->rewind();
     vp = TPS_TOSP(interp);
@@ -108,7 +108,7 @@ const char*
 debugdstack0(Tps_Interp* interp)
 {
     const char* s;
-    register long i;
+    long i;
     Tps_Value* dp = TPS_DTOSP(interp);
     long dl = TPS_DDEPTH(interp);
 
@@ -128,9 +128,9 @@ const char*
 debugdstack(Tps_Interp* interp)
 {
     const char* s;
-    register long i;
+    long i;
     Tps_Value* dv;
-    register long dlen;
+    long dlen;
 
     TPS_TEMPBUF->rewind();
     dlen = TPS_DDEPTH(interp);
@@ -151,10 +151,10 @@ const char*
 debugdstacks(Tps_Interp* interp)
 {
     const char* s;
-    register long i;
-    register long sf;
+    long i;
+    long sf;
     Tps_Value* dv;
-    register long dlen;
+    long dlen;
 
     TPS_TEMPBUF->rewind();
     for(sf=0;sf<2;sf++) {
@@ -178,9 +178,9 @@ debugdstacks(Tps_Interp* interp)
 const char*
 debugexec0(Tps_Interp* interp, long nframes)
 {
-    register char* ep = TPS_ETOSP(interp);
-    register char* elast = interp->_estack._last;
-    register Tps_Frame* eframe;
+    char* ep = TPS_ETOSP(interp);
+    char* elast = interp->_estack._last;
+    Tps_Frame* eframe;
     const char* s;
 
     TPS_TEMPBUF->rewind();

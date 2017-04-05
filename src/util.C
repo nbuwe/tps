@@ -41,9 +41,9 @@ Tps_bind1(Tps_Value* ds, long dlen, Tps_Value* vp)
 	    }
 	} break;
 	case TPSTYPE_ARRAY: {
-	    register Tps_Array* a;
-	    register long i;
-	    register Tps_Value* ap;
+	    Tps_Array* a;
+	    long i;
+	    Tps_Value* ap;
 
 	    a = TPS_ARRAY_OF(*vp);
 	    for(i=0,ap=a->contents();i<a->length();i++,ap++) {
@@ -63,13 +63,13 @@ Tps_bind1(Tps_Value* ds, long dlen, Tps_Value* vp)
 Tps_Status
 Tps_cvts1(Tps_Stream& outbuf, Tps_Value object, boolean deep, long addrctr)
 {
-    register Tps_Status ok;
-    register Tps_Typeid rtyp;
-    register Tps_String* s1;
-    register const char* s;
-    register long len;
-    register long i;
-    register long c;
+    Tps_Status ok;
+    Tps_Typeid rtyp;
+    Tps_String* s1;
+    const char* s;
+    long len;
+    long i;
+    long c;
 
     rtyp = TPS_TYPE(object);
     switch (rtyp) {
@@ -170,9 +170,9 @@ Tps_cvts1(Tps_Stream& outbuf, Tps_Value object, boolean deep, long addrctr)
 	    break;
 	case TPSTYPE_ARRAY:
 	    if(deep){
-		register boolean isexec = TPS_ISEXECUTABLE(object);
-		register long i = isexec?LBRACE:LBRACKET;
-		register Tps_Array* a;
+		boolean isexec = TPS_ISEXECUTABLE(object);
+		long i = isexec?LBRACE:LBRACKET;
+		Tps_Array* a;
 		ok = outbuf.write(i);
 		if(ok != TPSSTAT_OK) return ok;
 		a = TPS_ARRAY_OF(object);
@@ -211,7 +211,7 @@ Tps_cvts1(Tps_Stream& outbuf, Tps_Value object, boolean deep, long addrctr)
 	    break;
 	case TPSTYPE_STREAM:
 		if(deep) {
-		    register Tps_Stream* strm = TPS_STREAM_OF(object);
+		    Tps_Stream* strm = TPS_STREAM_OF(object);
 		    ok = outbuf.write("--streamtype(");
 		    if(ok != TPSSTAT_OK) return ok;
 		    ok = outbuf.write(strm->name());
@@ -222,7 +222,7 @@ Tps_cvts1(Tps_Stream& outbuf, Tps_Value object, boolean deep, long addrctr)
 		}
 		break;
  	case TPSTYPE_OPERATOR: {
-		register Tps_Operator* op;
+		Tps_Operator* op;
 		op = TPS_OPERATOR_OF(object);
 		ok = outbuf.write((char*)Tps_operator_prefix);
 		if(ok != TPSSTAT_OK) return ok;
@@ -250,9 +250,9 @@ static
 Tps_Status
 Tps_cvts1_tcldict_deep(Tps_Stream& accum, Tps_Dict_Tcl* dict, boolean deep)
 {
-    register Tps_Status ok;
-    register long i;
-    register long dlen,dtsz;
+    Tps_Status ok;
+    long i;
+    long dlen,dtsz;
     Tps_Bucket* chains;
   
     dlen = dict->length();
@@ -262,7 +262,7 @@ Tps_cvts1_tcldict_deep(Tps_Stream& accum, Tps_Dict_Tcl* dict, boolean deep)
     ok = accum.printf("/%d)<<",dtsz);
     if(ok != TPSSTAT_OK) return ok;
     for(i=0;i<dtsz;i++,chains++) {
-        register Tps_HashEntry* p = chains->chain;
+        Tps_HashEntry* p = chains->chain;
 	ok = accum.write("[");
 	if(ok != TPSSTAT_OK) return ok;
 	if(p) {
@@ -305,14 +305,14 @@ Tps_cvts1_dict_deep(Tps_Stream& accum, Tps_Dict* dict, boolean deep)
 int
 Tps_compare(Tps_Value opl, Tps_Value opr)
 {
-    register Tps_Typeid tr;
-    register Tps_Typeid tl;
-    register const char* sl;
-    register const char* sr;
-    register long lenl;
-    register long lenr;
-    register long ir;
-    register long minlen;
+    Tps_Typeid tr;
+    Tps_Typeid tl;
+    const char* sl;
+    const char* sr;
+    long lenl;
+    long lenr;
+    long ir;
+    long minlen;
 #if HASFLOAT
     Tps_Real fr;
 #endif
@@ -406,12 +406,12 @@ intresult:
 Tps_Status
 Tps_string_or_name(Tps_Value v, const char** sp, long* lenp)
 {
-    register const char* s;
-    register long len;
+    const char* s;
+    long len;
     switch(TPS_TYPE(v)) {
 	case TPSTYPE_STRING:
 	    {
-		register Tps_String* str = TPS_STRING_OF(v);
+		Tps_String* str = TPS_STRING_OF(v);
 		s = str->contents();
 		len = str->length();
 	    }
@@ -436,12 +436,12 @@ Tps_Status
 Tps_dictstack_lookup(Tps_Value* dstack, long dlen, Tps_Value key,
 		   long* where, Tps_Dictpair** pairp)
 {
-    register Tps_Value* dp = dstack;
-    register long depth = dlen;
+    Tps_Value* dp = dstack;
+    long depth = dlen;
 
     /* remember dstack grows down */
     while(depth > 0) {
-	register Tps_Dict* d = TPS_DICT_OF(*dp);
+	Tps_Dict* d = TPS_DICT_OF(*dp);
 	if((d)->lookup(key,pairp) == TPSSTAT_OK) {
 	    if(where) *where = (dlen - depth);
 	    return TPSSTAT_OK; /* found it */
@@ -454,10 +454,10 @@ Tps_dictstack_lookup(Tps_Value* dstack, long dlen, Tps_Value key,
 Tps_Status
 Tps_dictstack_define(Tps_Value* dstack, long dlen, Tps_Dictpair& pair, long* where)
 {
-    register Tps_Value* dp;
-    register long depth;
-    register Tps_Dict* d;
-    register Tps_Status ok = TPSSTAT_DICTSTACKUNDERFLOW;
+    Tps_Value* dp;
+    long depth;
+    Tps_Dict* d;
+    Tps_Status ok = TPSSTAT_DICTSTACKUNDERFLOW;
 
     /* remember dstack grows down */
     for(depth=dlen,dp=dstack;depth > 0;dp++) {
@@ -476,11 +476,11 @@ Tps_dictstack_define(Tps_Value* dstack, long dlen, Tps_Dictpair& pair, long* whe
 Tps_Dict*
 Tps_builderrordict(void)
 {
-    register int i;
-    register Tps_Dict* d;
-    register Tps_Dict* derr;
+    int i;
+    Tps_Dict* d;
+    Tps_Dict* derr;
     Tps_Dictpair pair;
-    register Tps_Status ok;
+    Tps_Status ok;
 
     d = new Tps_Dict_Tcl(1,"errordict");
     /* define the default entry in the error dict */

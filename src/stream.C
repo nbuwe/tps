@@ -38,7 +38,7 @@ EXTERNC int open(char*,int...);
 Tps_Stream_Mode
 Tps_mode_of(const char* modestring, const long modelen)
 {
-    register Tps_Stream_Mode md = 0;
+    Tps_Stream_Mode md = 0;
     if(modelen != 1) return md;
     switch (*modestring) {
 	    case 'r': md = Tps_stream_r; break;
@@ -96,7 +96,7 @@ Tps_Status
 Tps_Stream_File::open(const char* fname, const long flen, const Tps_Stream_Mode md)
 {
     if(_isopen) return TPSSTAT_IOERROR;
-    register Tps_Status ok = init(fname,flen,md);
+    Tps_Status ok = init(fname,flen,md);
     if(ok != TPSSTAT_OK) return ok;
     switch (_modeflags) {
 	case Tps_stream_r: _fd = ::open(_name,O_RDONLY); break;
@@ -111,7 +111,7 @@ Tps_Status
 Tps_Stream_File::attach(const int f, const char* fname, const Tps_Stream_Mode md)
 {
     if(_isopen || f < 0) return TPSSTAT_INVALIDSTREAMACCESS;
-    register Tps_Status ok = init(fname,strlen(fname),md);
+    Tps_Status ok = init(fname,strlen(fname),md);
     if(ok != TPSSTAT_OK) return ok;
     _fd = f;
     _attached = TRUE;
@@ -218,8 +218,8 @@ Tps_Stream_File::flush()
 long
 Tps_Stream_File::bytesavailable()
 {
-    register long len;
-    register long current;
+    long len;
+    long current;
     if(!_good) return TPSSTAT_IOERROR;
     if(w()) return -1;
     if((current = ::lseek(_fd,0,SEEK_CUR)) < 0) return -1; // save position
@@ -234,7 +234,7 @@ Tps_Status
 Tps_Stream_File::printf(const char* fmt...)
 {
     va_list args;
-    register FILE* f = (FILE*)_f;
+    FILE* f = (FILE*)_f;
 
     if(!_good || !w()) return TPSSTAT_IOERROR;
     if(!f) {
@@ -401,7 +401,7 @@ Tps_Status
 Tps_Stream_String::printf(const char* fmt...)
 {
     va_list args;
-    register long len;
+    long len;
 
     if(!_good || !w()) return TPSSTAT_IOERROR;
     len = strlen(fmt);
@@ -426,10 +426,10 @@ Tps_Stream_String::printf(const char* fmt...)
 boolean
 Tps_Stream_String::guarantee(long need)
 {
-    register long avail;
-    register long used;
-    register long newalloc;
-    register char* newbuf;
+    long avail;
+    long used;
+    long newalloc;
+    char* newbuf;
 
     if(!w()) return FALSE;
     if(_contents) {

@@ -105,7 +105,7 @@ typedef unsigned long Tps_Userdata;
 #define GLOBAL_LOCK()
 #define GLOBAL_UNLOCK()
 
-#define TESTERR(cmd) {register Tps_Status err = cmd; if(err != TPSSTAT_OK) return err; }
+#define TESTERR(cmd) { Tps_Status err = cmd; if(err != TPSSTAT_OK) return err; }
 
 struct Tps_Interp; /* forward */
 struct Tps_Value; /* forward */

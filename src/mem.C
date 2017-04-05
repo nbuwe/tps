@@ -11,8 +11,8 @@ various flavors of Unix.
 char*
 Tps_strdup(const char* s)
 {
-    register long len;
-    register char* s2;
+    long len;
+    char* s2;
 
     len = strlen(s);
     s2 = Tps_malloc(len+1);

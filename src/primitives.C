@@ -109,13 +109,13 @@ static Tps_Status Tps_repeat_import(TPS_IMPORT_ARGS0);
 Tps_Status
 Tps_op_abs(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Typeid rtyp;
+    Tps_Typeid rtyp;
 
     rtyp = TPS_TYPE(args[0]);
     switch (rtyp) {
 	case TPSTYPE_INTEGER:
 	    {
-		register long i = TPS_INTEGER_OF(args[0]);
+		long i = TPS_INTEGER_OF(args[0]);
 		if(i < 0) TPS_INTEGER_OF(args[0]) = - i;
 	    }
 	    break;
@@ -137,11 +137,11 @@ Tps_Status
 Tps_op_add(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
     Tps_Value result;
-    register long ir = 0;
-    register long i;
+    long ir = 0;
+    long i;
 #if HASFLOAT
     Tps_Real fr = 0.0;
-    register int isfloat = 0;
+    int isfloat = 0;
 #endif
 
     /* this is defined to potentially add any number of args;
@@ -172,10 +172,10 @@ Tps_op_add(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_aload(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Array* a;
+    Tps_Array* a;
     Tps_Value v;
-    register long i;
-    register Tps_Value* p;
+    long i;
+    Tps_Value* p;
 
     v = TPS_POP(intrp);
     args++; /* keep in synch */
@@ -196,8 +196,8 @@ Tps_op_aload(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_anchorsearch(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_String* s0;
-    register Tps_String* s1;
+    Tps_String* s0;
+    Tps_String* s1;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_STRING) || !TPS_ISTYPE(args[1],TPSTYPE_STRING))
 	return(TPSSTAT_TYPECHECK);
@@ -209,7 +209,7 @@ Tps_op_anchorsearch(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	/* need to construct 2 substrings */
 	Tps_Value mid;
 	Tps_Value post;
-	register Tps_String* s;
+	Tps_String* s;
 
 	TPS_GUARANTEE(intrp,1);
 	s = new Tps_String(s1->contents(),s0->length());
@@ -232,9 +232,9 @@ Tps_op_anchorsearch(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_and(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register u_long bits = ~0; /* so initial and will be correct */
-    register long i;
-    register int isint = 0;
+    u_long bits = ~0; /* so initial and will be correct */
+    long i;
+    int isint = 0;
     Tps_Value result;
 
     for(i=0;i<2;i++) {
@@ -258,21 +258,21 @@ Tps_op_and(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_append(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
-    register Tps_Typeid typ0;
+    Tps_Status ok;
+    Tps_Typeid typ0;
 
     if(TPS_DEPTH(intrp) < 2) return(TPSSTAT_STACKUNDERFLOW);
     typ0 = TPS_TYPE(args[1]);
     switch (typ0) {
 	case TPSTYPE_STRING: {
-	    register Tps_String* s0;
+	    Tps_String* s0;
 	    if(TPS_ISTYPE(args[0],TPSTYPE_STRING)) {
-		register Tps_String* s1;
+		Tps_String* s1;
 		s0 = TPS_STRING_OF(args[1]);
 		s1 = TPS_STRING_OF(args[0]);
 		ok = s0->append(s1);
 	    } else if(TPS_ISTYPE(args[0],TPSTYPE_INTEGER)) {
-		register char c;
+		char c;
 		s0 = TPS_STRING_OF(args[1]);
 		c = TPS_INTEGER_OF(args[0]);
 		ok = s0->append(c);
@@ -281,7 +281,7 @@ Tps_op_append(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	    TPS_POPN(intrp,1);
 	    break;
 	case TPSTYPE_ARRAY: {
-	    register Tps_Array* a0;
+	    Tps_Array* a0;
 	    a0 = TPS_ARRAY_OF(args[1]);
 	    ok = a0->append(args[0]);
 	    if(ok != TPSSTAT_OK) return ok;
@@ -298,8 +298,8 @@ Tps_op_append(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_array(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Array* a;
-    register long i;
+    Tps_Array* a;
+    long i;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_INTEGER)) return(TPSSTAT_TYPECHECK);
     i = TPS_INTEGER_OF(args[0]);
@@ -316,10 +316,10 @@ Tps_op_array(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_astore(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Array* a;
-    register long len;
-    register long i;
-    register Tps_Value* p;
+    Tps_Array* a;
+    long len;
+    long i;
+    Tps_Value* p;
     Tps_Value v;
 
     /* ostensibly arity == 1 */
@@ -352,8 +352,8 @@ Tps_op_begin(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_bind(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Value* ds;
-    register long dlen;
+    Tps_Value* ds;
+    long dlen;
 
     ds = TPS_DTOSP(intrp);
     dlen = TPS_DDEPTH(intrp);
@@ -363,8 +363,8 @@ Tps_op_bind(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_bitshift(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register u_long iu;
-    register long i;
+    u_long iu;
+    long i;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_INTEGER)) return(TPSSTAT_TYPECHECK);
     if(!TPS_ISTYPE(args[1],TPSTYPE_INTEGER)) return(TPSSTAT_TYPECHECK);
@@ -393,7 +393,7 @@ Tps_op_catch(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 
     proc = TPS_POP(intrp);
     if(TPS_ISEXARRAY(proc)) {
-	register Tps_Frame_Catch* f;
+	Tps_Frame_Catch* f;
 	if(!(f = (Tps_Frame_Catch*)Tps_create_frame(intrp,&Tps_handler_catch,sizeof(Tps_Frame_Catch)))) return TPSSTAT_VMERROR;
 	f->_body = proc;
 	return Tps_create_source(intrp,proc);
@@ -406,8 +406,8 @@ static
 Tps_Status
 Tps_catch_unwind(TPS_UNWIND_ARGS)
 {
-    register Tps_Frame_Catch* f = (Tps_Frame_Catch*)frame;
-    register Tps_Status ok = Tps_unwind_frame(intrp,f);
+    Tps_Frame_Catch* f = (Tps_Frame_Catch*)frame;
+    Tps_Status ok = Tps_unwind_frame(intrp,f);
     if(ok != TPSSTAT_OK) return ok;  
     if(thrown) {
 	/* thrown, push throw value and true */
@@ -434,7 +434,7 @@ static
 Tps_Status
 Tps_catch_trace(TPS_TRACE_ARGS)
 {
-    register Tps_Frame_Catch* f = (Tps_Frame_Catch*)frame;
+    Tps_Frame_Catch* f = (Tps_Frame_Catch*)frame;
     Tps_trace0(intrp,strm,f);
     strm->write(" body=");
     (void)Tps_cvts1(*strm,f->_body,TRUE,-1);
@@ -445,7 +445,7 @@ static
 Tps_Status
 Tps_catch_mark(TPS_MARK_ARGS1)
 {
-    register Tps_Frame_Catch* f = (Tps_Frame_Catch*)frame;
+    Tps_Frame_Catch* f = (Tps_Frame_Catch*)frame;
     Tps_mark(f->_body);
     return TPSSTAT_OK;
 }
@@ -454,7 +454,7 @@ static
 Tps_Status
 Tps_catch_export(TPS_EXPORT_ARGS1)
 {
-    register Tps_Frame_Catch* f = (Tps_Frame_Catch*)frame;
+    Tps_Frame_Catch* f = (Tps_Frame_Catch*)frame;
 
     /* guarantee enough room for 1 value */
     TPS_GUARANTEE(intrp,1);
@@ -468,7 +468,7 @@ static
 Tps_Status
 Tps_catch_import(TPS_IMPORT_ARGS1)
 {
-    register Tps_Frame_Catch* f = (Tps_Frame_Catch*)fr;
+    Tps_Frame_Catch* f = (Tps_Frame_Catch*)fr;
 
     /* Assume that the handler name has been verified */
     /* verify length */
@@ -505,8 +505,8 @@ Tps_op_clear(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_cleartomark(Tps_Interp* intrp, Tps_Value* args, long nargs)
 {
-    register long i;
-    register Tps_Value* top = args;
+    long i;
+    Tps_Value* top = args;
 
     /* need to look for topmost mark */
     for(i=0;i<nargs;i++,top++) {
@@ -521,7 +521,7 @@ Tps_op_cleartomark(Tps_Interp* intrp, Tps_Value* args, long nargs)
 Tps_Status
 Tps_op_closestream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Stream* strm;
+    Tps_Stream* strm;
     if(!TPS_ISTYPE(args[0],TPSTYPE_STREAM)) return(TPSSTAT_TYPECHECK);
     if(intrp->safe() && TPS_ISUNSAFE(args[0])) return TPSSTAT_UNSAFE;
     strm = TPS_STREAM_OF(args[0]);
@@ -533,9 +533,9 @@ Tps_op_closestream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_copy(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
-    register long i;
-    register Tps_Value* pv;
+    Tps_Status ok;
+    long i;
+    Tps_Value* pv;
     Tps_Value v;
 
     /* arity is considered 1, but special cases apply */
@@ -555,8 +555,8 @@ Tps_op_copy(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	args = TPS_TOSP(intrp);
 	switch (TPS_TYPE(args[1])) {
 	case TPSTYPE_STRING: {
-		register Tps_String* s0;
-		register Tps_String* s1;
+		Tps_String* s0;
+		Tps_String* s1;
 		s0 = TPS_STRING_OF(args[1]);
 		if(TPS_ISTYPE(args[0],TPSTYPE_NULL)) {
 		    s1 = new Tps_String(s0->length());
@@ -577,8 +577,8 @@ Tps_op_copy(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	    }
 	    break;
 	case TPSTYPE_ARRAY: {
-		register Tps_Array* a0;
-		register Tps_Array* a1;
+		Tps_Array* a0;
+		Tps_Array* a1;
 		a0 = TPS_ARRAY_OF(args[1]);
 		if(TPS_ISTYPE(args[0],TPSTYPE_NULL)) {
 		    a1 = new Tps_Array(a0->length());
@@ -600,8 +600,8 @@ Tps_op_copy(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	    }
 	    break;
 	case TPSTYPE_DICT: {
-		register Tps_Dict* d0;
-		register Tps_Dict* d1;
+		Tps_Dict* d0;
+		Tps_Dict* d1;
 		d0 = TPS_DICT_OF(args[1]);
 		if(TPS_ISTYPE(args[0],TPSTYPE_NULL)) {
 		    d1 = new Tps_Dict_Tcl;
@@ -640,7 +640,7 @@ Tps_op_count(Tps_Interp* intrp, Tps_Value* /*args*/, long nargs)
 Tps_Status
 Tps_op_countdictstack(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register long i;
+    long i;
     Tps_Value v;
 
     TPS_GUARANTEE(intrp,1);
@@ -653,11 +653,11 @@ Tps_op_countdictstack(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_countexecstack(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register long xlen = 0;
-    register Tps_Frame* eframe;
-    register char* enext;
-    register long count;
-    register Tps_Status ok;
+    long xlen = 0;
+    Tps_Frame* eframe;
+    char* enext;
+    long count;
+    Tps_Status ok;
     long flen;
     Tps_Value v;
 
@@ -681,8 +681,8 @@ Tps_op_countexecstack(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_counttomark(Tps_Interp* intrp, Tps_Value* args, long nargs)
 {
-    register long i;
-    register Tps_Value* top = args;
+    long i;
+    Tps_Value* top = args;
 
     TPS_GUARANTEE(intrp,1);
     /* need to look for topmost mark */
@@ -715,14 +715,14 @@ return TPSSTAT_SYSTEMERROR;
 Tps_Status
 Tps_op_cvi(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Typeid rtyp;
+    Tps_Typeid rtyp;
     rtyp = TPS_TYPE(args[0]);
     switch (rtyp) {
 	case TPSTYPE_INTEGER:
 	    break;
 	case TPSTYPE_STRING:
 	    {
-		register long ir;
+		long ir;
 		char* next;
 		char* s;
 #if HASFLOAT
@@ -752,7 +752,7 @@ Tps_op_cvi(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 #if HASFLOAT
 	case TPSTYPE_REAL:
 	    {
-		register long i = (int)TPS_REAL_OF(args[0]);
+		long i = (int)TPS_REAL_OF(args[0]);
 		TPS_MAKEVALUE(args[0],TPSTYPE_INTEGER,i);
 	    }
 	    break;
@@ -773,10 +773,10 @@ Tps_op_cvlit(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_cvn(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Nameid nm;
-    register Tps_String* s;
-    register char* x;
-    register long len;
+    Tps_Nameid nm;
+    Tps_String* s;
+    char* x;
+    long len;
 
     switch (TPS_TYPE(args[0])) {
 	case TPSTYPE_NAME:
@@ -811,21 +811,21 @@ Tps_op_cvn(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_cvr(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Typeid rtyp;
+    Tps_Typeid rtyp;
     rtyp = TPS_TYPE(args[0]);
     switch (rtyp) {
 	case TPSTYPE_REAL:
 	    break;
 	case TPSTYPE_INTEGER:
 	    {
-		register float f = TPS_INTEGER_OF(args[0]);
+		float f = TPS_INTEGER_OF(args[0]);
 		TPS_MAKEREAL(args[0],f);
 	    }
 	    break;
 	case TPSTYPE_STRING:
 	    {
 		double dn;
-		register float fn;
+		float fn;
 		char* next;
 		Tps_String* s = TPS_STRING_OF(args[0]);
 	
@@ -850,12 +850,12 @@ char digitchars[37] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 Tps_Status
 Tps_op_cvrs(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Typeid rtyp0;
-    register Tps_Typeid rtyp2;
-    register Tps_String* ss;
-    register long r;
-    register long n;
-    register long i;
+    Tps_Typeid rtyp0;
+    Tps_Typeid rtyp2;
+    Tps_String* ss;
+    long r;
+    long n;
+    long i;
     char digits[33];
 
     if(!TPS_ISTYPE(args[2],TPSTYPE_INTEGER)
@@ -899,8 +899,8 @@ Tps_op_cvrs(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_cvs(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Typeid typdst;
-    register Tps_String* ss;
+    Tps_Typeid typdst;
+    Tps_String* ss;
     long len;
     const char* result;
     Tps_Value src;
@@ -972,9 +972,9 @@ cvts (convert to token string): any string|null cvts substring
 Tps_Status
 Tps_op_cvts(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Typeid rtyp0;
-    register Tps_Status ok;
-    register Tps_String* ss;
+    Tps_Typeid rtyp0;
+    Tps_Status ok;
+    Tps_String* ss;
     long len;
     char* result;
     Tps_Value v;
@@ -1022,8 +1022,8 @@ Tps_op_cvx(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_def(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
-    register Tps_Nameid nm;
+    Tps_Status ok;
+    Tps_Nameid nm;
     Tps_Dictpair pair;
 
     if(TPS_DDEPTH(intrp) == 0) return TPSSTAT_DICTSTACKUNDERFLOW;
@@ -1046,7 +1046,7 @@ Tps_op_def(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_deletefile(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_String* ss;
+    Tps_String* ss;
     if(!TPS_ISTYPE(args[0],TPSTYPE_STRING)) return(TPSSTAT_TYPECHECK);
     ss = TPS_STRING_OF(args[0]);
     TPS_POPN(intrp,1);
@@ -1058,7 +1058,7 @@ Tps_Status
 Tps_op_dict(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
     Tps_Dict* d;
-    register long len;
+    long len;
 
     if(TPS_TYPEID_OF(args[0]) != TPSTYPE_INTEGER) return TPSSTAT_TYPECHECK;
     len = TPS_INTEGER_OF(args[0]);
@@ -1072,10 +1072,10 @@ Tps_op_dict(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_dictstack(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Array* a;
-    register Tps_Value* ds;
-    register Tps_Value* cnts;
-    register long ddepth;
+    Tps_Array* a;
+    Tps_Value* ds;
+    Tps_Value* cnts;
+    long ddepth;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_ARRAY)) return(TPSSTAT_TYPECHECK);
     a = TPS_ARRAY_OF(args[0]);
@@ -1097,8 +1097,8 @@ Tps_Status
 Tps_op_div(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
 #if HASFLOAT
-    register Tps_Typeid rtyp0;
-    register Tps_Typeid rtyp1;
+    Tps_Typeid rtyp0;
+    Tps_Typeid rtyp1;
     Tps_Real fr1;
     Tps_Real fr0;
 
@@ -1115,7 +1115,7 @@ Tps_op_div(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     fr0 = fr0 / fr1;
     /* now, see if we can make it back to an integer */
     if(rtyp1 == TPSTYPE_INTEGER && rtyp0 == TPSTYPE_INTEGER) {
-	register long ir = (int)fr0;
+	long ir = (int)fr0;
 	if(fr0 == ir)
 	    TPS_MAKEVALUE(args[1],TPSTYPE_INTEGER,ir);
 	else
@@ -1129,7 +1129,7 @@ Tps_op_div(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     if(TPS_TYPE(args[0]) != TPSTYPE_INTEGER
        || TPS_TYPE(args[1]) != TPSTYPE_INTEGER)
 	return TPSSTAT_TYPECHECK;
-    register long ir;
+    long ir;
     ir = TPS_INTEGER_OF(args[1]) / TPS_INTEGER_OF(args[0]);
     TPS_MAKEVALUE(args[1],TPSTYPE_INTEGER,ir);
     TPS_POPN(intrp,1);
@@ -1140,9 +1140,9 @@ Tps_op_div(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_dload(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Dict* d;
+    Tps_Dict* d;
     Tps_Value v;
-    register long i;
+    long i;
     Tps_Dictpair* pairp;
 
     v = TPS_POP(intrp);
@@ -1153,9 +1153,9 @@ Tps_op_dload(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     /* need space for all elements in dict + dict*/
     TPS_GUARANTEE(intrp,2*i);
     /* transfer the contents to the stack */
-    register long r = d->range();
+    long r = d->range();
     for(i=0;i<r;i++) {
-	register Tps_Status ok = d->ith(i,pairp);
+	Tps_Status ok = d->ith(i,pairp);
 	if(ok == TPSSTAT_UNDEFINED) continue; /* no entry at this index */
 	if(ok != TPSSTAT_OK) return ok; /* some form of error */
 	TPS_PUSH(intrp,pairp->_key);
@@ -1192,9 +1192,9 @@ Tps_op_end(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_eq(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register int comparison = 0;
-    register Tps_Typeid t0;
-    register Tps_Typeid t1;
+    int comparison = 0;
+    Tps_Typeid t0;
+    Tps_Typeid t1;
 
     if((t1 = TPS_TYPE(args[0])) != (t0 = TPS_TYPE(args[1]))) {
 	/* need to do some special checking */
@@ -1217,7 +1217,7 @@ Tps_op_eqeqsign(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
     char* result;
     Tps_Value v;
-    register long len;
+    long len;
     Tps_Stream* strm;
 
     intrp->_tokenbuf.rewind();
@@ -1260,7 +1260,7 @@ Tps_Status
 Tps_op_execstack(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
     Tps_Value v;
-    register Tps_Status ok;
+    Tps_Status ok;
     long count;
     Tps_Array* a;
     Tps_Value* e;
@@ -1318,12 +1318,12 @@ Tps_op_for(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     Tps_Value incr;
     Tps_Value lim;
     Tps_Value proc;
-    register Tps_Frame_For* frame;
-    register int direction;
+    Tps_Frame_For* frame;
+    int direction;
 #if HASFLOAT
-    register Tps_Typeid tinit; /*= initial value */
-    register Tps_Typeid tinc;
-    register Tps_Typeid tlim;
+    Tps_Typeid tinit; /*= initial value */
+    Tps_Typeid tinc;
+    Tps_Typeid tlim;
 
     proc = args[0];
     lim = args[1];
@@ -1391,8 +1391,8 @@ static
 Tps_Status
 Tps_for_unwind(TPS_UNWIND_ARGS)
 {
-    register Tps_Frame_For* f = (Tps_Frame_For*)frame;
-    register Tps_Status ok = Tps_unwind_frame(intrp,f);
+    Tps_Frame_For* f = (Tps_Frame_For*)frame;
+    Tps_Status ok = Tps_unwind_frame(intrp,f);
     if(ok != TPSSTAT_OK) return ok;  
     if(thrown
 	&& TPS_ISTYPE(intrp->_throwflag,TPSTYPE_NAME)
@@ -1406,15 +1406,15 @@ static
 Tps_Status
 Tps_for_reenter(TPS_REENTER_ARGS)
 {
-    register Tps_Frame_For* f = (Tps_Frame_For*)frame;
-    register long direction = f->_dir;
+    Tps_Frame_For* f = (Tps_Frame_For*)frame;
+    long direction = f->_dir;
     Tps_Value curr = f->_current;
 #if HASFLOAT
     switch (TPS_TYPE(curr)) {
 	case TPSTYPE_INTEGER: {
-	    register long ci = TPS_INTEGER_OF(curr);
-	    register long li = TPS_INTEGER_OF(f->_limit);
-	    register long ii = TPS_INTEGER_OF(f->_incr);
+	    long ci = TPS_INTEGER_OF(curr);
+	    long li = TPS_INTEGER_OF(f->_limit);
+	    long ii = TPS_INTEGER_OF(f->_incr);
 	    if((direction && ci > li)
 	       || (!direction && ci < li)) return TPSSTAT_POPFRAME;
 	    /* increment _current */
@@ -1436,9 +1436,9 @@ Tps_for_reenter(TPS_REENTER_ARGS)
 	    return TPSSTAT_SYSTEMERROR;
     }
 #else /*!HASFLOAT*/
-    register long ci = TPS_INTEGER_OF(curr);
-    register long li = TPS_INTEGER_OF(f->_limit);
-    register long ii = TPS_INTEGER_OF(f->_incr);
+    long ci = TPS_INTEGER_OF(curr);
+    long li = TPS_INTEGER_OF(f->_limit);
+    long ii = TPS_INTEGER_OF(f->_incr);
     if((direction && ci > li)
        || (!direction && ci < li)) return TPSSTAT_POPFRAME;
     /* increment _current */
@@ -1456,7 +1456,7 @@ static
 Tps_Status
 Tps_for_trace(TPS_TRACE_ARGS)
 {
-    register Tps_Frame_For* f = (Tps_Frame_For*)frame;
+    Tps_Frame_For* f = (Tps_Frame_For*)frame;
     Tps_trace0(intrp,strm,f);
     if(TPS_ISTYPE(f->_current,TPSTYPE_INTEGER)) {
 	strm->printf(" %d",TPS_INTEGER_OF(f->_current));
@@ -1475,7 +1475,7 @@ static
 Tps_Status
 Tps_for_export(TPS_EXPORT_ARGS)
 {
-    register Tps_Frame_For* f = (Tps_Frame_For*)frame;
+    Tps_Frame_For* f = (Tps_Frame_For*)frame;
 
     /* assume length and kind will be dumped by caller */
     TPS_GUARANTEE(intrp,3);
@@ -1490,8 +1490,8 @@ static
 Tps_Status
 Tps_for_import(TPS_IMPORT_ARGS)
 {
-    register Tps_Frame_For* f = (Tps_Frame_For*)fr;
-    register Tps_Status ok;
+    Tps_Frame_For* f = (Tps_Frame_For*)fr;
+    Tps_Status ok;
     Tps_Value v;
 
     /* Assume that the handler name has been verified */
@@ -1539,7 +1539,7 @@ Tps_op_forall(Tps_Interp* intrp,  Tps_Value* args, long /*nargs*/)
     /* post form is:
 	compound body forall -> -
     */
-    register Tps_Frame_Forall* f;
+    Tps_Frame_Forall* f;
 
     switch (TPS_TYPE(args[1])) {
 	case TPSTYPE_ARRAY:
@@ -1561,8 +1561,8 @@ static
 Tps_Status
 Tps_forall_unwind(TPS_UNWIND_ARGS)
 {
-    register Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
-    register Tps_Status ok = Tps_unwind_frame(intrp,f);
+    Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
+    Tps_Status ok = Tps_unwind_frame(intrp,f);
     if(ok != TPSSTAT_OK) return ok;  
     if(thrown
 	&& TPS_ISTYPE(intrp->_throwflag,TPSTYPE_NAME)
@@ -1576,11 +1576,11 @@ static
 Tps_Status
 Tps_forall_reenter(TPS_REENTER_ARGS)
 {
-    register Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
-    register long n = f->_current;
-    register Tps_Array* a;
-    register Tps_String* s;
-    register Tps_Dict* d;
+    Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
+    long n = f->_current;
+    Tps_Array* a;
+    Tps_String* s;
+    Tps_Dict* d;
     Tps_Value v;
     Tps_Dictpair* pairp;
 
@@ -1630,7 +1630,7 @@ static
 Tps_Status
 Tps_forall_trace(TPS_TRACE_ARGS)
 {
-    register Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
+    Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
     Tps_trace0(intrp,strm,f);
     strm->printf(" index=%d",f->_current);
     strm->write("; iterate=");
@@ -1644,7 +1644,7 @@ static
 Tps_Status
 Tps_forall_mark(TPS_MARK_ARGS)
 {
-    register Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
+    Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
     (void)Tps_loop_mark(intrp,frame);
     Tps_mark(f->_iterate);
     return TPSSTAT_OK;
@@ -1654,7 +1654,7 @@ static
 Tps_Status
 Tps_forall_export(TPS_EXPORT_ARGS)
 {
-    register Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
+    Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
 
     /* assume length and kind will be dumped by caller */
     TPS_GUARANTEE(intrp,1);
@@ -1667,8 +1667,8 @@ static
 Tps_Status
 Tps_forall_import(TPS_IMPORT_ARGS)
 {
-    register Tps_Frame_Forall* f = (Tps_Frame_Forall*)fr;
-    register Tps_Status ok;
+    Tps_Frame_Forall* f = (Tps_Frame_Forall*)fr;
+    Tps_Status ok;
 
     /* Assume that the handler name has been verified */
     /* verify length */
@@ -1699,7 +1699,7 @@ Tps_Handler Tps_handler_forall = {
 Tps_Status
 Tps_op_flushstream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Stream* strm;
+    Tps_Stream* strm;
     if(!TPS_ISTYPE(args[0],TPSTYPE_STREAM)) return(TPSSTAT_TYPECHECK);
     strm = TPS_STREAM_OF(args[0]);
     TPS_POPN(intrp,1);
@@ -1710,9 +1710,9 @@ Tps_op_flushstream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_ge(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register int comparison;
-    register Tps_Typeid t0;
-    register Tps_Typeid t1;
+    int comparison;
+    Tps_Typeid t0;
+    Tps_Typeid t1;
 
     if((t1 = TPS_TYPE(args[0])) != (t0 = TPS_TYPE(args[1]))) {
 	/* need to do some special checking */
@@ -1734,17 +1734,17 @@ badtype:
 Tps_Status
 Tps_op_get(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Typeid t0;
-    register Tps_Typeid t1;
-    register long index;
-    register Tps_Status ok;
+    Tps_Typeid t0;
+    Tps_Typeid t1;
+    long index;
+    Tps_Status ok;
 
     t0 = TPS_TYPE(args[1]);
     t1 = TPS_TYPE(args[0]);
     switch (t0) {
 	case TPSTYPE_ARRAY:
 	    {
-		register Tps_Array* a = TPS_ARRAY_OF(args[1]);
+		Tps_Array* a = TPS_ARRAY_OF(args[1]);
 		if(t1 != TPSTYPE_INTEGER) goto badtype;
 		index = TPS_INTEGER_OF(args[0]);
 		if(index < 0 || index >= a->length()) goto badrange;
@@ -1753,7 +1753,7 @@ Tps_op_get(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	    break;
 	case TPSTYPE_DICT:
 	    {
-		register Tps_Dict* d = TPS_DICT_OF(args[1]);
+		Tps_Dict* d = TPS_DICT_OF(args[1]);
 		Tps_Dictpair* pairp;
 		ok = d->lookup(args[0],&pairp);
 		if(ok != TPSSTAT_OK) return ok;
@@ -1762,7 +1762,7 @@ Tps_op_get(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	    break;
 	case TPSTYPE_STRING:
 	    {
-		register Tps_String* s = TPS_STRING_OF(args[1]);
+		Tps_String* s = TPS_STRING_OF(args[1]);
 		if(t1 != TPSTYPE_INTEGER) goto badtype;
 		index = TPS_INTEGER_OF(args[0]);
 		if(index < 0 || index >= s->length()) goto badrange;
@@ -1783,8 +1783,8 @@ badrange:
 Tps_Status
 Tps_op_getinterval(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register long index;
-    register long count;
+    long index;
+    long count;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_INTEGER) || !TPS_ISTYPE(args[1],TPSTYPE_INTEGER))
 	return(TPSSTAT_TYPECHECK);
@@ -1793,20 +1793,20 @@ Tps_op_getinterval(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     switch (TPS_TYPE(args[2])) {
 	case TPSTYPE_ARRAY:
 	    {
-		register Tps_Array* a = TPS_ARRAY_OF(args[2]);
+		Tps_Array* a = TPS_ARRAY_OF(args[2]);
 		if(index < 0 || count < 0 || index+count > a->length())
 		    return(TPSSTAT_RANGECHECK);
-		register Tps_Array* anew = new Tps_Array(0);
+		Tps_Array* anew = new Tps_Array(0);
 		anew->append(a->contents()+index,count);
 		TPS_MAKEVALUE(args[2],TPSTYPE_ARRAY,anew);
 	    }
 	    break;
 	case TPSTYPE_STRING:
 	    {
-		register Tps_String* s = TPS_STRING_OF(args[2]);
+		Tps_String* s = TPS_STRING_OF(args[2]);
 		if(index < 0 || count < 0 || index+count > s->length())
 		    return(TPSSTAT_RANGECHECK);
-		register Tps_String* snew = new Tps_String;
+		Tps_String* snew = new Tps_String;
 		snew->append(s->contents()+index,count);
 		TPS_MAKEVALUE(args[2],TPSTYPE_STRING,snew);
 	    }
@@ -1821,9 +1821,9 @@ Tps_op_getinterval(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_gt(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register int comparison;
-    register Tps_Typeid t0;
-    register Tps_Typeid t1;
+    int comparison;
+    Tps_Typeid t0;
+    Tps_Typeid t1;
 
     if((t1 = TPS_TYPE(args[0])) != (t0 = TPS_TYPE(args[1]))) {
 	/* need to do some special checking */
@@ -1855,7 +1855,7 @@ Tps_op_idiv(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_if(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register int tf;
+    int tf;
     Tps_Value proc;
 
     if(!TPS_ISTYPE(args[1],TPSTYPE_BOOLEAN)) return(TPSSTAT_TYPECHECK);
@@ -1863,7 +1863,7 @@ Tps_op_if(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     proc = args[0];
     TPS_POPN(intrp,2);
     if(tf) {
-	register Tps_Status ok = Tps_create_source(intrp,proc);
+	Tps_Status ok = Tps_create_source(intrp,proc);
 	if(ok != TPSSTAT_OK) return ok;
     }
     return TPSSTAT_OK;
@@ -1872,7 +1872,7 @@ Tps_op_if(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_ifelse(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register int tf;
+    int tf;
     Tps_Value proc;
 
     if(!TPS_ISTYPE(args[2],TPSTYPE_BOOLEAN)) return(TPSSTAT_TYPECHECK);
@@ -1885,7 +1885,7 @@ Tps_op_ifelse(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_index(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register long count;
+    long count;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_INTEGER)) return(TPSSTAT_TYPECHECK);
     count = TPS_INTEGER_OF(args[0]);
@@ -1903,9 +1903,9 @@ Tps_op_interrupt(Tps_Interp* /*intrp*/, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_known(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Dict* d;
+    Tps_Dict* d;
     Tps_Dictpair* pairp;
-    register Tps_Status found;
+    Tps_Status found;
 
     if(!TPS_ISTYPE(args[1],TPSTYPE_DICT)) return(TPSSTAT_TYPECHECK);
     d = TPS_DICT_OF(args[1]);
@@ -1927,9 +1927,9 @@ Tps_op_known(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_le(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register int comparison;
-    register Tps_Typeid t0;
-    register Tps_Typeid t1;
+    int comparison;
+    Tps_Typeid t0;
+    Tps_Typeid t1;
 
     if((t1 = TPS_TYPE(args[0])) != (t0 = TPS_TYPE(args[1]))) {
 	/* need to do some special checking */
@@ -1951,7 +1951,7 @@ badtype:
 Tps_Status
 Tps_op_length(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register long len;
+    long len;
 
     switch (TPS_TYPE(args[0])) {
 	case TPSTYPE_STRING:
@@ -1970,7 +1970,7 @@ Tps_op_length(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_load(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     Tps_Dictpair* pairp;
 
     ok = Tps_dictstack_lookup(TPS_DTOSP(intrp),TPS_DDEPTH(intrp),
@@ -1983,7 +1983,7 @@ Tps_op_load(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_loop(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register Tps_Frame_Loop* f;
+    Tps_Frame_Loop* f;
 
     if(!(f = (Tps_Frame_Loop*)Tps_create_frame(intrp,&Tps_handler_loop,sizeof(Tps_Frame_Loop)))) return TPSSTAT_VMERROR;
     f->_body = TPS_POP(intrp);
@@ -1994,8 +1994,8 @@ static
 Tps_Status
 Tps_loop_unwind(TPS_UNWIND_ARGS)
 {
-    register Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
-    register Tps_Status ok = Tps_unwind_frame(intrp,f);
+    Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
+    Tps_Status ok = Tps_unwind_frame(intrp,f);
     if(ok != TPSSTAT_OK) return ok;  
     if(thrown
 	&& TPS_ISTYPE(intrp->_throwflag,TPSTYPE_NAME)
@@ -2009,7 +2009,7 @@ static
 Tps_Status
 Tps_loop_reenter(TPS_REENTER_ARGS)
 {
-    register Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
+    Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
     Tps_create_source(intrp,f->_body);
     return TPSSTAT_RETRYFRAME;
 }
@@ -2018,7 +2018,7 @@ static
 Tps_Status
 Tps_loop_trace(TPS_TRACE_ARGS)
 {
-    register Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
+    Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
     Tps_trace0(intrp,strm,f);
     strm->write(" body=");
     (void)Tps_cvts1(*strm,f->_body,TRUE,-1);
@@ -2029,7 +2029,7 @@ static
 Tps_Status
 Tps_loop_mark(TPS_MARK_ARGS1)
 {
-    register Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
+    Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
     Tps_mark(f->_body);
     return TPSSTAT_OK;
 }
@@ -2038,7 +2038,7 @@ static
 Tps_Status
 Tps_loop_export(TPS_EXPORT_ARGS)
 {
-    register Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
+    Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
 
     /* assume length and kind will be dumped by caller */
     TPS_GUARANTEE(intrp,1);
@@ -2051,7 +2051,7 @@ static
 Tps_Status
 Tps_loop_import(TPS_IMPORT_ARGS1)
 {
-    register Tps_Frame_Loop* f = (Tps_Frame_Loop*)fr;
+    Tps_Frame_Loop* f = (Tps_Frame_Loop*)fr;
 
     /* Assume that the handler name has been verified */
     /* verify length */
@@ -2081,9 +2081,9 @@ Tps_Handler Tps_handler_loop = {
 Tps_Status
 Tps_op_lt(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register int comparison;
-    register Tps_Typeid t0;
-    register Tps_Typeid t1;
+    int comparison;
+    Tps_Typeid t0;
+    Tps_Typeid t1;
 
     if((t1 = TPS_TYPE(args[0])) != (t0 = TPS_TYPE(args[1]))) {
 	/* need to do some special checking */
@@ -2105,7 +2105,7 @@ badtype:
 Tps_Status
 Tps_op_maxlength(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register long maxlen;
+    long maxlen;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_DICT)) return(TPSSTAT_TYPECHECK);
     maxlen = TPS_DICT_OF(args[0])->maxlength();
@@ -2117,9 +2117,9 @@ Tps_Status
 Tps_op_mod(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
 #if HASFLOAT
-    register Tps_Typeid rtyp0;
-    register Tps_Typeid rtyp1;
-    register long ir;
+    Tps_Typeid rtyp0;
+    Tps_Typeid rtyp1;
+    long ir;
     Tps_Real fr;
 
     rtyp0 = TPS_TYPE(args[1]);
@@ -2168,7 +2168,7 @@ wrongtype:
     if(TPS_TYPE(args[1]) != TPSTYPE_INTEGER
        || TPS_TYPE(args[0]) != TPSTYPE_INTEGER)
 	return TPSSTAT_TYPECHECK;
-    register long ir = TPS_INTEGER_OF(args[1]) % TPS_INTEGER_OF(args[0]);
+    long ir = TPS_INTEGER_OF(args[1]) % TPS_INTEGER_OF(args[0]);
     TPS_MAKEVALUE(args[1],TPSTYPE_INTEGER,ir);
     TPS_POPN(intrp,1);
     return TPSSTAT_OK;
@@ -2179,11 +2179,11 @@ Tps_Status
 Tps_op_mul(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
     Tps_Value result;
-    register long ir = 1;
-    register long i;
+    long ir = 1;
+    long i;
 #if HASFLOAT
     Tps_Real fr = 1.0;
-    register int isfloat = 0;
+    int isfloat = 0;
 #endif
 
     /* this is defined to potentially add any number of args */
@@ -2212,7 +2212,7 @@ Tps_op_mul(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_ne(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok = Tps_op_eq(intrp,args,2);
+    Tps_Status ok = Tps_op_eq(intrp,args,2);
     if(ok != TPSSTAT_OK) return ok;
     args++;
     TPS_CHANGEVALUE(args[0],TPSTYPE_BOOLEAN,!TPS_BOOLEAN_OF(args[0]));
@@ -2223,13 +2223,13 @@ Tps_Status
 Tps_op_neg(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
 #if HASFLOAT
-    register Tps_Typeid rtyp;
+    Tps_Typeid rtyp;
 
     rtyp = TPS_TYPE(args[0]);
     switch (rtyp) {
 	case TPSTYPE_INTEGER:
 	    {
-		register long i = TPS_INTEGER_OF(args[0]);
+		long i = TPS_INTEGER_OF(args[0]);
 		TPS_CHANGEVALUE(args[0],TPSTYPE_INTEGER,- i);
 	    }
 	    break;
@@ -2246,7 +2246,7 @@ Tps_op_neg(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 #else /*!HASFLOAT*/
     if(TPS_TYPE(args[0]) != TPSTYPE_INTEGER)
 	return TPSSTAT_TYPECHECK;
-    register long i = TPS_INTEGER_OF(args[0]);
+    long i = TPS_INTEGER_OF(args[0]);
     TPS_CHANGEVALUE(args[0],TPSTYPE_INTEGER,- i);
     return TPSSTAT_OK;
 #endif /*HASFLOAT*/
@@ -2299,9 +2299,9 @@ Tps_op_not(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_operator(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
-    register Tps_Nameid nm;
-    register long arity;
+    Tps_Status ok;
+    Tps_Nameid nm;
+    long arity;
     Tpsstatfcn proc;
 
     /* name arity ptr operator => -- */
@@ -2326,9 +2326,9 @@ Tps_op_operator(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_or(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register u_long bits = 0; /* so initial and will be correct */
-    register long i;
-    register int isint = 0;
+    u_long bits = 0; /* so initial and will be correct */
+    long i;
+    int isint = 0;
     Tps_Value result;
 
     for(i=0;i<2;i++) {
@@ -2359,10 +2359,10 @@ Tps_op_pop(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_put(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Typeid t0;
-    register Tps_Typeid t1;
-    register Tps_Typeid t2;
-    register long index;
+    Tps_Typeid t0;
+    Tps_Typeid t1;
+    Tps_Typeid t2;
+    long index;
 
     t0 = TPS_TYPE(args[2]);
     t1 = TPS_TYPE(args[1]);
@@ -2371,7 +2371,7 @@ Tps_op_put(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     switch (t0) {
 	case TPSTYPE_ARRAY:
 	    {
-		register Tps_Array* a1 = TPS_ARRAY_OF(args[2]);
+		Tps_Array* a1 = TPS_ARRAY_OF(args[2]);
 		if(t1 != TPSTYPE_INTEGER) goto badtype;
 		index = TPS_INTEGER_OF(args[1]);
 		if(index < 0 || index >= a1->length()) goto badrange;
@@ -2380,8 +2380,8 @@ Tps_op_put(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	    break;
 	case TPSTYPE_DICT:
 	    {
-		register Tps_Dict* d1 = TPS_DICT_OF(args[2]);
-		register Tps_Status ok;
+		Tps_Dict* d1 = TPS_DICT_OF(args[2]);
+		Tps_Status ok;
 		Tps_Value v;
 		Tps_Dictpair pair;
 
@@ -2394,7 +2394,7 @@ Tps_op_put(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	    break;
 	case TPSTYPE_STRING:
 	    {
-		register Tps_String* s1 = TPS_STRING_OF(args[2]);
+		Tps_String* s1 = TPS_STRING_OF(args[2]);
 		if(t2 != TPSTYPE_INTEGER || t1 != TPSTYPE_INTEGER) goto badtype;
 		index = TPS_INTEGER_OF(args[1]);
 		if(index < 0 || index >= s1->length()) goto badrange;
@@ -2415,8 +2415,8 @@ badrange:
 Tps_Status
 Tps_op_putinterval(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Typeid t0;
-    register long index;
+    Tps_Typeid t0;
+    long index;
 
     if(!TPS_ISTYPE(args[1],TPSTYPE_INTEGER)) return(TPSSTAT_TYPECHECK);
     if((t0 = TPS_TYPE(args[2])) != TPS_TYPE(args[0])) return(TPSSTAT_TYPECHECK);
@@ -2425,16 +2425,16 @@ Tps_op_putinterval(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     switch (t0) {
 	case TPSTYPE_STRING:
 	    {
-		register Tps_String* s2 = TPS_STRING_OF(args[0]);
-		register Tps_String* s0 = TPS_STRING_OF(args[2]);
+		Tps_String* s2 = TPS_STRING_OF(args[0]);
+		Tps_String* s0 = TPS_STRING_OF(args[2]);
 		if(s0->length() < s2->length()+index) return(TPSSTAT_RANGECHECK);
 		MEMCPY(&s0->contents()[index],s2->contents(),s2->length());
 	    }
 	    break;
 	case TPSTYPE_ARRAY:
 	    {
-		register Tps_Array* a2 = TPS_ARRAY_OF(args[0]);
-		register Tps_Array* a0 = TPS_ARRAY_OF(args[2]);
+		Tps_Array* a2 = TPS_ARRAY_OF(args[0]);
+		Tps_Array* a0 = TPS_ARRAY_OF(args[2]);
 		if(a0->length() < a2->length()+index) return(TPSSTAT_RANGECHECK);
 		MEMCPY(
 		      (char*)&a0->contents()[index],(char*)a2->contents(),
@@ -2457,7 +2457,7 @@ Tps_op_quit(Tps_Interp* /*intrp*/, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_rbrace(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
 
     /* do the equivalent of {counttomark array astore exch pop cvx} */
     ok = TPS_CALL_PRIM(intrp,Tps_op_counttomark);/* mark a0..an-1 n */
@@ -2477,7 +2477,7 @@ Tps_op_rbrace(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_rbracket(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
 
     /* do the equivalent of {counttomark array astore exch pop} */
     ok = TPS_CALL_PRIM(intrp,Tps_op_counttomark);/* mark a0..an-1 n */
@@ -2495,7 +2495,7 @@ Tps_op_rbracket(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_rcheck(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register boolean b = TRUE;
+    boolean b = TRUE;
 
     switch (TPS_TYPE(args[0])) {
 	case TPSTYPE_STRING:
@@ -2536,10 +2536,10 @@ Tps_op_read(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_readline(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_String* ss;
-    register long i;
-    register long c;
-    register Tps_Stream* strm;
+    Tps_String* ss;
+    long i;
+    long c;
+    Tps_Stream* strm;
     char* s;
 
     if(!TPS_ISTYPE(args[1],TPSTYPE_STREAM)) return(TPSSTAT_TYPECHECK);
@@ -2607,10 +2607,10 @@ Tps_op_readonly(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_readstring(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_String* ss;
-    register long i;
-    register long c;
-    register Tps_Stream* strm;
+    Tps_String* ss;
+    long i;
+    long c;
+    Tps_Stream* strm;
     char* s;
 
     if(!TPS_ISTYPE(args[1],TPSTYPE_STREAM)) return(TPSSTAT_TYPECHECK);
@@ -2649,7 +2649,7 @@ Tps_op_readstring(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_realtime(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register long timediff;
+    long timediff;
     Tps_Value v;
     struct timeval t;
 
@@ -2669,8 +2669,8 @@ Tps_op_realtime(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_remove(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
-    register Tps_Dict* d1 = TPS_DICT_OF(args[1]);
+    Tps_Status ok;
+    Tps_Dict* d1 = TPS_DICT_OF(args[1]);
     Tps_Dictpair pair;
 
     if(!TPS_ISTYPE(args[1],TPSTYPE_DICT)) return(TPSSTAT_TYPECHECK);
@@ -2692,8 +2692,8 @@ Tps_op_repeat(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
     /* prefix form is:
 	repeat n body -> -
     */
-    register Tps_Frame_Repeat* f;
-    register long n;
+    Tps_Frame_Repeat* f;
+    long n;
 
     if(!TPS_ISTYPE(args[1],TPSTYPE_INTEGER)) return TPSSTAT_TYPECHECK;
     if((n = TPS_INTEGER_OF(args[1])) < 0) return TPSSTAT_RANGECHECK;
@@ -2710,8 +2710,8 @@ static
 Tps_Status
 Tps_repeat_unwind(TPS_UNWIND_ARGS)
 {
-    register Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)frame;
-    register Tps_Status ok = Tps_unwind_frame(intrp,f);
+    Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)frame;
+    Tps_Status ok = Tps_unwind_frame(intrp,f);
     if(ok != TPSSTAT_OK) return ok;  
     if(thrown
 	&& TPS_ISTYPE(intrp->_throwflag,TPSTYPE_NAME)
@@ -2725,7 +2725,7 @@ static
 Tps_Status
 Tps_repeat_reenter(TPS_REENTER_ARGS)
 {
-    register Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)frame;
+    Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)frame;
     if(f->_current-- <= 0) return TPSSTAT_POPFRAME;
     /* rexecute body */
     Tps_create_source(intrp,f->_body);
@@ -2736,7 +2736,7 @@ static
 Tps_Status
 Tps_repeat_trace(TPS_TRACE_ARGS)
 {
-    register Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)frame;
+    Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)frame;
     Tps_trace0(intrp,strm,f);
     strm->printf(" current=%d",f->_current);
     strm->write(" body=");
@@ -2749,7 +2749,7 @@ Tps_Status
 Tps_repeat_export(TPS_EXPORT_ARGS)
 {
     Tps_Value v;
-    register Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)frame;
+    Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)frame;
 
     /* assume length and kind will be dumped by caller */
     TPS_GUARANTEE(intrp,1);
@@ -2763,8 +2763,8 @@ static
 Tps_Status
 Tps_repeat_import(TPS_IMPORT_ARGS)
 {
-    register Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)fr;
-    register Tps_Status ok;
+    Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)fr;
+    Tps_Status ok;
     Tps_Value v;
 
     /* Assume that the handler name has been verified */
@@ -2799,7 +2799,7 @@ Tps_Handler Tps_handler_repeat = {
 Tps_Status
 Tps_op_resetstream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Stream* strm;
+    Tps_Stream* strm;
     if(!TPS_ISTYPE(args[0],TPSTYPE_STREAM)) return(TPSSTAT_TYPECHECK);
     if(intrp->safe() && TPS_ISUNSAFE(args[0])) return TPSSTAT_UNSAFE;
     strm = TPS_STREAM_OF(args[0]);
@@ -2811,13 +2811,13 @@ Tps_op_resetstream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_roll(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register long range; /* depth in the stack to roll */
-    register long count; /* amount to roll */
-    register long left; /* range - |count| */
-    register Tps_Value* first;
-    register Tps_Value* last;
-    register Tps_Value* split;
-    register int i;
+    long range; /* depth in the stack to roll */
+    long count; /* amount to roll */
+    long left; /* range - |count| */
+    Tps_Value* first;
+    Tps_Value* last;
+    Tps_Value* split;
+    int i;
 
     /* treat as if arity == 2 */
     if(!TPS_ISTYPE(args[1],TPSTYPE_INTEGER)) return(TPSSTAT_TYPECHECK);
@@ -2857,8 +2857,8 @@ done:
 Tps_Status
 Tps_op_rrangle(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register Tps_Status ok;
-    register long count;
+    Tps_Status ok;
+    long count;
     Tps_Value v;
 
     /* counttomark */
@@ -2901,7 +2901,7 @@ Tps_op_rrangle(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_runstream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Frame_Runstream* f;
+    Tps_Frame_Runstream* f;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_STREAM)) return(TPSSTAT_TYPECHECK);
     if(!(f = (Tps_Frame_Runstream*)Tps_create_frame(intrp,&Tps_handler_runstream,sizeof(Tps_Frame_Runstream)))) return TPSSTAT_VMERROR;
@@ -2914,8 +2914,8 @@ static
 Tps_Status
 Tps_runstream_unwind(TPS_UNWIND_ARGS)
 {
-    register Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
-    register Tps_Status ok = Tps_unwind_frame(intrp,f);
+    Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
+    Tps_Status ok = Tps_unwind_frame(intrp,f);
     if(ok != TPSSTAT_OK) return ok;  
     if(thrown) {
 	if(TPS_ISTYPE(intrp->_throwflag,TPSTYPE_NAME)
@@ -2940,8 +2940,8 @@ static
 Tps_Status
 Tps_runstream_reenter(TPS_REENTER_ARGS)
 {
-    register Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
-    register Tps_Status ok;
+    Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
+    Tps_Status ok;
     Tps_Value v;
     ok = Tps_get_token(intrp->_tokenbuf,f->_strm,&v,1);
     if(ok == TPSSTAT_EOF)
@@ -2956,7 +2956,7 @@ static
 Tps_Status
 Tps_runstream_trace(TPS_TRACE_ARGS)
 {
-    register Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
+    Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
     Tps_trace0(intrp,strm,f);
     return TPSSTAT_OK;
 }
@@ -2965,7 +2965,7 @@ static
 Tps_Status
 Tps_runstream_mark(TPS_MARK_ARGS1)
 {
-    register Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
+    Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
     f->_strm->mark();
     return TPSSTAT_OK;
 }
@@ -2975,7 +2975,7 @@ Tps_Status
 Tps_runstream_export(TPS_EXPORT_ARGS1)
 {
     Tps_Value v;
-    register Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
+    Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
 
     TPS_GUARANTEE(intrp,1);
     TPS_MAKEVALUE(v,TPSTYPE_STREAM,f->_strm);
@@ -2988,7 +2988,7 @@ static
 Tps_Status
 Tps_runstream_import(TPS_IMPORT_ARGS1)
 {
-    register Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)fr;
+    Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)fr;
     Tps_Value v;
 
     /* Assume that the handler name has been verified */
@@ -3021,14 +3021,14 @@ Tps_Handler Tps_handler_runstream = {
 Tps_Status
 Tps_op_search(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_String* s0;
-    register Tps_String* s1;
-    register long i;
-    register long r0;
-    register long l0;
-    register long c0;
-    register char* p0;
-    register char* p1;
+    Tps_String* s0;
+    Tps_String* s1;
+    long i;
+    long r0;
+    long l0;
+    long c0;
+    char* p0;
+    char* p1;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_STRING)
 	|| !TPS_ISTYPE(args[1],TPSTYPE_STRING))
@@ -3081,8 +3081,8 @@ notfound:
 Tps_Status
 Tps_op_setarity(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Operator* op;
-    register long arity;
+    Tps_Operator* op;
+    long arity;
 
     if(!TPS_ISTYPE(args[1],TPSTYPE_OPERATOR)) return TPSSTAT_TYPECHECK;
     if(!TPS_ISTYPE(args[0],TPSTYPE_INTEGER)) return TPSSTAT_TYPECHECK;
@@ -3097,7 +3097,7 @@ Tps_op_setarity(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_sleep(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register long sec;
+    long sec;
     if(!TPS_ISTYPE(args[0],TPSTYPE_INTEGER))
 	return(TPSSTAT_TYPECHECK);    
     sec = TPS_INTEGER_OF(args[0]);
@@ -3136,7 +3136,7 @@ Tps_op_stopped(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 
     proc = TPS_POP(intrp);
     if(TPS_ISEXARRAY(proc)) {
-	register Tps_Frame_Stopped* f;
+	Tps_Frame_Stopped* f;
 	if(!(f = (Tps_Frame_Stopped*)Tps_create_frame(intrp,&Tps_handler_stopped,sizeof(Tps_Frame_Stopped)))) return TPSSTAT_VMERROR;
 	f->_body = proc;
 	return Tps_create_source(intrp,proc);
@@ -3150,8 +3150,8 @@ static
 Tps_Status
 Tps_stopped_unwind(TPS_UNWIND_ARGS)
 {
-    register Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)frame;
-    register Tps_Status ok = Tps_unwind_frame(intrp,f);
+    Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)frame;
+    Tps_Status ok = Tps_unwind_frame(intrp,f);
     if(ok != TPSSTAT_OK) return ok;  
     /* test for /stop */
     if(thrown) {
@@ -3184,7 +3184,7 @@ static
 Tps_Status
 Tps_stopped_trace(TPS_TRACE_ARGS)
 {
-    register Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)frame;
+    Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)frame;
     Tps_trace0(intrp,strm,f);
     strm->write(" body=");
     (void)Tps_cvts1(*strm,f->_body,TRUE,-1);
@@ -3195,7 +3195,7 @@ static
 Tps_Status
 Tps_stopped_mark(TPS_MARK_ARGS1)
 {
-    register Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)frame;
+    Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)frame;
     Tps_mark(f->_body);
     return TPSSTAT_OK;
 }
@@ -3204,7 +3204,7 @@ static
 Tps_Status
 Tps_stopped_export(TPS_EXPORT_ARGS1)
 {
-    register Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)frame;
+    Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)frame;
 
     /* assume length and kind will be dumped by caller */
     TPS_GUARANTEE(intrp,1);
@@ -3217,7 +3217,7 @@ static
 Tps_Status
 Tps_stopped_import(TPS_IMPORT_ARGS1)
 {
-    register Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)fr;
+    Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)fr;
 
     /* Assume that the handler name has been verified */
     /* verify length */
@@ -3247,11 +3247,11 @@ Tps_Handler Tps_handler_stopped = {
 Tps_Status
 Tps_op_store(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Value* ds;
-    register Tps_Status ok;
+    Tps_Value* ds;
+    Tps_Status ok;
     long where;
     Tps_Dictpair pair;
-    register Tps_Dict* d;
+    Tps_Dict* d;
     Tps_Value dv;
 
     ok = Tps_dictstack_lookup(TPS_DTOSP(intrp),TPS_DDEPTH(intrp),
@@ -3280,7 +3280,7 @@ previous safety state on top of stack
 Tps_Status
 Tps_op_stream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     const char* which;
     long wlen;
     const char* fname;
@@ -3353,9 +3353,9 @@ Tps_op_stream(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_streamstring(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Stream* strm;
-    register Tps_Stream_String* sstrm;
-    register Tps_String* s;
+    Tps_Stream* strm;
+    Tps_Stream_String* sstrm;
+    Tps_String* s;
     Tps_Value v;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_STREAM)) return TPSSTAT_TYPECHECK;
@@ -3374,8 +3374,8 @@ Tps_op_streamstring(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_string(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_String* s;
-    register long len;
+    Tps_String* s;
+    long len;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_INTEGER)) return(TPSSTAT_TYPECHECK);
     len = TPS_INTEGER_OF(args[0]);
@@ -3390,9 +3390,9 @@ Tps_Status
 Tps_op_sub(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
 #if HASFLOAT
-    register Tps_Typeid rtyp0;
-    register Tps_Typeid rtyp1;
-    register long ir;
+    Tps_Typeid rtyp0;
+    Tps_Typeid rtyp1;
+    long ir;
     Tps_Real fr;
 
     rtyp1 = TPS_TYPE(args[0]);
@@ -3439,7 +3439,7 @@ wrongtype:
     if(TPS_TYPE(args[0]) != TPSTYPE_INTEGER
        || TPS_TYPE(args[1]) != TPSTYPE_INTEGER)
 	return TPSSTAT_TYPECHECK;
-    register long ir;
+    long ir;
     ir = TPS_INTEGER_OF(args[1]) - TPS_INTEGER_OF(args[0]);
     TPS_MAKEVALUE(args[1],TPSTYPE_INTEGER,ir);
     TPS_POPN(intrp,1);
@@ -3461,7 +3461,7 @@ throw: value throw -
 Tps_Status
 Tps_op_throw(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
 
     intrp->_throwflag = TPS_POP(intrp); /* pull off the thrown value */
     if(!intrp->safe()) TPS_SET_UNSAFE(intrp->_throwflag,1);
@@ -3543,11 +3543,11 @@ Tps_Status
 Tps_op_undef(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
     long where;
-    register Tps_Value* ds;
-    register Tps_Status ok;
+    Tps_Value* ds;
+    Tps_Status ok;
     Tps_Dictpair* pairp;
     Tps_Dictpair pair;
-    register Tps_Dict* d;
+    Tps_Dict* d;
 
     ok = Tps_dictstack_lookup(TPS_DTOSP(intrp),TPS_DDEPTH(intrp),
 			      args[0],&where,&pairp);
@@ -3579,7 +3579,7 @@ Tps_op_userdict(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_usertime(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register long timediff;
+    long timediff;
     Tps_Value v;
 
 #if defined hpux || solaris2
@@ -3614,7 +3614,7 @@ Tps_op_usertime(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_wcheck(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register boolean b = TRUE;
+    boolean b = TRUE;
 
     switch (TPS_TYPE(args[0])) {
 	case TPSTYPE_STRING:
@@ -3641,8 +3641,8 @@ Tps_Status
 Tps_op_where(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
     long where;
-    register Tps_Value* ds;
-    register Tps_Status ok;
+    Tps_Value* ds;
+    Tps_Status ok;
 
     ok = Tps_dictstack_lookup(TPS_DTOSP(intrp),TPS_DDEPTH(intrp),
 			      args[0],&where,(Tps_Dictpair**)0);
@@ -3666,7 +3666,7 @@ Tps_Status
 Tps_op_while(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
     /* form: expr body while */
-    register Tps_Frame_While* f;
+    Tps_Frame_While* f;
 
     if(!(f = (Tps_Frame_While*)Tps_create_frame(intrp,&Tps_handler_while,sizeof(Tps_Frame_While)))) return TPSSTAT_VMERROR;
     f->_body = TPS_POP(intrp);
@@ -3680,8 +3680,8 @@ static
 Tps_Status
 Tps_while_unwind(TPS_UNWIND_ARGS)
 {
-    register Tps_Frame_While* f = (Tps_Frame_While*)frame;
-    register Tps_Status ok = Tps_unwind_frame(intrp,f);
+    Tps_Frame_While* f = (Tps_Frame_While*)frame;
+    Tps_Status ok = Tps_unwind_frame(intrp,f);
     if(ok != TPSSTAT_OK) return ok;  
     if(thrown
 	&& TPS_ISTYPE(intrp->_throwflag,TPSTYPE_NAME)
@@ -3695,8 +3695,8 @@ static
 Tps_Status
 Tps_while_reenter(TPS_REENTER_ARGS)
 {
-    register Tps_Frame_While* f = (Tps_Frame_While*)frame;
-    register Tps_Value b;
+    Tps_Frame_While* f = (Tps_Frame_While*)frame;
+    Tps_Value b;
     
     /* test the top of stack to decide if to continue */
     b = TPS_TOP(intrp);
@@ -3716,7 +3716,7 @@ static
 Tps_Status
 Tps_while_trace(TPS_TRACE_ARGS)
 {
-    register Tps_Frame_While* f = (Tps_Frame_While*)frame;
+    Tps_Frame_While* f = (Tps_Frame_While*)frame;
     Tps_trace0(intrp,strm,f);
     strm->write(" cond=");
     (void)Tps_cvts1(*strm,f->_cond,TRUE,-1);
@@ -3729,7 +3729,7 @@ static
 Tps_Status
 Tps_while_mark(TPS_MARK_ARGS1)
 {
-    register Tps_Frame_While* f = (Tps_Frame_While*)frame;
+    Tps_Frame_While* f = (Tps_Frame_While*)frame;
     Tps_mark(f->_body);
     Tps_mark(f->_cond);
     return TPSSTAT_OK;
@@ -3739,7 +3739,7 @@ static
 Tps_Status
 Tps_while_export(TPS_EXPORT_ARGS)
 {
-    register Tps_Frame_While* f = (Tps_Frame_While*)frame;
+    Tps_Frame_While* f = (Tps_Frame_While*)frame;
 
     TPS_GUARANTEE(intrp,1);
     TPS_PUSH(intrp,f->_cond);
@@ -3751,8 +3751,8 @@ static
 Tps_Status
 Tps_while_import(TPS_IMPORT_ARGS)
 {
-    register Tps_Frame_While* f = (Tps_Frame_While*)fr;
-    register Tps_Status ok;
+    Tps_Frame_While* f = (Tps_Frame_While*)fr;
+    Tps_Status ok;
 
     /* Assume that the handler name has been verified */
     /* verify length */
@@ -3783,7 +3783,7 @@ Tps_Handler Tps_handler_while = {
 Tps_Status
 Tps_op_write(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     if(!TPS_ISTYPE(args[1],TPSTYPE_STREAM)) return(TPSSTAT_TYPECHECK);
     if(!TPS_ISTYPE(args[0],TPSTYPE_INTEGER)) return(TPSSTAT_TYPECHECK);
     ok = TPS_STREAM_OF(args[1])->write(TPS_INTEGER_OF(args[0]));
@@ -3795,8 +3795,8 @@ Tps_op_write(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_writestring(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_String* s;
-    register Tps_Status ok;
+    Tps_String* s;
+    Tps_Status ok;
 
     if(!TPS_ISTYPE(args[1],TPSTYPE_STREAM)) return(TPSSTAT_TYPECHECK);
     if(!TPS_ISTYPE(args[0],TPSTYPE_STRING)) return(TPSSTAT_TYPECHECK);
@@ -3820,9 +3820,9 @@ Tps_op_xcheck(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_xor(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register u_long bits = 0; /* so initial and will be correct */
-    register long i;
-    register int isint = 0;
+    u_long bits = 0; /* so initial and will be correct */
+    long i;
+    int isint = 0;
     Tps_Value result;
 
     for(i=0;i<2;i++) {
@@ -3884,8 +3884,8 @@ on entry, stack contains :  ... object /<errname>
 Tps_Status
 Tps_op_handleerror(Tps_Interp* intrp, Tps_Value* args, long nargs)
 {
-    register Tps_Status ok;
-    register boolean errmode;
+    Tps_Status ok;
+    boolean errmode;
 
     /* do some validity checks */
     if(nargs < 2) return TPSSTAT_STACKUNDERFLOW;
@@ -3936,7 +3936,7 @@ Tps_op_tracecheck(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_traceexec(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
 
     ok = Tps_create_trace(intrp,1);
     if(ok != TPSSTAT_OK) return ok;
@@ -4122,7 +4122,7 @@ Tps_op_truncate(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_rand(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register int i;
+    int i;
     Tps_Value v;
 
     TPS_GUARANTEE(intrp,1);
@@ -4135,7 +4135,7 @@ Tps_op_rand(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_rrand(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register int i;
+    int i;
     Tps_Value v;
 
     TPS_GUARANTEE(intrp,1);
@@ -4149,7 +4149,7 @@ Tps_op_rrand(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_srand(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register long i;
+    long i;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_INTEGER)) return(TPSSTAT_TYPECHECK);
     i = TPS_INTEGER_OF(args[0]);
@@ -4173,7 +4173,7 @@ Tps_op_gc(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_stateexec(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
 
     ok = Tps_create_statemark(intrp);
     if(ok != TPSSTAT_OK) return ok;
@@ -4186,9 +4186,9 @@ Tps_op_stateexec(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_statesave(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 {
-    register Tps_Status ok;
-    register char* s;
-    register Tps_String* ss;
+    Tps_Status ok;
+    char* s;
+    Tps_String* ss;
     Tps_Value v;
 
     TPS_GUARANTEE(intrp,2);
@@ -4209,10 +4209,10 @@ Tps_op_statesave(Tps_Interp* intrp, Tps_Value* /*args*/, long /*nargs*/)
 Tps_Status
 Tps_op_staterestore(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
-    register Tps_String* ss;
-    register Tps_Stream* f;
-    register boolean clr;
+    Tps_Status ok;
+    Tps_String* ss;
+    Tps_Stream* f;
+    boolean clr;
 
     if(!TPS_ISTYPE(args[0],TPSTYPE_BOOLEAN)) return TPSSTAT_TYPECHECK;
     clr = TPS_BOOLEAN_OF(args[0]);
@@ -4251,7 +4251,7 @@ Tps_op_cvunsafe(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_safecheck(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 {
-    register boolean b = TPS_ISUNSAFE(args[0]);
+    boolean b = TPS_ISUNSAFE(args[0]);
     if(b)
 	args[0] = TPS__CONST(TPS__FALSE);
     else
@@ -4262,7 +4262,7 @@ Tps_op_safecheck(Tps_Interp* /*intrp*/, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_safeexec(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
 
     if(!intrp->safe()) {
 	ok = Tps_create_safety(intrp,TRUE);
@@ -4299,10 +4299,10 @@ Tps_op_cvmethod(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 Tps_Status
 Tps_op_clonedeep(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 {
-    register Tps_Dict* dthis; /* current OLD dict */
-    register Tps_Dict* dcopy; /* copy of current old dict */
-    register Tps_Dict* dprev; /* last dict copy */
-    register Tps_Status ok;
+    Tps_Dict* dthis; /* current OLD dict */
+    Tps_Dict* dcopy; /* copy of current old dict */
+    Tps_Dict* dprev; /* last dict copy */
+    Tps_Status ok;
     Tps_Value v;
     Tps_Dictpair pair;
     Tps_Dictpair* pairp;

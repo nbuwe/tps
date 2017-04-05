@@ -27,7 +27,7 @@ const int TPS_STRING_MINEXTEND = 4;
 boolean
 Tps_String::initialize(long sz)
 {
-    register long alloc;
+    long alloc;
     if(sz < 0) sz = 0;
     alloc = sz?sz:TPS_STRING_MINEXTEND;
     _contents = (char*)Tps_malloc(alloc);
@@ -52,7 +52,7 @@ Tps_String::Tps_String(const char* initstr, long len) : Tps_Container(TPSTYPE_ST
 Tps_String::Tps_String(const char* initstr)
 	    : Tps_Container(TPSTYPE_STRING)
 {
-    register size_t len = strlen(initstr);
+    size_t len = strlen(initstr);
     initialize(len);
     MEMCPY(_contents,initstr,len);
 }
@@ -65,8 +65,8 @@ Tps_String::~Tps_String()
 Tps_Status
 Tps_String::extend(long need)
 {
-    register long newalloc;
-    register char* newcontents;
+    long newalloc;
+    char* newcontents;
 
     if(need <= TPS_STRING_MINEXTEND) need = TPS_STRING_MINEXTEND;
     newalloc = _len+need;
@@ -83,7 +83,7 @@ Tps_String::extend(long need)
 Tps_Status
 Tps_String::setlen(long newlen)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     if(newlen < 0) return TPSSTAT_RANGECHECK;
     if(newlen > _alloc) {
 	ok = extend(newlen - _alloc);
@@ -100,7 +100,7 @@ Tps_Status
 Tps_String::append(char* s, long slen)
 {
     if((_len + slen) > _alloc) {
-	register Tps_Status ok;
+	Tps_Status ok;
 	ok = extend(slen);
 	if(ok != TPSSTAT_OK) return ok;
     }
@@ -113,7 +113,7 @@ Tps_Status
 Tps_String::append(char c)
 {
     if(_len >= _alloc) {
-	register Tps_Status ok;
+	Tps_Status ok;
 	ok = extend(1);
 	if(ok != TPSSTAT_OK) return ok;
     }
@@ -150,7 +150,7 @@ Tps_String::nullterminate()
 char*
 Tps_String::extract()
 {
-    register char* s = _contents;
+    char* s = _contents;
     initialize(0);
     return s;
 }

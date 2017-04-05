@@ -33,7 +33,7 @@ const int TPS_ARRAY_MINEXTEND = 4;
 Tps_Array::Tps_Array(long sz)
 	   : Tps_Container(TPSTYPE_ARRAY)
 {
-    register long alloc;
+    long alloc;
     if(sz < 0) sz = 0;
     alloc = sz?sz:TPS_ARRAY_MINEXTEND;
     _contents = (Tps_Value*)Tps_malloc(sizeof(Tps_Value)*alloc);
@@ -51,8 +51,8 @@ Tps_Array::~Tps_Array()
 Tps_Status
 Tps_Array::extend(long need)
 {
-    register Tps_Value* newcontents;
-    register long newalloc;
+    Tps_Value* newcontents;
+    long newalloc;
 
     if(need <= TPS_ARRAY_MINEXTEND) need = TPS_ARRAY_MINEXTEND;
     newalloc = _len+need;
@@ -69,7 +69,7 @@ Tps_Array::extend(long need)
 Tps_Status
 Tps_Array::setlen(long newlen)
 {
-    register Tps_Status ok;
+    Tps_Status ok;
     if(newlen < 0) return TPSSTAT_RANGECHECK;
     if(newlen > _alloc) {
 	ok = extend(newlen - _alloc);
@@ -86,7 +86,7 @@ Tps_Status
 Tps_Array::append(Tps_Value* vs, long vlen)
 {
     if(_len + vlen >= _alloc) {
-	register Tps_Status ok;
+	Tps_Status ok;
 	ok = extend(vlen);
 	if(ok != TPSSTAT_OK) return ok;
     }
@@ -99,7 +99,7 @@ Tps_Status
 Tps_Array::append(Tps_Value v)
 {
     if(_len >= _alloc) {
-	register Tps_Status ok;
+	Tps_Status ok;
 	ok = extend(1);
 	if(ok != TPSSTAT_OK) return ok;
     }
@@ -117,8 +117,8 @@ Tps_Array::append(Tps_Array* a)
 void
 Tps_Array::mark()
 {
-    register Tps_Value* ap;
-    register int i;
+    Tps_Value* ap;
+    int i;
 
     if(marked()) return;
     Tps_Container::mark();  /* mark self */

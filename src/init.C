@@ -286,8 +286,8 @@ static
 Tps_Status
 buildoneoperator(Tps_Dict* d, Tps_Operator* pco, boolean unsafe) 
 {
-    register Tps_Nameid nm;
-    register Tps_Status ok;
+    Tps_Nameid nm;
+    Tps_Status ok;
     Tps_Dictpair pair;
     char opname[256];
 
@@ -316,7 +316,7 @@ void
 buildoperators()  // insert into the systemdict
 {
     Tps_Operator* pco;
-    register Tps_Status ok;
+    Tps_Status ok;
 
     for(pco=safeprimitives;pco->_name;pco++) {
 	ok = buildoneoperator(tpsg._systemdict,pco,FALSE);
@@ -458,9 +458,9 @@ buildnametable()
 {
     Tps_Value* pcv = (Tps_Value*)Tps__constants_static;
     Tps_Operator* pco = safeprimitives;
-    register Tps_Nameid nm;
-    register int i;
-    register int l;
+    Tps_Nameid nm;
+    int i;
+    int l;
 
     /* put in the names from the constants table first
 	so that the name table entries will in fact
@@ -640,9 +640,9 @@ void
 buildconstantdefs()
 {
     /* fill in operators defined as constant values */
-    register struct Tps_Constant_Defs* pc;
-    register Tps_Nameid nm;
-    register Tps_Status ok;
+    struct Tps_Constant_Defs* pc;
+    Tps_Nameid nm;
+    Tps_Status ok;
     Tps_Dictpair pair;
 
     for(pc=constant_defs;pc->_name;pc++) {
@@ -671,16 +671,16 @@ static
 void
 buildmisc()
 {
-    register struct Tps_misc* pa;
-    register Tps_Nameid nm;
-    register Tps_Status ok;
+    struct Tps_misc* pa;
+    Tps_Nameid nm;
+    Tps_Status ok;
     Tps_Dictpair pair;
 
     /* fill in misc. constants */
     for(pa=misc_defs;pa->_name;pa++) {
 	switch (pa->_type) {
 	    case TPSTYPE_STRING: {
-		register Tps_String* ss;
+		Tps_String* ss;
 		ss = new Tps_String((char*)pa->_value);
 		TPS_MAKEVALUE(pair._value,pa->_type,ss);
 	    } break;
@@ -722,9 +722,9 @@ static
 void
 buildunsafemisc()
 {
-    register struct Tps_unsafe* pa;
-    register Tps_Nameid nm;
-    register Tps_Status ok;
+    struct Tps_unsafe* pa;
+    Tps_Nameid nm;
+    Tps_Status ok;
     Tps_Dictpair pair;
     Tps_Dictpair* pairp;
 
@@ -773,9 +773,9 @@ static
 Tps_Dict*
 buildplatform()
 {
-    register struct Tps_platform* pp;
-    register Tps_Nameid nm;
-    register Tps_Status ok;
+    struct Tps_platform* pp;
+    Tps_Nameid nm;
+    Tps_Status ok;
     Tps_Dictpair pair;
     Tps_Dict* pldict;
 
@@ -788,7 +788,7 @@ buildplatform()
     for(pp=platform_defs;pp->_name;pp++) {
 	switch (pp->_type) {
 	    case TPSTYPE_STRING: {
-		register Tps_String* ss;
+		Tps_String* ss;
 		ss = new Tps_String((char*)pp->_value);
 		TPS_MAKEVALUE(pair._value,pp->_type,ss);
 	    } break;
@@ -818,9 +818,9 @@ static
 void
 buildconfig()
 {
-    register struct Tps_config* pp;
-    register Tps_Nameid nm;
-    register Tps_Status ok;
+    struct Tps_config* pp;
+    Tps_Nameid nm;
+    Tps_Status ok;
     Tps_Dictpair pair;
     Tps_Dict* pldict;
     Tps_Dict* confdict;
@@ -861,7 +861,7 @@ buildconfig()
 	if(pp->_indirect) pv = *((void**)pv);
 	switch (pp->_type) {
 	    case TPSTYPE_STRING: {
-		register Tps_String* ss;
+		Tps_String* ss;
 		ss = new Tps_String((char*)pv);
 		TPS_MAKEVALUE(pair._value,pp->_type,ss);
 	    } break;
@@ -895,9 +895,9 @@ void
 bindoperators()
 {
     Tps_Value fake[2];
-    register int i;
+    int i;
     Tps_Dictpair* pairp;
-    register Tps_Status ok;
+    Tps_Status ok;
 
     /* go thru all dicts again and try to bind all the entries in the dict.*/
 
@@ -915,8 +915,8 @@ bindoperators()
 Tps_Status
 Tps_initialize(boolean isinteractive)
 {
-    register Tps_Status ok;
-    register Tps_Nameid nm;
+    Tps_Status ok;
+    Tps_Nameid nm;
     Tps_Dictpair pair;
 
     /* initialize the global structures */
@@ -1060,7 +1060,7 @@ Tps_initialize(boolean isinteractive)
     }
 
     {
-	register Tps_Dict_Tcl* d;
+	Tps_Dict_Tcl* d;
 	d = (Tps_Dict_Tcl*)tpsg._nametable;
 	printf("%s:%s\n","nametable",d->stats());
 	d = (Tps_Dict_Tcl*)tpsg._systemdict;
@@ -1085,7 +1085,7 @@ Tps_finalize()
 Tps_Status
 Tps_add_handler(Tps_Handler* h)
 {
-    register Tps_Handler_List* l = new Tps_Handler_List;
+    Tps_Handler_List* l = new Tps_Handler_List;
     if(!l) return TPSSTAT_VMERROR;
     GLOBAL_LOCK();
     l->_handler = h;
@@ -1098,8 +1098,8 @@ Tps_add_handler(Tps_Handler* h)
 Tps_Status
 Tps_remove_handler(Tps_Handler* h)
 {
-    register Tps_Handler_List *l,*l2;
-    register Tps_Status ok = TPSSTAT_OK;
+    Tps_Handler_List *l,*l2;
+    Tps_Status ok = TPSSTAT_OK;
 
     GLOBAL_LOCK();
     l = tpsg._handlers;
@@ -1124,8 +1124,8 @@ done:
 Tps_Handler*
 Tps_lookup_handler(const char* s)
 {
-    register Tps_Handler_List* h;
-    register Tps_Handler* hd = (Tps_Handler*)0;
+    Tps_Handler_List* h;
+    Tps_Handler* hd = (Tps_Handler*)0;
     GLOBAL_LOCK();
     for(h=tpsg._handlers;h;h=h->_next) {
 	if(strcmp(s,h->_handler->_parms->_name)==0) {

@@ -33,9 +33,9 @@ Tps_Nametable::Tps_Nametable(long chains)
 Tps_Nametable::~Tps_Nametable(void)
 {
     /* before deleting, go thru and clean up the writable names */
-    register Tps_Status ok;
-    register int i;
-    register long l;
+    Tps_Status ok;
+    int i;
+    long l;
     Tps_Dictpair* pairp;
 
     for(l=length(),i=0;i<l;i++) {
@@ -52,14 +52,14 @@ Tps_Nametable::~Tps_Nametable(void)
 Tps_Nameid
 Tps_Nametable::newname(const char* nm, boolean ro)
 {
-    register Tps_Nameid s = 0;
-    register long len;
+    Tps_Nameid s = 0;
+    long len;
 
     GLOBAL_LOCK();
 
 #ifdef NOINLINE
     Tps_Dictpair pair;
-    register Tps_Status ok;
+    Tps_Status ok;
     Tps_Dictpair* pairp;
 
     TPS_MAKEVALUE(pair._key,TPSTYPE_NAME,nm);
@@ -83,9 +83,9 @@ Tps_Nametable::newname(const char* nm, boolean ro)
     }
 #else /*!NOINLINE*/
     /* inline combined lookup + possible insert */
-    register const char* knm;
-    register u_long h,c,index;
-    register Tps_HashEntry* hPtr;
+    const char* knm;
+    u_long h,c,index;
+    Tps_HashEntry* hPtr;
 
     for(knm=nm,h=0;c=*knm++;) {h += (h<<3) + c;}
     h = randomize(h);
@@ -131,7 +131,7 @@ u_long
 Tps_Nametable::namehash(const char* kn)
 {
     u_long h = 0;
-    register int c;
+    int c;
 
     /* do something with the bytes in the string */
     /* this is the tcl hash function*/
@@ -147,12 +147,12 @@ Tps_Nametable::namehash(const char* kn)
 Tps_Status
 Tps_Nametable::lookup(Tps_Value key, Tps_Dictpair** pairp)
 {
-    register Tps_HashEntry *hPtr;
-    register u_long index;
-    register u_long h;
-    register Tps_Nameid knm;
-    register Tps_Nameid kn;
-    register int c;
+    Tps_HashEntry *hPtr;
+    u_long index;
+    u_long h;
+    Tps_Nameid knm;
+    Tps_Nameid kn;
+    int c;
 
     if(TPS_TYPE(key) != TPSTYPE_NAME) return TPSSTAT_UNDEFINED;
     kn = (knm = TPS_NAME_OF(key));
@@ -188,12 +188,12 @@ Tps_Nametable::lookup(Tps_Value key, Tps_Dictpair** pairp)
 Tps_Status
 Tps_Nametable::insert(Tps_Dictpair& pair, Tps_Value* oldvalue, boolean)
 {
-    register Tps_HashEntry *hPtr;
-    register u_long index;
-    register u_long h;
-    register Tps_Nameid knm;
-    register Tps_Nameid kn;
-    register int c;
+    Tps_HashEntry *hPtr;
+    u_long index;
+    u_long h;
+    Tps_Nameid knm;
+    Tps_Nameid kn;
+    int c;
 
     if(TPS_TYPE(pair._key) != TPSTYPE_NAME) return TPSSTAT_UNDEFINED;
     kn = (knm = TPS_NAME_OF(pair._key));

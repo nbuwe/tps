@@ -34,8 +34,8 @@ u_long
 Tps_Dict::stringhash(Tps_String* key)
 {
     /* do something with the bytes in the string */
-    register long i;
-    register u_long h;
+    long i;
+    u_long h;
     h = 0;
     for(h=0,i=0;i<key->length();i++) {
 	h += (h<<3)+key->contents()[i];
@@ -59,7 +59,7 @@ Tps_Dict::mark(void)
     /* walk all entries and have them marked */
     for(int i=0;i<range();i++) {
 	Tps_Dictpair* pairp;
-	register Tps_Status ok = ith(i,pairp);
+	Tps_Status ok = ith(i,pairp);
 	if(ok == TPSSTAT_UNDEFINED) continue;
 	if(ok != TPSSTAT_OK) break;
 	Tps_mark(pairp->_key);
@@ -165,7 +165,7 @@ Tps_Dict_Tcl::Tps_Dict_Tcl(long bucketcount, const char* nm)
 void
 Tps_Dict_Tcl::clear(void)
 {
-    register Tps_HashEntry *hPtr, *nextPtr;
+    Tps_HashEntry *hPtr, *nextPtr;
     int i;
 
     /*
@@ -201,16 +201,16 @@ Tps_Dict_Tcl::~Tps_Dict_Tcl(void)
 Tps_Status
 Tps_Dict_Tcl::remove(Tps_Value key, Tps_Dictpair* pairp)
 {
-    register Tps_Bucket* b;
-    register Tps_HashEntry *hPtr;
-    register Tps_HashEntry *prev;
-    register u_long index;
-    register u_long h;
+    Tps_Bucket* b;
+    Tps_HashEntry *hPtr;
+    Tps_HashEntry *prev;
+    u_long index;
+    u_long h;
 
 #ifdef NOINLINE
     h = hashfcn(key);
 #else
-    register Tps_Typeid kid = TPS_TYPE(key);
+    Tps_Typeid kid = TPS_TYPE(key);
     if(kid == TPSTYPE_STRING)
 	h = stringhash(TPS_STRING_OF(key));
     else
@@ -247,14 +247,14 @@ Tps_Dict_Tcl::remove(Tps_Value key, Tps_Dictpair* pairp)
 Tps_Status
 Tps_Dict_Tcl::lookup(Tps_Value key, Tps_Dictpair** pairp)
 {
-    register Tps_HashEntry *hPtr;
-    register u_long index;
-    register u_long h;
+    Tps_HashEntry *hPtr;
+    u_long index;
+    u_long h;
 
 #ifdef NOINLINE
     h = hashfcn(key);
 #else
-    register Tps_Typeid kid = TPS_TYPE(key);
+    Tps_Typeid kid = TPS_TYPE(key);
     if(kid == TPSTYPE_STRING)
 	h = stringhash(TPS_STRING_OF(key));
     else
@@ -288,14 +288,14 @@ Tps_Dict_Tcl::lookup(Tps_Value key, Tps_Dictpair** pairp)
 Tps_Status
 Tps_Dict_Tcl::insert(Tps_Dictpair& pair, Tps_Value* oldvalue, boolean suppress)
 {
-    register Tps_HashEntry *hPtr;
-    register u_long index;
-    register u_long h;
+    Tps_HashEntry *hPtr;
+    u_long index;
+    u_long h;
 
 #ifdef NOINLINE
     h = hashfcn(pair._key);
 #else
-    register Tps_Typeid kid = TPS_TYPE(pair._key);
+    Tps_Typeid kid = TPS_TYPE(pair._key);
     if(kid == TPSTYPE_STRING)
 	h = stringhash(TPS_STRING_OF(pair._key));
     else
@@ -366,8 +366,8 @@ Tps_Dict_Tcl::RebuildTable(void)
 {
     long oldSize, index;
     Tps_Bucket* oldBuckets;
-    register Tps_Bucket* oldBPtr;
-    register Tps_HashEntry *hPtr,*chain;
+    Tps_Bucket* oldBPtr;
+    Tps_HashEntry *hPtr,*chain;
 
     oldSize = numBuckets;
     oldBuckets = buckets;
@@ -416,9 +416,9 @@ Tps_Dict_Tcl::RebuildTable(void)
 Tps_Status
 Tps_Dict_Tcl::ith(long i, Tps_Dictpair*& pairp)
 {
-    register Tps_HashEntry* p;
-    register long rng = range();
-    register long j;
+    Tps_HashEntry* p;
+    long rng = range();
+    long j;
 
     /* pretend that the range is 0..numBuckets*maxlen */
 
@@ -457,7 +457,7 @@ Tps_Dict_Tcl::stats(void)
 #define NUM_COUNTERS 10
     int count[NUM_COUNTERS], overflow, i, j;
     double average, tmp;
-    register Tps_HashEntry *hPtr;
+    Tps_HashEntry *hPtr;
     char *result, *p;
 
     /*
@@ -511,13 +511,13 @@ Tps_Dict_Tcl::stats(void)
 void
 Tps_Dict_Tcl::mark(void)
 {
-    register long i;
+    long i;
 
     if(marked()) return;
     Tps_Container::mark();  /* mark self */
     /* walk all entries and have them marked */
     for(i=0;i<numBuckets;i++) {
-	register Tps_HashEntry* p;
+	Tps_HashEntry* p;
 	for(p=buckets[i].chain;p;p=p->nextPtr) {
 	    Tps_mark(p->pair._key);
 	    Tps_mark(p->pair._value);
@@ -536,9 +536,9 @@ Tps_Dict_Tcl::mark(void)
 Tps_Status
 Tps_Dict_Tcl::copy(Tps_Dict* src)
 {
-    register long i;
-    register long r = src->range();
-    register Tps_Status ok = TPSSTAT_OK;
+    long i;
+    long r = src->range();
+    Tps_Status ok = TPSSTAT_OK;
     Tps_Dictpair* pairp;
 
     clear();

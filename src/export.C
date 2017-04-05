@@ -35,8 +35,8 @@ but that they have a uid assigned; recurses with vencode.
 Tps_Status
 Tps_encode(Tps_Interp* intrp, Tps_Value v, Tps_Stream* f)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register Tps_Typeid tid;
+    Tps_Status ok = TPSSTAT_OK;
+    Tps_Typeid tid;
     Tps_Value_Union vu;
     Tps_Container* c;
 
@@ -87,17 +87,17 @@ Assumes that containers have a uid assigned by encode.
 Tps_Status
 Tps_encode_container(Tps_Interp* intrp, Tps_Value v, Tps_Stream* f)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register long i;
-    register Tps_Container* c;
-    register long l;
-    register Tps_String* s;
-    register Tps_Array* a;
-    register Tps_Dict* d;
-    register Tps_Stream* strm;
-    register Tps_Value* ac;
+    Tps_Status ok = TPSSTAT_OK;
+    long i;
+    Tps_Container* c;
+    long l;
+    Tps_String* s;
+    Tps_Array* a;
+    Tps_Dict* d;
+    Tps_Stream* strm;
+    Tps_Value* ac;
     Tps_Dictpair* pairp;
-    register Tps_Typeid tid;
+    Tps_Typeid tid;
 
     tid = TPS_TYPE(v);
     c = TPS_CONTAINER_OF(v);
@@ -143,7 +143,7 @@ Tps_encode_container(Tps_Interp* intrp, Tps_Value v, Tps_Stream* f)
 		s = new Tps_String;
 		if(!s) {ok = TPSSTAT_VMERROR; goto fail;}
 		while(l-- > 0) {
-		    register long ch = strm->read();
+		    long ch = strm->read();
 		    if(ch == EOF) break; /* bytesavail may lie */
 		    s->append((char)ch);
 		}
@@ -174,11 +174,11 @@ fail:
 Tps_Status
 Tps_export(Tps_Interp* intrp, Tps_Stream* f)
 {
-    register Tps_Status ok;
-    register long i;
+    Tps_Status ok;
+    long i;
     long l;
-    register Tps_Value* vp;
-    register Tps_List* lp;
+    Tps_Value* vp;
+    Tps_List* lp;
     Tps_Value v;
 
     /*
@@ -204,7 +204,7 @@ Tps_export(Tps_Interp* intrp, Tps_Stream* f)
 
     /* reset uid's of all containers */
     for(lp=tpsg._objects->next();lp;lp=lp->next()) {
-	register Tps_Container* q = (Tps_Container*)lp;
+	Tps_Container* q = (Tps_Container*)lp;
 	q->setuid(-1);
     }
 
@@ -308,7 +308,7 @@ static
 void
 skipws(Tps_Stream* f)
 {
-    register long c;
+    long c;
     /* skip whitespace */
     for(;;) {
 	c = f->read();
@@ -322,7 +322,7 @@ static
 Tps_Status
 check(Tps_Stream* f, long expected)
 {
-    register long c;
+    long c;
     skipws(f);
     c = f->read();
     return (c == expected)?TPSSTAT_OK:TPSSTAT_SYNTAXERROR;
@@ -333,9 +333,9 @@ Tps_Status
 Tps_decode_value(Tps_Interp* /*intrp*/, Tps_Value& vout, Tps_Stream* f,
 	   Tps_Array& da, Tps_Stream_String& buf)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register long i;
-    register long tid,tid2;
+    Tps_Status ok = TPSSTAT_OK;
+    long i;
+    long tid,tid2;
     Tps_Value v;
     Tps_Value_Union vu;
     Tps_Dictpair* pairp;
@@ -425,10 +425,10 @@ Tps_Status
 Tps_decode_array(Tps_Interp* intrp, Tps_Value& vout, Tps_Stream* f,
 	   Tps_Array& da, Tps_Stream_String& buf)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register long l;
-    register long i;
-    register Tps_Array* a;
+    Tps_Status ok = TPSSTAT_OK;
+    long l;
+    long i;
+    Tps_Array* a;
     Tps_Value v;
 
     ok = Tps_get_atom(buf,f,&v,1);
@@ -457,10 +457,10 @@ Tps_Status
 Tps_decode_dict(Tps_Interp* intrp, Tps_Value& vout, Tps_Stream* f,
 	   Tps_Array& da, Tps_Stream_String& buf)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register long l;
-    register long i;
-    register Tps_Dict* d;
+    Tps_Status ok = TPSSTAT_OK;
+    long l;
+    long i;
+    Tps_Dict* d;
     Tps_Dictpair pair;
     Tps_Value v;
 
@@ -493,9 +493,9 @@ Tps_Status
 Tps_decode_stream(Tps_Interp* /*intrp*/, Tps_Value& vout, Tps_Stream* f,
 	   Tps_Array& /*da*/, Tps_Stream_String& buf)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register Tps_Stream_String* strm;
-    register Tps_String* ss;
+    Tps_Status ok = TPSSTAT_OK;
+    Tps_Stream_String* strm;
+    Tps_String* ss;
     Tps_Value v;
 
     ok = Tps_get_atom(buf,f,&v,1);
@@ -524,7 +524,7 @@ Tps_Status
 Tps_decode_string(Tps_Interp* /*intrp*/, Tps_Value& vout, Tps_Stream* f,
 	   Tps_Array& /*da*/, Tps_Stream_String& buf)
 {
-    register Tps_Status ok = TPSSTAT_OK;
+    Tps_Status ok = TPSSTAT_OK;
     Tps_Value v;
 
     ok = Tps_get_atom(buf,f,&v,1);
@@ -542,8 +542,8 @@ Tps_Status
 Tps_decode_container(Tps_Interp* intrp, Tps_Value& vout, Tps_Stream* f,
 	   Tps_Array& da, Tps_Stream_String& buf)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register long l;
+    Tps_Status ok = TPSSTAT_OK;
+    long l;
     Tps_Value v;
 
     ok = Tps_get_atom(buf,f,&v,1);
@@ -570,8 +570,8 @@ Tps_Status
 Tps_decode(Tps_Interp* intrp, Tps_Value& vout, Tps_Stream* f,
            Tps_Array& da, Tps_Stream_String& buf)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register long c;
+    Tps_Status ok = TPSSTAT_OK;
+    long c;
     Tps_Value v;
 
     skipws(f);
@@ -625,10 +625,10 @@ Tps_Status
 Tps_decode_section(Tps_Interp* intrp, Tps_Stream* f,
 		   Tps_Array& da, Tps_Stream_String& buf)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register long l;
-    register long i;
-    register long c;
+    Tps_Status ok = TPSSTAT_OK;
+    long l;
+    long i;
+    long c;
     Tps_Value v;
 
     skipws(f);
@@ -660,13 +660,13 @@ static int Tps_equal(Tps_Value v1, Tps_Value v2);
 Tps_Status
 Tps_import(Tps_Interp* intrp, Tps_Stream* f, boolean clr)
 {
-    register Tps_Status ok = TPSSTAT_OK;
-    register long i;
-    register long c;
-    register Tps_Value* vp;
-    register Tps_Value* op;
-    register Tps_Array* da = new Tps_Array;
-    register Tps_Stream_String* buf;
+    Tps_Status ok = TPSSTAT_OK;
+    long i;
+    long c;
+    Tps_Value* vp;
+    Tps_Value* op;
+    Tps_Array* da = new Tps_Array;
+    Tps_Stream_String* buf;
     long l;
     boolean safeflag;
     Tps_Value v;
@@ -760,9 +760,9 @@ Tps_import(Tps_Interp* intrp, Tps_Stream* f, boolean clr)
     intrp->_userdicts[1] = TPS_DICT_OF(userdicts[1]);
 
 #if IMTEST
-    register Tps_Value* vp1;
-    register Tps_Value* vp2;
-    register long t1;
+    Tps_Value* vp1;
+    Tps_Value* vp2;
+    long t1;
     t1 = intrp->_dstacks[1]._last - intrp->_dstacks[1]._tos;
     if(t1 != marks[4] - marks[3])
 	abort();
@@ -868,15 +868,15 @@ static
 int
 Tps_equal1(Tps_Value v1, Tps_Value v2)
 {
-    register long i;
+    long i;
     if(TPS_TYPE(v1) != TPS_TYPE(v2)) return FALSE;
     if(TPS_ANY_OF(v1) == TPS_ANY_OF(v2)) return TRUE;
     switch (TPS_TYPE(v1)) {
 	case TPSTYPE_NULL:
 	case TPSTYPE_MARK: return TRUE;
 	case TPSTYPE_BOOLEAN: {
-	    register boolean b1 = TPS_BOOLEAN_OF(v1)?1:0;
-	    register boolean b2 = TPS_BOOLEAN_OF(v2)?1:0;
+	    boolean b1 = TPS_BOOLEAN_OF(v1)?1:0;
+	    boolean b2 = TPS_BOOLEAN_OF(v2)?1:0;
 	    return b1 == b2;
 	}
 	case TPSTYPE_INTEGER:
@@ -890,14 +890,14 @@ Tps_equal1(Tps_Value v1, Tps_Value v2)
 	case TPSTYPE_STREAM:
 	    return TRUE;
 	case TPSTYPE_STRING: {
-	    register Tps_String* s1 = TPS_STRING_OF(v1);
-	    register Tps_String* s2 = TPS_STRING_OF(v2);
+	    Tps_String* s1 = TPS_STRING_OF(v1);
+	    Tps_String* s2 = TPS_STRING_OF(v2);
 	    if(s1->length() != s2->length()) return FALSE;
 	    return (MEMCMP(s1->contents(),s2->contents(),s1->length())==0)?1:0;
 	}
 	case TPSTYPE_ARRAY: {
-	    register Tps_Array* a1 = TPS_ARRAY_OF(v1);
-	    register Tps_Array* a2 = TPS_ARRAY_OF(v2);
+	    Tps_Array* a1 = TPS_ARRAY_OF(v1);
+	    Tps_Array* a2 = TPS_ARRAY_OF(v2);
 	    if(a1->length() != a2->length()) return FALSE;
 	    if(a1->marked() && a2->marked()) return TRUE;
 	    if(a1->marked() != a2->marked()) return FALSE;
@@ -909,8 +909,8 @@ Tps_equal1(Tps_Value v1, Tps_Value v2)
 	    return TRUE;
 	}
 	case TPSTYPE_DICT: {
-	    register Tps_Dict* d1 = TPS_DICT_OF(v1);
-	    register Tps_Dict* d2 = TPS_DICT_OF(v2);
+	    Tps_Dict* d1 = TPS_DICT_OF(v1);
+	    Tps_Dict* d2 = TPS_DICT_OF(v2);
 	    if(d1->length() != d2->length()) return FALSE;
 	    if(d1->marked() && d2->marked()) return TRUE;
 	    if(d1->marked() != d2->marked()) return FALSE;
@@ -918,11 +918,11 @@ Tps_equal1(Tps_Value v1, Tps_Value v2)
 	    for(i=0;i<d1->range();i++) {
 		Tps_Dictpair* dp1;
 		Tps_Dictpair* dp2;
-		register Tps_Status ok;
+		Tps_Status ok;
 		ok = d1->ith(i,dp1);
 		if(ok != TPSSTAT_OK) continue;
-		register long j;
-		register boolean b=0;
+		long j;
+		boolean b=0;
 		for(j=0;j<d2->range();j++) {
 		    ok = d2->ith(j,dp2);
 		    if(ok != TPSSTAT_OK) continue;
@@ -945,14 +945,14 @@ int
 Tps_equal(Tps_Value v1, Tps_Value v2)
 {
     /* go thru and mark all containers as untouched */
-    register Tps_List* lp;
+    Tps_List* lp;
     for(lp=tpsg._objects->next();lp;lp=lp->next()) {
-	register Tps_Container* q = (Tps_Container*)lp;
+	Tps_Container* q = (Tps_Container*)lp;
 	q->unmark();
     }
-    register boolean b = Tps_equal1(v1,v2);
+    boolean b = Tps_equal1(v1,v2);
     for(lp=tpsg._objects->next();lp;lp=lp->next()) {
-	register Tps_Container* q = (Tps_Container*)lp;
+	Tps_Container* q = (Tps_Container*)lp;
 	q->unmark();
     }
 }
@@ -963,12 +963,12 @@ Tps_equal(Tps_Value v1, Tps_Value v2)
 Tps_Status
 Tps_export_exec(Tps_Interp* intrp, long& ecount, Tps_Exec_Pass passflag)
 {
-    register char* enext;
-    register Tps_Status ok;
-    register Tps_Frame* eframe;
-    register Tps_Nameid nm;
-    register long count;
-    register long xlen;
+    char* enext;
+    Tps_Status ok;
+    Tps_Frame* eframe;
+    Tps_Nameid nm;
+    long count;
+    long xlen;
     long flen;
     Tps_Value v;
 
@@ -1005,10 +1005,10 @@ Tps_export_exec(Tps_Interp* intrp, long& ecount, Tps_Exec_Pass passflag)
 Tps_Status
 Tps_import_exec(Tps_Interp* intrp, long count, Tps_Exec_Pass passflag)
 {
-    register Tps_Status ok;
-    register Tps_Nameid nm;
-    register long popped;
-    register Tps_Handler* h;
+    Tps_Status ok;
+    Tps_Nameid nm;
+    long popped;
+    Tps_Handler* h;
     long xlen;
     Tps_Value v;
 
