@@ -62,7 +62,7 @@ debugdictall(const Tps_Dict* dict)
 }
 
 const char*
-debugstack0(Tps_Interp* interp)
+debugstack0(const Tps_Interp* interp)
 {
     const char* s;
     long i;
@@ -82,7 +82,7 @@ debugstack0(Tps_Interp* interp)
 }
 
 const char*
-debugstack(Tps_Interp* interp)
+debugstack(const Tps_Interp* interp)
 {
     const char* s;
     long i;
@@ -102,7 +102,7 @@ debugstack(Tps_Interp* interp)
 }
 
 const char*
-debugdstack0(Tps_Interp* interp)
+debugdstack0(const Tps_Interp* interp)
 {
     const char* s;
     long i;
@@ -122,7 +122,7 @@ debugdstack0(Tps_Interp* interp)
 }
 
 const char*
-debugdstack(Tps_Interp* interp)
+debugdstack(const Tps_Interp* interp)
 {
     const char* s;
     long i;
@@ -145,7 +145,7 @@ debugdstack(Tps_Interp* interp)
 }
 
 const char*
-debugdstacks(Tps_Interp* interp)
+debugdstacks(const Tps_Interp* interp)
 {
     const char* s;
     long i;
@@ -173,7 +173,7 @@ debugdstacks(Tps_Interp* interp)
 }
 
 const char*
-debugexec0(Tps_Interp* interp, long nframes)
+debugexec0(const Tps_Interp* interp, long nframes)
 {
     char* ep = TPS_ETOSP(interp);
     char* elast = interp->_estack._last;
@@ -195,7 +195,7 @@ debugexec0(Tps_Interp* interp, long nframes)
 }
 
 const char*
-debugexec(Tps_Interp* interp)
+debugexec(const Tps_Interp* interp)
 {
     return debugexec0(interp,TPS_EFRAMECOUNT(interp));
 }

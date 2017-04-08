@@ -431,7 +431,7 @@ static
 Tps_Status
 Tps_catch_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_Catch* f = (Tps_Frame_Catch*)frame;
+    const Tps_Frame_Catch* f = (const Tps_Frame_Catch*)frame;
     Tps_trace0(intrp,strm,f);
     strm->write(" body=");
     (void)Tps_cvts1(*strm,f->_body,TRUE,-1);
@@ -1453,7 +1453,7 @@ static
 Tps_Status
 Tps_for_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_For* f = (Tps_Frame_For*)frame;
+    const Tps_Frame_For* f = (const Tps_Frame_For*)frame;
     Tps_trace0(intrp,strm,f);
     if(TPS_ISTYPE(f->_current,TPSTYPE_INTEGER)) {
 	strm->printf(" %d",TPS_INTEGER_OF(f->_current));
@@ -1627,7 +1627,7 @@ static
 Tps_Status
 Tps_forall_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_Forall* f = (Tps_Frame_Forall*)frame;
+    const Tps_Frame_Forall* f = (const Tps_Frame_Forall*)frame;
     Tps_trace0(intrp,strm,f);
     strm->printf(" index=%d",f->_current);
     strm->write("; iterate=");
@@ -2015,7 +2015,7 @@ static
 Tps_Status
 Tps_loop_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_Loop* f = (Tps_Frame_Loop*)frame;
+    const Tps_Frame_Loop* f = (const Tps_Frame_Loop*)frame;
     Tps_trace0(intrp,strm,f);
     strm->write(" body=");
     (void)Tps_cvts1(*strm,f->_body,TRUE,-1);
@@ -2733,7 +2733,7 @@ static
 Tps_Status
 Tps_repeat_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_Repeat* f = (Tps_Frame_Repeat*)frame;
+    const Tps_Frame_Repeat* f = (const Tps_Frame_Repeat*)frame;
     Tps_trace0(intrp,strm,f);
     strm->printf(" current=%d",f->_current);
     strm->write(" body=");
@@ -2953,7 +2953,7 @@ static
 Tps_Status
 Tps_runstream_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_Runstream* f = (Tps_Frame_Runstream*)frame;
+    const Tps_Frame_Runstream* f = (const Tps_Frame_Runstream*)frame;
     Tps_trace0(intrp,strm,f);
     return TPSSTAT_OK;
 }
@@ -3181,7 +3181,7 @@ static
 Tps_Status
 Tps_stopped_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_Stopped* f = (Tps_Frame_Stopped*)frame;
+    const Tps_Frame_Stopped* f = (const Tps_Frame_Stopped*)frame;
     Tps_trace0(intrp,strm,f);
     strm->write(" body=");
     (void)Tps_cvts1(*strm,f->_body,TRUE,-1);
@@ -3713,7 +3713,7 @@ static
 Tps_Status
 Tps_while_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_While* f = (Tps_Frame_While*)frame;
+    const Tps_Frame_While* f = (const Tps_Frame_While*)frame;
     Tps_trace0(intrp,strm,f);
     strm->write(" cond=");
     (void)Tps_cvts1(*strm,f->_cond,TRUE,-1);

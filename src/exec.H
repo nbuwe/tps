@@ -70,8 +70,8 @@ struct Tps_Handler; /*Forward*/
 #define TPS_REENTER_ARGS0 struct Tps_Interp*, struct Tps_Frame*
 #define TPS_REENTER_ARGS struct Tps_Interp* intrp, struct Tps_Frame* frame
 
-#define TPS_TRACE_ARGS0 struct Tps_Interp*, struct Tps_Frame*, struct Tps_Stream*
-#define TPS_TRACE_ARGS struct Tps_Interp* intrp, struct Tps_Frame* frame, struct Tps_Stream* strm
+#define TPS_TRACE_ARGS0 const struct Tps_Interp*, const struct Tps_Frame*, struct Tps_Stream*
+#define TPS_TRACE_ARGS const struct Tps_Interp* intrp, const struct Tps_Frame* frame, struct Tps_Stream* strm
 
 #define TPS_MARK_ARGS0 struct Tps_Interp*, struct Tps_Frame*
 #define TPS_MARK_ARGS1 struct Tps_Interp*, struct Tps_Frame* frame
@@ -137,10 +137,10 @@ EXTERNC Tps_Status Tps_nullfcn_import(TPS_IMPORT_ARGS0);
 /**************************************************/
 
 /* Generic Trace support */
-EXTERNC Tps_Status Tps_trace0(Tps_Interp*, Tps_Stream*, Tps_Frame*);
+EXTERNC Tps_Status Tps_trace0(const Tps_Interp*, Tps_Stream*, const Tps_Frame*);
 
 /* Given a frame ptr, figure out its depth (in terms of frames) in exec stack*/
-EXTERNC int Tps_framedepth(Tps_Interp*, Tps_Frame*);
+EXTERNC int Tps_framedepth(const Tps_Interp*, const Tps_Frame*);
 
 /**************************************************/
 /*

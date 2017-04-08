@@ -51,9 +51,9 @@ Tps_unwind_frame(Tps_Interp* intrp, Tps_Frame* f)
 
 // Default frame trace routine, partial output
 Tps_Status
-Tps_trace0(Tps_Interp* intrp,
+Tps_trace0(const Tps_Interp* intrp,
 	   Tps_Stream* strm,
-	   Tps_Frame* f)
+	   const Tps_Frame* f)
 {
     long len = TPS_FRAME_LENGTH(intrp,f);
     const char* nam = TPS_FRAME_NAME(intrp,f);
@@ -65,15 +65,15 @@ Tps_trace0(Tps_Interp* intrp,
 }
 
 int
-Tps_framedepth(Tps_Interp* interp, Tps_Frame* frame)
+Tps_framedepth(const Tps_Interp* interp, const Tps_Frame* frame)
 {
-    char* ep = TPS_ETOSP(interp);
+    const char* ep = TPS_ETOSP(interp);
     long nframes = TPS_EFRAMECOUNT(interp);
-    Tps_Frame* eframe;
+    const Tps_Frame* eframe;
 
-    while(ep < (char*)frame) {
+    while(ep < (const char*)frame) {
 	nframes--;
-	eframe = (Tps_Frame*)ep;
+	eframe = (const Tps_Frame*)ep;
 	ep += TPS_FRAME_LENGTH(interp,eframe);
     }
     return nframes;
@@ -124,7 +124,7 @@ static
 Tps_Status
 Tps_source_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_Source* f = (Tps_Frame_Source*)frame;
+    const Tps_Frame_Source* f = (const Tps_Frame_Source*)frame;
 
     Tps_trace0(intrp,strm,frame);
     return Tps_cvts1(*strm,f->_body,TRUE,f->_index);
@@ -263,7 +263,7 @@ static
 Tps_Status
 Tps_trace_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_Trace* f = (Tps_Frame_Trace*)frame;
+    const Tps_Frame_Trace* f = (const Tps_Frame_Trace*)frame;
     Tps_trace0(intrp,strm,frame);
     strm->printf(" tracing=%s",f->_tracing?"on":"off");
     return TPSSTAT_OK;
@@ -426,7 +426,7 @@ static
 Tps_Status
 Tps_safety_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_Safety* f = (Tps_Frame_Safety*)frame;
+    const Tps_Frame_Safety* f = (const Tps_Frame_Safety*)frame;
     Tps_trace0(intrp,strm,frame);
     strm->printf(" safe=%s",f->_safe?"on":"off");
     return TPSSTAT_OK;
@@ -527,7 +527,7 @@ static
 Tps_Status
 Tps_OO_trace(TPS_TRACE_ARGS)
 {
-    Tps_Frame_OO* f = (Tps_Frame_OO*)frame;
+    const Tps_Frame_OO* f = (const Tps_Frame_OO*)frame;
     Tps_trace0(intrp,strm,frame);
     return Tps_cvts1(*strm,f->_self,FALSE,-1);
 }
