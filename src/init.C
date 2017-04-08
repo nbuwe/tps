@@ -922,11 +922,11 @@ Tps_initialize(boolean isinteractive)
    
 #ifdef CONFIGTEST
     if(sizeof(Tps_Value) != (2 * sizeof(void*))) {
-	fprintf(stderr,"Tps_initialize: non-packed Tps_Value: %d\n",
+	fprintf(stderr,"Tps_initialize: non-packed Tps_Value: %zu\n",
 		sizeof(Tps_Value));
     }
     if(sizeof(Tps_Value_Simple) != (2 * sizeof(void*))) {
-	fprintf(stderr,"Tps_initialize: non-packed Tps_Value_Simple: %d\n",
+	fprintf(stderr,"Tps_initialize: non-packed Tps_Value_Simple: %zu\n",
 		sizeof(Tps_Value_Simple));
     }
 #endif
