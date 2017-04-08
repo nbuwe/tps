@@ -21,12 +21,12 @@ struct Tps_Operator_Defines {
 }; 
 
 /* safe operators defined in system dict */
-extern struct Tps_Operator_Defines textdefs[];
+extern const struct Tps_Operator_Defines textdefs[];
 
 /* unsafe operators defined in system dict */
-extern struct Tps_Operator_Defines utextdefs[];
+extern const struct Tps_Operator_Defines utextdefs[];
 
 #if OO
 /* OO operators defined in system dict */
-extern struct Tps_Operator_Defines ootextdefs[];
+extern const struct Tps_Operator_Defines ootextdefs[];
 #endif

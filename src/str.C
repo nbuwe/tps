@@ -94,7 +94,7 @@ Tps_String::setlen(long newlen)
 }
 
 Tps_Status
-Tps_String::append(char* s, long slen)
+Tps_String::append(const char* s, long slen)
 {
     if((_len + slen) > _alloc) {
 	Tps_Status ok;

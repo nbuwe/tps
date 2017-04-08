@@ -27,7 +27,7 @@ class Tps_List {
 	Tps_List(void) {_next = 0; _prev = 0;}
 	virtual ~Tps_List(void) {unlink();}
     public:
-	Tps_List* next(void) {return _next;}
+	Tps_List* next(void) const {return _next;}
     public:
 	void link(Tps_List* lp)
 		{
@@ -51,9 +51,9 @@ class Tps_Container : public Tps_List {
 	Tps_Container(Tps_Typeid t);
 	virtual ~Tps_Container(void) {}
     public:
-	boolean marked(void) {return _marked;}
-	Tps_Typeid tid(void) {return _tid;}
-	long uid(void) {return _uid;}
+	boolean marked(void) const {return _marked;}
+	Tps_Typeid tid(void) const {return _tid;}
+	long uid(void) const {return _uid;}
     public:
 	virtual void mark(void) {_marked = TRUE;}
 	void unmark(void) {_marked = FALSE;}

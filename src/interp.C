@@ -211,14 +211,14 @@ Tps_Interp::~Tps_Interp()
 
 /**************************************************/
 void
-Tps_Interp::safeprefix(char* s)
+Tps_Interp::safeprefix(const char* s)
 {
     if(_safeprefix) Tps_free(_safeprefix);
     _safeprefix = STRDUP(s);
 }
 
 void
-Tps_Interp::tpsrc(char* s)
+Tps_Interp::tpsrc(const char* s)
 {
     if(_tpsrc) Tps_free(_tpsrc);
     _tpsrc = STRDUP(s);

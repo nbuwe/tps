@@ -16,7 +16,7 @@
  */
 
 /* char marking table for parsing */
-EXTERNC unsigned int Tps_chartable[256];
+EXTERNC const unsigned int Tps_chartable[256];
 
 /* Define the char parsing table flags; see also build.C */
 #define TPSC_WS		0x01	/* whitespace char */

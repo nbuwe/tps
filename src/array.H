@@ -29,9 +29,9 @@ class Tps_Array : public Tps_Container {
 	Tps_Array(long sz=0);
 	virtual ~Tps_Array();
     public:
-	int length() {return _len;}
-	Tps_Value* contents() {return _contents;}
-	int alloc() {return _alloc;}
+	int length() const {return _len;}
+	Tps_Value* contents() const {return _contents;}
+	int alloc() const {return _alloc;}
     public:
 	Tps_Status setlen(long);
 	Tps_Status setlength(long l) {return setlen(l);}

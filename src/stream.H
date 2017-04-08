@@ -80,16 +80,16 @@ class Tps_Stream : public Tps_Container {
 	Tps_Status write(const char* s) {return write(s,s?strlen(s):0);}
 	Tps_Status endl() {(void)ends(); return flush();}
     public:
-	const char* name() {return _name;}
-	boolean isopen() {return _isopen;}
-	Tps_Status good() {return (_isopen && _good)?TPSSTAT_OK:TPSSTAT_IOERROR;}
-	boolean operator!() {return good() != TPSSTAT_OK;}
-	Tps_Stream_Mode mode() {return _modeflags;}
-	const char* modestring() {return Tps_modestring_of(_modeflags);}
-	Tps_Stream_Type stream_type() {return _type;}
-	boolean r() {return (_modeflags & Tps_stream_r)?1:0;}
-	boolean w() {return (_modeflags & (Tps_stream_w | Tps_stream_a))?1:0;}
-	boolean a() {return (_modeflags & Tps_stream_a)?1:0;}
+	const char* name() const {return _name;}
+	boolean isopen() const {return _isopen;}
+	Tps_Status good() const {return (_isopen && _good)?TPSSTAT_OK:TPSSTAT_IOERROR;}
+	boolean operator!() const {return good() != TPSSTAT_OK;}
+	Tps_Stream_Mode mode() const {return _modeflags;}
+	const char* modestring() const{return Tps_modestring_of(_modeflags);}
+	Tps_Stream_Type stream_type() const {return _type;}
+	boolean r() const {return (_modeflags & Tps_stream_r)?1:0;}
+	boolean w() const {return (_modeflags & (Tps_stream_w | Tps_stream_a))?1:0;}
+	boolean a() const {return (_modeflags & Tps_stream_a)?1:0;}
     protected:
 	Tps_Stream_Type	_type;
 	char* 		_name;

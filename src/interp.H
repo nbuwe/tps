@@ -77,13 +77,13 @@ class Tps_Interp {
 	virtual Tps_Status restore(char*);
 	virtual Tps_Status restore(int fd);
     public:
-	Tps_Status status() { return _status;}
+	Tps_Status status() const { return _status;}
 	void status(Tps_Status s) {_status = s;}
-	int step() { return _step;}
+	int step() const { return _step;}
 	void step(boolean b) {_step = (b)?1:0;}
-	int tracing() { return _tracing;}
+	int tracing() const { return _tracing;}
 	void tracing(boolean b) {_tracing = (b)?1:0;}
-	int safe() { return _safe;}
+	int safe() const { return _safe;}
 	void safe(boolean b) {_safe=(b)?1:0;}
     public:
 	Tps_Status newoperator(const char*, long, Tpsstatfcn);
@@ -92,10 +92,10 @@ class Tps_Interp {
 	Tps_Status where(Tps_Value key, Tps_Value* valp=0, Tps_Value* where=0);
 	Tps_Status def(Tps_Value key, Tps_Value val, Tps_Value* where=0);
     public:
-	char* safeprefix() { return _safeprefix;}
-	void safeprefix(char*);
-	char* tpsrc() { return _tpsrc;}
-	void tpsrc(char*);
+	const char* safeprefix() const { return _safeprefix;}
+	void safeprefix(const char*);
+	const char* tpsrc() const { return _tpsrc;}
+	void tpsrc(const char*);
     public:
 	Tps_Status unwind_thru(struct Tps_Frame* fr, boolean thrown=FALSE);
 	Tps_Status unwind_throw(void){ return unwind_thru((struct Tps_Frame*)0,TRUE);}

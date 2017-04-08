@@ -19,7 +19,7 @@
 #include "textdefs.H"
 
 /* Safe defs */
-struct Tps_Operator_Defines textdefs[] = {
+const struct Tps_Operator_Defines textdefs[] = {
 
 {"run","{/r /file stream runstream {handleerror} if}"},
 {"=","{null cvts print}"},
@@ -100,7 +100,7 @@ struct Tps_Operator_Defines textdefs[] = {
 };
 
 /* Unsafe operators */
-struct Tps_Operator_Defines utextdefs[] = {
+const struct Tps_Operator_Defines utextdefs[] = {
 
 {"stream","{{dup /file eq						\n\
 		{safefileprefix null copy				\n\
@@ -120,7 +120,7 @@ struct Tps_Operator_Defines utextdefs[] = {
 
 #if OO
 /* Safe OO defs */
-struct Tps_Operator_Defines ootextdefs[] = {
+const struct Tps_Operator_Defines ootextdefs[] = {
 
 {"super","/super"},
 {"self","/self"},

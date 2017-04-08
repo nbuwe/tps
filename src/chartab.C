@@ -18,7 +18,7 @@
 #include "Sysdep.H"
 #include "chartab.H"
 
-unsigned int Tps_chartable[256] = {
+const unsigned int Tps_chartable[256] = {
 /*[^@]*/ (TPSC_WS),
 /*[^A]*/ (TPSC_WS),
 /*[^B]*/ (TPSC_WS),

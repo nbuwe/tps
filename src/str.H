@@ -39,8 +39,8 @@ class Tps_String : public Tps_Container {
 	Tps_String(const char* initstr);
 	virtual ~Tps_String();
     public:
-	long length() {return _len;}
-	long alloc() {return _alloc;}
+	long length() const {return _len;}
+	long alloc() const {return _alloc;}
 	char* contents() {return _contents;}
     public:
 	char* extract();
@@ -48,9 +48,9 @@ class Tps_String : public Tps_Container {
 	Tps_Status setlen(long);
 	Tps_Status setlength(long l) {return setlen(l);}
 	Tps_Status append(char);
-	Tps_Status append(char*,long);
+	Tps_Status append(const char*, long);
 	Tps_Status append(Tps_String*);
-	Tps_Status append(char* s) {return append(s,strlen(s));}
+	Tps_Status append(const char* s) {return append(s,strlen(s));}
     public:
 	Tps_Status nullterminate();
 	boolean isnullterminated();

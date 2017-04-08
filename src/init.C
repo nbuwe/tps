@@ -486,7 +486,7 @@ buildnametable()
 static
 void
 buildonetextoperator(Tps_Dict* opdict,
-		      struct Tps_Operator_Defines* pod,
+		      const struct Tps_Operator_Defines* pod,
 		      Tps_Stream_String* procbuf,
 		      Tps_Stream_String* tokenbuf,
 		      boolean unsafe)
@@ -524,7 +524,7 @@ buildtextoperators()
 {
     Tps_Stream_String* procbuf = 0;
     Tps_Stream_String* tokenbuf = 0;
-    struct Tps_Operator_Defines* pod;
+    const struct Tps_Operator_Defines* pod;
 
     /* ATT C++ does not like stack allocated objects with destructors
 	if one is also using labels
