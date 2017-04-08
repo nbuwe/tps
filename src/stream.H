@@ -43,11 +43,11 @@ typedef enum Tps_Stream_Type {
 } Tps_Stream_Type;
 
 /* following designed to be tested by masking */
-typedef u_long Tps_Stream_Mode;
+typedef unsigned int Tps_Stream_Mode;
 
-const long Tps_stream_r	= 1<<O_RDONLY;
-const long Tps_stream_w	= 1<<O_WRONLY;
-const long Tps_stream_a	= 1<<O_APPEND;
+const Tps_Stream_Mode Tps_stream_r	= 1 << 0;
+const Tps_Stream_Mode Tps_stream_w	= 1 << 1;
+const Tps_Stream_Mode Tps_stream_a	= 1 << 2;
 
 EXTERNC Tps_Stream_Mode Tps_mode_of(const char* modestring, const long modelen);
 EXTERNC const char* Tps_modestring_of(const Tps_Stream_Mode);
