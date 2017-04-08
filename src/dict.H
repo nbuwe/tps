@@ -50,14 +50,14 @@ class Tps_Dict : public Tps_Container {
 	virtual Tps_Status copy(Tps_Dict* src) = 0;
 	virtual void clear(void) = 0;
     public:
-	virtual long length(void) = 0; // # defined pairs in table
-	virtual long maxlength(void) = 0; // current capacity
-	virtual long range(void) = 0; // range (0..range()) for ith() method
+	virtual long length(void) const = 0; // # defined pairs in table
+	virtual long maxlength(void) const = 0; // current capacity
+	virtual long range(void) const = 0; // range (0..range()) for ith() method
     public:
 	void mark(void);
-	Tps_Dictkind kind(void) {return _kind;}
+	Tps_Dictkind kind(void) const {return _kind;}
     public:
-	const char* name() { return _name?_name:"<dict>"; }	
+	const char* name() const { return _name?_name:"<dict>"; }	
 	void name(const char* nm) {_name = nm;}
     protected:
 	virtual u_long hashfcn(Tps_Value key)
@@ -120,11 +120,11 @@ class Tps_Dict_Tcl : public Tps_Dict {
 	virtual Tps_Status copy(Tps_Dict*);
 	virtual void clear(void);
     public:
-	virtual long length(void) {return numEntries;}
-	virtual long maxlength(void) {return maxlen*numBuckets;}
-	virtual long range(void) {return maxlength();}
-	long tablelength(void) {return numBuckets;}
-	Tps_Bucket* table(void) {return buckets;}
+	virtual long length(void) const {return numEntries;}
+	virtual long maxlength(void) const {return maxlen*numBuckets;}
+	virtual long range(void) const {return maxlength();}
+	long tablelength(void) const {return numBuckets;}
+	const Tps_Bucket* table(void) const {return buckets;}
     public:
 	char* stats(void);
 	void mark(void);

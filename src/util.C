@@ -245,12 +245,12 @@ Tps_cvts1(Tps_Stream& outbuf, Tps_Value object, boolean deep, long addrctr)
 /**************************************************/
 static
 Tps_Status
-Tps_cvts1_tcldict_deep(Tps_Stream& accum, Tps_Dict_Tcl* dict, boolean deep)
+Tps_cvts1_tcldict_deep(Tps_Stream& accum, const Tps_Dict_Tcl* dict, boolean deep)
 {
     Tps_Status ok;
     long i;
     long dlen,dtsz;
-    Tps_Bucket* chains;
+    const Tps_Bucket* chains;
   
     dlen = dict->length();
     dtsz = dict->tablelength();
@@ -287,10 +287,10 @@ Tps_cvts1_tcldict_deep(Tps_Stream& accum, Tps_Dict_Tcl* dict, boolean deep)
 
 /* special deep printer for dictionaries */
 Tps_Status
-Tps_cvts1_dict_deep(Tps_Stream& accum, Tps_Dict* dict, boolean deep)
+Tps_cvts1_dict_deep(Tps_Stream& accum, const Tps_Dict* dict, boolean deep)
 {
     if(dict->kind() == Tps_tcldict) {
-	return Tps_cvts1_tcldict_deep(accum,(Tps_Dict_Tcl*)dict,deep);
+	return Tps_cvts1_tcldict_deep(accum,(const Tps_Dict_Tcl*)dict,deep);
     }
     return TPSSTAT_FAIL;
 }

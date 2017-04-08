@@ -17,8 +17,8 @@
 
 EXTERNC void debugobject1(Tps_Value obj, Tps_Stream* accum, long deep, long ic);
 EXTERNC const char* debugobject(Tps_Value);
-EXTERNC const char* debugdict(Tps_Dict*);
-EXTERNC const char* debugdictall(Tps_Dict*);
+EXTERNC const char* debugdict(const Tps_Dict*);
+EXTERNC const char* debugdictall(const Tps_Dict*);
 EXTERNC const char* debugstack0(Tps_Interp*);
 EXTERNC const char* debugstack(Tps_Interp*);
 EXTERNC const char* debugdstack0(Tps_Interp*);
