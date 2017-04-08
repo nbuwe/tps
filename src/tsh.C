@@ -29,6 +29,7 @@ EXTERNC int open(char*,int);
 #  endif
 #endif
 
+int
 main(int argc, char** argv)
 {
     Tps_Status status;
