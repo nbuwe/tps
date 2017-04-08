@@ -33,7 +33,7 @@ const char Tps_tpsrc[] = ".tpsrc";
 
 /**************************************************/
 /* Define a vector of useful constant values */
-EXTERNC Tps_Value* Tps__constants;
+EXTERNC const Tps_Value* Tps__constants;
 
 /* Accessing macros */
 

@@ -33,7 +33,7 @@
 /* Define vectors of useful names and useful other constants */
 /* possibly statically filled */
 
-Tps_Value* Tps__constants;
+const Tps_Value* Tps__constants;
 
 /**************************************************/
 /* Define the "variable" global values: access needs to be
@@ -44,7 +44,7 @@ Tps_Global tpsg;
 
 /**************************************************/
 /* Following does not contain unsafe operators */
-static
+static const
 Tps_Operator safeprimitives[] = {
 
 /* arithmetics */
@@ -269,7 +269,7 @@ Tps_Operator safeprimitives[] = {
 };
 
 /* System dict operators that should be marked unsafe */
-static
+static const
 Tps_Operator unsafeprimitives[] = {
 
 {"stream",Tps_op_stream,3,Tps_operator_static},
@@ -281,7 +281,7 @@ Tps_Operator unsafeprimitives[] = {
 
 static
 Tps_Status
-buildoneoperator(Tps_Dict* d, Tps_Operator* pco, boolean unsafe) 
+buildoneoperator(Tps_Dict* d, const Tps_Operator* pco, boolean unsafe) 
 {
     Tps_Nameid nm;
     Tps_Status ok;
@@ -312,7 +312,7 @@ static
 void
 buildoperators()  // insert into the systemdict
 {
-    Tps_Operator* pco;
+    const Tps_Operator* pco;
     Tps_Status ok;
 
     for(pco=safeprimitives;pco->_name;pco++) {
@@ -333,7 +333,7 @@ buildoperators()  // insert into the systemdict
 
 /**************************************************/
 
-static
+static const
 Tps_Value_Simple Tps__constants_static[TPS_ALLCONSTANTS_COUNT] = {
 {{0,TPSTYPE_NAME},(void*)"ok"},
 {{0,TPSTYPE_NAME},(void*)"fail"},
@@ -453,8 +453,8 @@ static
 void
 buildnametable()
 {
-    Tps_Value* pcv = (Tps_Value*)Tps__constants_static;
-    Tps_Operator* pco = safeprimitives;
+    const Tps_Value* pcv = (const Tps_Value*)Tps__constants_static;
+    const Tps_Operator* pco = safeprimitives;
     Tps_Nameid nm;
     int i;
     int l;
@@ -562,7 +562,7 @@ buildtextoperators()
 
 /**************************************************/
 /* alias defs */
-static
+static const
 struct Tps_Operator_Alias {
 	const char*	_name;
 	const char*	_target;
@@ -581,7 +581,7 @@ static
 void
 buildoperatoraliases()
 {
-    struct Tps_Operator_Alias* p;
+    const struct Tps_Operator_Alias* p;
     Tps_Dict* opdict;
     Tps_Nameid nm;
     Tps_Status ok;
@@ -616,7 +616,7 @@ buildoperatoraliases()
 /* builtin constants (in systemdict): all names here should be in
    constants table as a pre-defined name
 */
-static
+static const
 struct Tps_Constant_Defs {
 	const char*	_name;
 	int		_index;
@@ -637,7 +637,7 @@ void
 buildconstantdefs()
 {
     /* fill in operators defined as constant values */
-    struct Tps_Constant_Defs* pc;
+    const struct Tps_Constant_Defs* pc;
     Tps_Nameid nm;
     Tps_Status ok;
     Tps_Dictpair pair;
@@ -655,7 +655,7 @@ buildconstantdefs()
 }
 
 /**************************************************/
-static
+static const
 struct Tps_misc {
 	char*		_name;
 	Tps_Typeid	_type;
@@ -668,7 +668,7 @@ static
 void
 buildmisc()
 {
-    struct Tps_misc* pa;
+    const struct Tps_misc* pa;
     Tps_Nameid nm;
     Tps_Status ok;
     Tps_Dictpair pair;
@@ -705,7 +705,7 @@ buildmisc()
 
 /**************************************************/
 /* misc non-operator values to mark as unsafe for various reasons */
-static
+static const
 struct Tps_unsafe {
 	const char*	_name;
 } unsafemisc[] = {
@@ -719,7 +719,7 @@ static
 void
 buildunsafemisc()
 {
-    struct Tps_unsafe* pa;
+    const struct Tps_unsafe* pa;
     Tps_Nameid nm;
     Tps_Status ok;
     Tps_Dictpair pair;
@@ -740,7 +740,7 @@ buildunsafemisc()
 }
 
 /**************************************************/
-static
+static const
 struct Tps_platform {
 	const char*	_name;
 	Tps_Typeid	_type;
@@ -752,7 +752,7 @@ struct Tps_platform {
 {(const char*)NULL,TPSTYPE_NULL}
 };
 
-static
+static const
 struct Tps_config {
 	const char*	_name;
 	Tps_Typeid	_type;
@@ -770,7 +770,7 @@ static
 Tps_Dict*
 buildplatform()
 {
-    struct Tps_platform* pp;
+    const struct Tps_platform* pp;
     Tps_Nameid nm;
     Tps_Status ok;
     Tps_Dictpair pair;
@@ -815,7 +815,7 @@ static
 void
 buildconfig()
 {
-    struct Tps_config* pp;
+    const struct Tps_config* pp;
     Tps_Nameid nm;
     Tps_Status ok;
     Tps_Dictpair pair;
@@ -940,7 +940,7 @@ Tps_initialize(boolean isinteractive)
     tpsg._clockres = 1;
 #endif
 
-    Tps__constants = (Tps_Value*)Tps__constants_static;
+    Tps__constants = (const Tps_Value*)Tps__constants_static;
 
     tpsg._objects = new Tps_List;
 
