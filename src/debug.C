@@ -36,7 +36,7 @@ debugobject(Tps_Value object)
 }
 
 const char*
-debugdict(Tps_Dict* dict)
+debugdict(const Tps_Dict* dict)
 {
     const char* s;
 
@@ -49,7 +49,7 @@ debugdict(Tps_Dict* dict)
 }
 
 const char*
-debugdictall(Tps_Dict* dict)
+debugdictall(const Tps_Dict* dict)
 {
     const char* s;
 
