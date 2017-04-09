@@ -33,10 +33,10 @@ or constructor or destructor.
 
 struct Tps_Operator {
     public:
-	Tps_Nameid name(void) const {return _name;}
-	long arity(void) const {return _arity;}
-	Tpsstatfcn proc(void) const {return _proc;}
-	Tps_Operator_Flags flags(void) const {return _flags;}
+	Tps_Nameid name() const {return _name;}
+	long arity() const {return _arity;}
+	Tpsstatfcn proc() const {return _proc;}
+	Tps_Operator_Flags flags() const {return _flags;}
     public:
 	void arity(long a) {_arity = a;}
 	void proc(Tpsstatfcn p) {_proc = p;}

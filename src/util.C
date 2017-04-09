@@ -471,7 +471,7 @@ Tps_dictstack_define(Tps_Value* dstack, long dlen, Tps_Dictpair& pair, long* whe
 /**************************************************/
 #if 0
 Tps_Dict*
-Tps_builderrordict(void)
+Tps_builderrordict()
 {
     int i;
     Tps_Dict* d;

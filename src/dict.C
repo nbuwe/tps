@@ -50,7 +50,7 @@ Tps_Dict::stringmatch(Tps_String* sp1, Tps_String* sp2)
 }
 
 void
-Tps_Dict::mark(void)
+Tps_Dict::mark()
 {
     if(marked()) return;
     Tps_Container::mark();  /* mark self */
@@ -161,7 +161,7 @@ Tps_Dict_Tcl::Tps_Dict_Tcl(long bucketcount, const char* nm)
  */
 
 void
-Tps_Dict_Tcl::clear(void)
+Tps_Dict_Tcl::clear()
 {
     Tps_HashEntry *hPtr, *nextPtr;
     int i;
@@ -183,7 +183,7 @@ Tps_Dict_Tcl::clear(void)
     maxlen = 0;
 }
 
-Tps_Dict_Tcl::~Tps_Dict_Tcl(void)
+Tps_Dict_Tcl::~Tps_Dict_Tcl()
 {
     clear();
 
@@ -360,7 +360,7 @@ Tps_Dict_Tcl::insert(Tps_Dictpair& pair, Tps_Value* oldvalue, boolean suppress)
  */
 
 void
-Tps_Dict_Tcl::RebuildTable(void)
+Tps_Dict_Tcl::RebuildTable()
 {
     long oldSize, index;
     Tps_Bucket* oldBuckets;
@@ -450,7 +450,7 @@ Tps_Dict_Tcl::ith(long i, Tps_Dictpair*& pairp)
  */
 
 char*
-Tps_Dict_Tcl::stats(void)
+Tps_Dict_Tcl::stats()
 {
 #define NUM_COUNTERS 10
     int count[NUM_COUNTERS], overflow, i, j;
@@ -507,7 +507,7 @@ Tps_Dict_Tcl::stats(void)
 
 /**************************************************/
 void
-Tps_Dict_Tcl::mark(void)
+Tps_Dict_Tcl::mark()
 {
     long i;
 

@@ -48,14 +48,14 @@ class Tps_Dict : public Tps_Container {
 	virtual Tps_Status remove(Tps_Value key, Tps_Dictpair* pairp) = 0;
 	virtual Tps_Status ith(long i, Tps_Dictpair*& pairp) = 0;
 	virtual Tps_Status copy(Tps_Dict* src) = 0;
-	virtual void clear(void) = 0;
+	virtual void clear() = 0;
     public:
-	virtual long length(void) const = 0; // # defined pairs in table
-	virtual long maxlength(void) const = 0; // current capacity
-	virtual long range(void) const = 0; // range (0..range()) for ith() method
+	virtual long length() const = 0; // # defined pairs in table
+	virtual long maxlength() const = 0; // current capacity
+	virtual long range() const = 0; // range (0..range()) for ith() method
     public:
-	void mark(void);
-	Tps_Dictkind kind(void) const {return _kind;}
+	void mark();
+	Tps_Dictkind kind() const {return _kind;}
     public:
 	const char* name() const { return _name?_name:"<dict>"; }	
 	void name(const char* nm) {_name = nm;}
@@ -111,25 +111,25 @@ struct Tps_Bucket {
 class Tps_Dict_Tcl : public Tps_Dict {
     public:
 	Tps_Dict_Tcl(long bucketcount=0, const char* nm=0);
-	virtual ~Tps_Dict_Tcl(void);
+	virtual ~Tps_Dict_Tcl();
     public:
 	virtual Tps_Status lookup(Tps_Value key, Tps_Dictpair** pairp);
 	virtual Tps_Status insert(Tps_Dictpair& pair, Tps_Value* oldvalue, boolean suppress=FALSE);
 	virtual Tps_Status remove(Tps_Value key, Tps_Dictpair* pairp);
 	virtual Tps_Status ith(long i, Tps_Dictpair*& pairp);
 	virtual Tps_Status copy(Tps_Dict*);
-	virtual void clear(void);
+	virtual void clear();
     public:
-	virtual long length(void) const {return numEntries;}
-	virtual long maxlength(void) const {return maxlen*numBuckets;}
-	virtual long range(void) const {return maxlength();}
-	long tablelength(void) const {return numBuckets;}
-	const Tps_Bucket* table(void) const {return buckets;}
+	virtual long length() const {return numEntries;}
+	virtual long maxlength() const {return maxlen*numBuckets;}
+	virtual long range() const {return maxlength();}
+	long tablelength() const {return numBuckets;}
+	const Tps_Bucket* table() const {return buckets;}
     public:
-	char* stats(void);
-	void mark(void);
+	char* stats();
+	void mark();
     protected:
-	void RebuildTable(void);
+	void RebuildTable();
     protected:
 	Tps_Bucket* buckets;  /* Pointer to bucket array.  Each
 				     element points to first entry in

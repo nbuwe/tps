@@ -24,10 +24,10 @@ reclaimed when no longer used.
 
 class Tps_List {
     public:
-	Tps_List(void) {_next = 0; _prev = 0;}
-	virtual ~Tps_List(void) {unlink();}
+	Tps_List() {_next = 0; _prev = 0;}
+	virtual ~Tps_List() {unlink();}
     public:
-	Tps_List* next(void) const {return _next;}
+	Tps_List* next() const {return _next;}
     public:
 	void link(Tps_List* lp)
 		{
@@ -36,7 +36,7 @@ class Tps_List {
 		    _prev = lp;
 		    if(_next) _next->_prev = this;
 		}
-	void unlink(void)
+	void unlink()
 		{
 		    if(_next) _next->_prev = _prev;
 		    if(_prev) _prev->_next = _next;
@@ -49,14 +49,14 @@ class Tps_List {
 class Tps_Container : public Tps_List {
     public:
 	Tps_Container(Tps_Typeid t);
-	virtual ~Tps_Container(void) {}
+	virtual ~Tps_Container() {}
     public:
-	boolean marked(void) const {return _marked;}
-	Tps_Typeid tid(void) const {return _tid;}
-	long uid(void) const {return _uid;}
+	boolean marked() const {return _marked;}
+	Tps_Typeid tid() const {return _tid;}
+	long uid() const {return _uid;}
     public:
-	virtual void mark(void) {_marked = TRUE;}
-	void unmark(void) {_marked = FALSE;}
+	virtual void mark() {_marked = TRUE;}
+	void unmark() {_marked = FALSE;}
 	void setuid(long u) {_uid = u;}
     protected:
 	boolean		_marked; /* mark flag for gc */

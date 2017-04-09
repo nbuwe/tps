@@ -821,7 +821,7 @@ Tps_Interp::stdstream(Tps_Stdio io)
 
 /**************************************************/
 Tps_Interp*
-Tps_interp_create(void)
+Tps_interp_create()
 {
     Tps_Interp* intrp = new Tps_Interp;
     return intrp;

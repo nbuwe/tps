@@ -24,7 +24,7 @@ The name table is kept independent of any specific interpreter
 struct Tps_Nametable : public Tps_Dict_Tcl {
     public:
 	Tps_Nametable(long);
-	virtual ~Tps_Nametable(void);
+	virtual ~Tps_Nametable();
     public:
 	Tps_Nameid newname(const char* nm, boolean ro=FALSE);
     public:
@@ -32,7 +32,7 @@ struct Tps_Nametable : public Tps_Dict_Tcl {
     public: // virtual overrides
 	Tps_Status lookup(Tps_Value key, Tps_Dictpair** pairp);
 	Tps_Status insert(Tps_Dictpair& pairp, Tps_Value* oldvalue, boolean suppress=FALSE);
-	void mark(void) /* mark self only */
+	void mark() /* mark self only */
 	    {if(marked()) return; Tps_Container::mark();}
     protected:
 	/* key MUST BE TPSTYPE_NAME!*/

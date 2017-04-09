@@ -44,7 +44,7 @@ Tps_mark(Tps_Value v)
 }
 
 void
-Tps_Interp::gc(void)
+Tps_Interp::gc()
 {
     Tps_Value* vp;
     Tps_Dict* dp;

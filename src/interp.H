@@ -33,7 +33,7 @@ struct Tps_Frame; /* forward */
 /**************************************************/
 /* Define the factory procedure for this class */
 
-EXTERNC Tps_Interp* Tps_interp_create(void);
+EXTERNC Tps_Interp* Tps_interp_create();
 
 /**************************************************/
 /* Define some auxilliary types */
@@ -98,7 +98,7 @@ class Tps_Interp {
 	void tpsrc(const char*);
     public:
 	Tps_Status unwind_thru(struct Tps_Frame* fr, boolean thrown=FALSE);
-	Tps_Status unwind_throw(void){ return unwind_thru((struct Tps_Frame*)0,TRUE);}
+	Tps_Status unwind_throw(){ return unwind_thru((struct Tps_Frame*)0,TRUE);}
     public:
 	Tps_Stream* stdstream(Tps_Stdio);
     public: /* leave interpreter state open, at least for now */
@@ -151,66 +151,66 @@ class Tps_Interp {
 
     public: /* stack manipulators */
 	/* operand stack */
-	u_long depth(void) const
+	u_long depth() const
 	    {return _stack._last - _stack._tos;}
-	u_long room(void) const /* space left on the stack */
+	u_long room() const /* space left on the stack */
 	    {return _stack._tos - _stack._stack;}
 	/* caution:the following do not check for stack space */
 	Tps_Value push(Tps_Value value)
 	    {return *(--_stack._tos) = (value);}
 	Tps_Value* pushn(long n) /* move nos to hold n more elements */
 	    {(void)(_stack._tos -= (n)); return _stack._tos;}
-	Tps_Value pop(void) /* remove & return top element */
+	Tps_Value pop() /* remove & return top element */
 	    {return (*_stack._tos++);}
 	Tps_Value* popn(long n) /* remove n elements from stack */
 	    {(void)(_stack._tos += (n)); return _stack._tos;}
-	Tps_Value* tosp(void) const /* get address of the top stack element */
+	Tps_Value* tosp() const /* get address of the top stack element */
 	    {return _stack._tos;}
-	Tps_Value top(void) const /* return top element without popping it */
+	Tps_Value top() const /* return top element without popping it */
 	    { return *(_stack._tos);}
 	void settosp(Tps_Value* argptr) /* force stack to fixed point */
 	    {_stack._tos = (argptr);}
-	Tps_Value* base(void) const /* base of the stack (= tosp + depth) */
+	Tps_Value* base() const /* base of the stack (= tosp + depth) */
 	    {return (_stack._last);}
-	void clear(void) /* clear the stack */
+	void clear() /* clear the stack */
 	    {_stack._tos = _stack._last;}
 
 	/* dict stack */
-	u_long ddepth(void) const
+	u_long ddepth() const
 	    {return _dstack->_last - _dstack->_tos;}
-	u_long droom(void) const
+	u_long droom() const
 	    {return _dstack->_tos - _dstack->_stack;}
 	/* caution:the following do not check for stack space */
 	Tps_Value dpush(Tps_Value value)
 	    {return *(--_dstack->_tos) = (value);}
 	Tps_Value* dpushn(long n)
 	    {(void)(_dstack->_tos -= (n)); return _dstack->_tos;}
-	Tps_Value dpop(void)
+	Tps_Value dpop()
 	    {return (*_dstack->_tos++);}
 	Tps_Value* dpopn(long n)
 	    {(void)(_dstack->_tos += (n)); return _dstack->_tos;}
-	Tps_Value* dtosp(void) const
+	Tps_Value* dtosp() const
 	    {return _dstack->_tos;}
-	Tps_Value dtop(void) const
+	Tps_Value dtop() const
 	    { return *(_dstack->_tos);}
-	void dclear(void)
+	void dclear()
 	    {_dstack->_tos = _dstack->_last;}
 
 	/* exec stack */
-	u_long edepth(void) const
+	u_long edepth() const
 	    {return _estack._last - _estack._tos;}
-	u_long eroom(void) const
+	u_long eroom() const
 	    {return _estack._tos - _estack._stack;}
 	/* caution:the following do not check for stack space */
 	char* epushn(long n)
 	    {(void)(_estack._tos -= (n)); return _estack._tos;}
 	char* epopn(long n)
 	    {(void)(_estack._tos += (n)); return _estack._tos;}
-	char* etosp(void) const
+	char* etosp() const
 	    {return _estack._tos;}
-	void eclear(void)
+	void eclear()
 	    {_estack._tos = _estack._last;}
-	char* ebase(void) const
+	char* ebase() const
 	    {return (_estack._last);}
 	long eoffset(char* f) const
 	    {return _estack._last - f;}

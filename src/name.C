@@ -27,7 +27,7 @@ Tps_Nametable::Tps_Nametable(long chains)
 	: Tps_Dict_Tcl(chains,"nametable")
 {return;}
 
-Tps_Nametable::~Tps_Nametable(void)
+Tps_Nametable::~Tps_Nametable()
 {
     /* before deleting, go thru and clean up the writable names */
     Tps_Status ok;
