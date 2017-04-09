@@ -18,6 +18,7 @@
 #define TPS_HH  1
 
 #include <sys/types.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 

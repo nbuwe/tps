@@ -85,7 +85,7 @@ typedef union Tps_Valueset {
 	struct Tps_Operator*	_operator;	/*TPSTYPE_OPERATOR*/
 	/* all others have no associated value */
 	/* Following are for special access */
-	u_long			_any;		/*TPSTYPE_ANY*/
+	uintptr_t		_any;		/*TPSTYPE_ANY*/
 	struct Tps_Container*	_container;	/*TPSTYPE_CONTAINER*/
 } Tps_Valueset;
 
@@ -198,11 +198,11 @@ Fill in a value from scratch
 #define TPS_MAKEVALUE(pv,typ,val) (\
 	TPS_CLEAR_FLAGS(pv), \
 	TPS_SET_TYPEID(pv,typ), \
-	TPS_ANY_OF(pv) = (u_long)(val) \
+	TPS_ANY_OF(pv) = (uintptr_t)(val) \
 	)
 
 /* change value only */
-#define TPS_CHANGEVALUE(pv,typ,val) { TPS_ANY_OF(pv) = (u_long)(val); }
+#define TPS_CHANGEVALUE(pv,typ,val) { TPS_ANY_OF(pv) = (uintptr_t)(val); }
 
 #if HASFLOAT
 /* Make a real value */
