@@ -151,70 +151,70 @@ class Tps_Interp {
 
     public: /* stack manipulators */
 	/* operand stack */
-	inline u_long depth(void) const
+	u_long depth(void) const
 	    {return _stack._last - _stack._tos;}
-	inline u_long room(void) const /* space left on the stack */
+	u_long room(void) const /* space left on the stack */
 	    {return _stack._tos - _stack._stack;}
 	/* caution:the following do not check for stack space */
-	inline Tps_Value push(Tps_Value value)
+	Tps_Value push(Tps_Value value)
 	    {return *(--_stack._tos) = (value);}
-	inline Tps_Value* pushn(long n) /* move nos to hold n more elements */
+	Tps_Value* pushn(long n) /* move nos to hold n more elements */
 	    {(void)(_stack._tos -= (n)); return _stack._tos;}
-	inline Tps_Value pop(void) /* remove & return top element */
+	Tps_Value pop(void) /* remove & return top element */
 	    {return (*_stack._tos++);}
-	inline Tps_Value* popn(long n) /* remove n elements from stack */
+	Tps_Value* popn(long n) /* remove n elements from stack */
 	    {(void)(_stack._tos += (n)); return _stack._tos;}
-	inline Tps_Value* tosp(void) const /* get address of the top stack element */
+	Tps_Value* tosp(void) const /* get address of the top stack element */
 	    {return _stack._tos;}
-	inline Tps_Value top(void) const /* return top element without popping it */
+	Tps_Value top(void) const /* return top element without popping it */
 	    { return *(_stack._tos);}
-	inline void settosp(Tps_Value* argptr) /* force stack to fixed point */
+	void settosp(Tps_Value* argptr) /* force stack to fixed point */
 	    {_stack._tos = (argptr);}
-	inline Tps_Value* base(void) const /* base of the stack (= tosp + depth) */
+	Tps_Value* base(void) const /* base of the stack (= tosp + depth) */
 	    {return (_stack._last);}
-	inline void clear(void) /* clear the stack */
+	void clear(void) /* clear the stack */
 	    {_stack._tos = _stack._last;}
 
 	/* dict stack */
-	inline u_long ddepth(void) const
+	u_long ddepth(void) const
 	    {return _dstack->_last - _dstack->_tos;}
-	inline u_long droom(void) const
+	u_long droom(void) const
 	    {return _dstack->_tos - _dstack->_stack;}
 	/* caution:the following do not check for stack space */
-	inline Tps_Value dpush(Tps_Value value)
+	Tps_Value dpush(Tps_Value value)
 	    {return *(--_dstack->_tos) = (value);}
-	inline Tps_Value* dpushn(long n)
+	Tps_Value* dpushn(long n)
 	    {(void)(_dstack->_tos -= (n)); return _dstack->_tos;}
-	inline Tps_Value dpop(void)
+	Tps_Value dpop(void)
 	    {return (*_dstack->_tos++);}
-	inline Tps_Value* dpopn(long n)
+	Tps_Value* dpopn(long n)
 	    {(void)(_dstack->_tos += (n)); return _dstack->_tos;}
-	inline Tps_Value* dtosp(void) const
+	Tps_Value* dtosp(void) const
 	    {return _dstack->_tos;}
-	inline Tps_Value dtop(void) const
+	Tps_Value dtop(void) const
 	    { return *(_dstack->_tos);}
-	inline void dclear(void)
+	void dclear(void)
 	    {_dstack->_tos = _dstack->_last;}
 
 	/* exec stack */
-	inline u_long edepth(void) const
+	u_long edepth(void) const
 	    {return _estack._last - _estack._tos;}
-	inline u_long eroom(void) const
+	u_long eroom(void) const
 	    {return _estack._tos - _estack._stack;}
 	/* caution:the following do not check for stack space */
-	inline char* epushn(long n)
+	char* epushn(long n)
 	    {(void)(_estack._tos -= (n)); return _estack._tos;}
-	inline char* epopn(long n)
+	char* epopn(long n)
 	    {(void)(_estack._tos += (n)); return _estack._tos;}
-	inline char* etosp(void) const
+	char* etosp(void) const
 	    {return _estack._tos;}
-	inline void eclear(void)
+	void eclear(void)
 	    {_estack._tos = _estack._last;}
-	inline char* ebase(void) const
+	char* ebase(void) const
 	    {return (_estack._last);}
-	inline long eoffset(char* f) const
+	long eoffset(char* f) const
 	    {return _estack._last - f;}
-	inline char* eoffbase(long n) const
+	char* eoffbase(long n) const
 	    {return _estack._last - n;}
 };
 
