@@ -64,7 +64,7 @@ class Tps_Container : public Tps_List {
 	long		_uid;    /* for state marshalling */
 };
 
-#define TPS_GC_OF(p) ((Tps_Container*)(p)._value._any)
+#define TPS_GC_OF(p) ((p)._value._container)
 EXTERNC void Tps_mark(Tps_Value v);
 
 #endif /*CONTAINER_HH*/
