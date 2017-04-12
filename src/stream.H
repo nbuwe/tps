@@ -125,7 +125,7 @@ class Tps_Stream_File : public Tps_Stream {
 	virtual long bytesavailable();
     public:
 	virtual Tps_Status printf(const char* fmt...);
-	virtual Tps_Status ends() {return TPSSTAT_OK;} /* avoid nulls*/
+	virtual Tps_Status ends();
     public:
 	int fd() {return _fd;}
 	long attached() {return _attached;}
@@ -158,7 +158,7 @@ class Tps_Stream_String : public Tps_Stream {
 	virtual long bytesavailable();
     public:
 	virtual Tps_Status printf(const char* fmt...);
-	virtual Tps_Status ends() {return write((long)'\0');}
+	virtual Tps_Status ends();
     public:
 	char* contents() {return _contents;}
 	long length() {return _finger - _contents;}

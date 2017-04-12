@@ -193,6 +193,12 @@ Tps_Stream_File::write(const char* s, long slen)
 }
 
 Tps_Status
+Tps_Stream_File::ends()
+{
+    return TPSSTAT_OK;
+}
+
+Tps_Status
 Tps_Stream_File::pushback(long c)
 {
     if(!_good) return TPSSTAT_IOERROR;
@@ -363,6 +369,12 @@ Tps_Stream_String::write(const char* s, long slen)
 	_finger += slen;
     }
     return good();
+}
+
+Tps_Status
+Tps_Stream_String::ends()
+{
+    return write((long)'\0');
 }
 
 Tps_Status
