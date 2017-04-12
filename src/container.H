@@ -25,7 +25,7 @@ reclaimed when no longer used.
 class Tps_List {
     public:
 	Tps_List() {_next = 0; _prev = 0;}
-	virtual ~Tps_List() {unlink();}
+	virtual ~Tps_List();
     public:
 	Tps_List* next() const {return _next;}
     public:
@@ -49,13 +49,13 @@ class Tps_List {
 class Tps_Container : public Tps_List {
     public:
 	Tps_Container(Tps_Typeid t);
-	virtual ~Tps_Container() {}
+	virtual ~Tps_Container();
     public:
 	boolean marked() const {return _marked;}
 	Tps_Typeid tid() const {return _tid;}
 	long uid() const {return _uid;}
     public:
-	virtual void mark() {_marked = TRUE;}
+	virtual void mark();
 	void unmark() {_marked = FALSE;}
 	void setuid(long u) {_uid = u;}
     protected:

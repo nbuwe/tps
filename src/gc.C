@@ -22,12 +22,29 @@
 #include "debug.H"
 #endif
 
+Tps_List::~Tps_List()
+{
+    unlink();
+}
+
 Tps_Container::Tps_Container(Tps_Typeid t)
 {
     _tid = t;
     unmark();
     link(tpsg._objects);
     setuid(-1);
+}
+
+Tps_Container::~Tps_Container()
+{
+    return;
+}
+
+
+void
+Tps_Container::mark()
+{
+    _marked = TRUE;
 }
 
 void
