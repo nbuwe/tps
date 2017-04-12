@@ -43,7 +43,6 @@ src/container.H
 src/dict.H
 src/export.H
 src/exec.H
-src/gc.H
 src/init.H
 src/interp.H
 src/isolate.H
