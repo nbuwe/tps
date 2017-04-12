@@ -61,7 +61,7 @@ class Tps_Stream : public Tps_Container {
 	    _good = FALSE;
 	    _modeflags = 0;
 	}
-	virtual ~Tps_Stream() {};
+	virtual ~Tps_Stream();
     public:
 	virtual Tps_Status open() = 0;
 	virtual Tps_Status close() = 0;

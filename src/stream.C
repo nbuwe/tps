@@ -58,6 +58,13 @@ Tps_modestring_of(const Tps_Stream_Mode md)
 /*NOTREACHED*/
 }
 
+
+Tps_Stream::~Tps_Stream()
+{
+    return;
+}
+
+
 /**************************************************/
 /**************************************************/
 /* File type operations */
