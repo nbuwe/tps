@@ -4217,7 +4217,7 @@ Tps_op_staterestore(Tps_Interp* intrp, Tps_Value* args, long /*nargs*/)
 	case TPSTYPE_STRING:
 	    ss = TPS_STRING_OF(args[1]);
 	    f = &intrp->_inbuf;
-	    ok = ((Tps_Stream_String*)f)->open(ss->contents(),ss->length());
+	    ok = intrp->_inbuf.open(ss->contents(),ss->length());
 	    if(ok != TPSSTAT_OK) return ok;
 	    break;
 	case TPSTYPE_STREAM:
