@@ -116,6 +116,7 @@ class Tps_Stream_File : public Tps_Stream {
 	virtual Tps_Status close();
     public:
 	virtual long read();
+	using Tps_Stream::write;
 	virtual Tps_Status write(long c);
 	virtual Tps_Status write(const char*,long);
 	virtual Tps_Status pushback(long c);
@@ -126,7 +127,6 @@ class Tps_Stream_File : public Tps_Stream {
 	virtual Tps_Status printf(const char* fmt...);
 	virtual Tps_Status ends() {return TPSSTAT_OK;} /* avoid nulls*/
     public:
-	Tps_Status write(const char* s) {return write(s,s?strlen(s):0);}
 	int fd() {return _fd;}
 	long attached() {return _attached;}
     protected:
@@ -149,6 +149,7 @@ class Tps_Stream_String : public Tps_Stream {
 	virtual Tps_Status close();
     public:
 	virtual long read();
+	using Tps_Stream::write;
 	virtual Tps_Status write(long c);
 	virtual Tps_Status write(const char*,long);
 	virtual Tps_Status pushback(long c);
@@ -159,7 +160,6 @@ class Tps_Stream_String : public Tps_Stream {
 	virtual Tps_Status printf(const char* fmt...);
 	virtual Tps_Status ends() {return write((long)0);}
     public:
-	Tps_Status write(const char* s) {return write(s,s?strlen(s):0);}
 	char* contents() {return _contents;}
 	long length() {return _finger - _contents;}
     public:
