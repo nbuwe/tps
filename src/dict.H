@@ -54,7 +54,7 @@ class Tps_Dict : public Tps_Container {
 	virtual long maxlength() const = 0; // current capacity
 	virtual long range() const = 0; // range (0..range()) for ith() method
     public:
-	void mark();
+	virtual void mark();
 	Tps_Dictkind kind() const {return _kind;}
     public:
 	const char* name() const { return _name?_name:"<dict>"; }	
@@ -127,7 +127,7 @@ class Tps_Dict_Tcl : public Tps_Dict {
 	const Tps_Bucket* table() const {return buckets;}
     public:
 	char* stats();
-	void mark();
+	virtual void mark();
     protected:
 	void RebuildTable();
     protected:

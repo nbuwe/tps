@@ -30,9 +30,9 @@ struct Tps_Nametable : public Tps_Dict_Tcl {
     public:
 	Tps_Nametable* duplicate(); // duplicate this nametable
     public: // virtual overrides
-	Tps_Status lookup(Tps_Value key, Tps_Dictpair** pairp);
-	Tps_Status insert(Tps_Dictpair& pairp, Tps_Value* oldvalue, boolean suppress=FALSE);
-	void mark() /* mark self only */
+	virtual Tps_Status lookup(Tps_Value key, Tps_Dictpair** pairp);
+	virtual Tps_Status insert(Tps_Dictpair& pairp, Tps_Value* oldvalue, boolean suppress=FALSE);
+	virtual void mark() /* mark self only */
 	    {if(marked()) return; Tps_Container::mark();}
     protected:
 	/* key MUST BE TPSTYPE_NAME!*/
