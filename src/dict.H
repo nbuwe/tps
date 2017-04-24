@@ -71,8 +71,8 @@ class Tps_Dict : public Tps_Container {
 			  && stringmatch(TPS_STRING_OF(key),TPS_STRING_OF(e)))
 			|| TPS_ANY_OF(key) == TPS_ANY_OF(e));}
     protected:
-	inline u_long randomize(u_long n) {return (n)*1103515245;}
-	inline u_long wordhash(Tps_Value key)
+	u_long randomize(u_long n) {return (n)*1103515245;}
+	u_long wordhash(Tps_Value key)
 		{return randomize(TPS_ANY_OF(key)>>3);}
 	u_long stringhash(Tps_String* key);
 	boolean stringmatch(Tps_String*, Tps_String*);
