@@ -108,8 +108,8 @@ class Tps_Stream_File : public Tps_Stream {
 		{return init((char*)0,0,0);}
 	virtual Tps_Status open(const char* fname, const long flen,
 				const Tps_Stream_Mode md=Tps_stream_r);
-	virtual Tps_Status open(const char* fname,
-				const Tps_Stream_Mode md=Tps_stream_r)
+	Tps_Status open(const char* fname,
+			const Tps_Stream_Mode md=Tps_stream_r)
 		{return open(fname,strlen(fname),md);}
 	virtual Tps_Status attach(const int f, const char* fname,
 				const Tps_Stream_Mode md=Tps_stream_r);
