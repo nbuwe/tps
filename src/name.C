@@ -45,6 +45,13 @@ Tps_Nametable::~Tps_Nametable()
     }
 }
 
+void
+Tps_Nametable::mark()
+{
+    if(marked()) return;
+    Tps_Container::mark();  /* mark self only */
+}
+
 /* Assume that the arg is null terminated */
 Tps_Nameid
 Tps_Nametable::newname(const char* nm, boolean ro)

@@ -32,8 +32,7 @@ struct Tps_Nametable : public Tps_Dict_Tcl {
     public: // virtual overrides
 	virtual Tps_Status lookup(Tps_Value key, Tps_Dictpair** pairp);
 	virtual Tps_Status insert(Tps_Dictpair& pairp, Tps_Value* oldvalue, boolean suppress=FALSE);
-	virtual void mark() /* mark self only */
-	    {if(marked()) return; Tps_Container::mark();}
+	virtual void mark();
     protected:
 	/* key MUST BE TPSTYPE_NAME!*/
 	virtual u_long hashfcn(Tps_Value key)
