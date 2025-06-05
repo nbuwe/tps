@@ -661,7 +661,7 @@ struct Tps_misc {
 	Tps_Typeid	_type;
 	void*		_value;
 } misc_defs[] = {
-{(char*)NULL,TPSTYPE_NULL}
+{(char*)NULL,TPSTYPE_NULL,NULL}
 };
 
 static
@@ -749,7 +749,7 @@ struct Tps_platform {
 {"version",TPSTYPE_STRING,(void*)Tps_versionstring},
 {"targetarch",TPSTYPE_STRING,(void*)Tps_targetarch},
 {"targetos",TPSTYPE_STRING,(void*)Tps_targetos},
-{(const char*)NULL,TPSTYPE_NULL}
+{(const char*)NULL,TPSTYPE_NULL,NULL}
 };
 
 static const
@@ -763,7 +763,7 @@ struct Tps_config {
 {"safefileprefix",TPSTYPE_STRING,(void*)Tps_safefileprefix,0},
 {"interactive",TPSTYPE_BOOLEAN,(void*)&tpsg._interactive,1}, // override
 {".tpsrc",TPSTYPE_STRING,(void*)Tps_tpsrc,0},
-{(const char*)NULL,TPSTYPE_NULL,0}
+{(const char*)NULL,TPSTYPE_NULL,0,false}
 };
 
 static
