@@ -107,8 +107,10 @@ Tps_Interp::gc()
     tpsg._nametable->mark();
 
     /* go thru and reclaim unused objects, and unmark others */
-    for(lp=tpsg._objects->next();lp;lp=lp->next()) {
+    lp = tpsg._objects->next();
+    while (lp != NULL) {
 	Tps_Container* q = (Tps_Container*)lp;
+	lp = lp->next();
 	if(!q->marked()) {
 #if VERBOSE > 2
 	    /* indicate what is being reclaimed */
@@ -118,7 +120,7 @@ Tps_Interp::gc()
 		case TPSTYPE_ARRAY:
 		case TPSTYPE_STRING:
 		case TPSTYPE_STREAM: {
-		    char* s;
+		    const char* s;
 		    Tps_Value v;
 		    TPS_MAKEVALUE(v,tid,q);
 		    s = debugobject(v);
@@ -128,7 +130,6 @@ Tps_Interp::gc()
 		default: /* better not happen */
 		    TPS_STDCONS->printf("!gc: attempt to reclaim object of type %s\n", TPS_TNM(tid));
 		    break;
-		
 	    }
 #endif /*VERBOSE*/
 	    delete q;
