@@ -139,7 +139,7 @@ long
 Tps_Stream_File::read()
 {
     char s[1];
-    long c;
+    long c = 0;
     if(!_good) return TPSSTAT_IOERROR;
     if(!r()) return TPSSTAT_INVALIDSTREAMACCESS;
     if(_pushed < 0) {
@@ -152,7 +152,7 @@ Tps_Stream_File::read()
 	c = (char)_pushed;
 	_pushed = -1;
     }
-if(!c) abort();
+    if(!c) abort();
     return c;
 }
 
