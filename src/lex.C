@@ -396,7 +396,7 @@ done:
     }
     return TPSSTAT_OK;
 failed:
-    if(a) Tps_free((char*)a);
+    if(a) delete a;
     return ok;
 }
 
