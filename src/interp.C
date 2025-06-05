@@ -171,7 +171,7 @@ Tps_Interp::Tps_Interp()
     /* _dstack = _dstacks + 0; */
 
 #if VERBOSE > 1
-    TPS_STDCONS.printf("dstack:\n%s\n",debugdstacks(this));
+    TPS_STDCONS->printf("dstack:\n%s\n",debugdstacks(this));
 #endif
 
     /* initialize misc. interpreter state */
@@ -190,7 +190,7 @@ Tps_Interp::Tps_Interp()
     _tpsrc = STRDUP(Tps_tpsrc);
 
 #if VERBOSE > 1
-    TPS_STDCONS.printf("userdict: %s\n",debugobject(__userdicts[0]));
+    TPS_STDCONS->printf("userdict: %s\n",debugobject(__userdicts[0]));
 #endif
 
     return;
