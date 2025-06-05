@@ -34,14 +34,14 @@ or constructor or destructor.
 struct Tps_Operator {
     public:
 	Tps_Nameid name() const {return _name;}
-	long arity() const {return _arity;}
 	Tpsstatfcn proc() const {return _proc;}
+	long arity() const {return _arity;}
 	Tps_Operator_Flags flags() const {return _flags;}
     public:
-	void arity(long a) {_arity = a;}
-	void proc(Tpsstatfcn p) {_proc = p;}
-	void flags(Tps_Operator_Flags f) {_flags = f;}
 	void name(const char* s) {_name = s;}
+	void proc(Tpsstatfcn p) {_proc = p;}
+	void arity(long a) {_arity = a;}
+	void flags(Tps_Operator_Flags f) {_flags = f;}
     public:
 	Tps_Status invoke(TPS_OPERATOR_ARGS)
 	    {return (_proc)(interp,args,nargs);}
