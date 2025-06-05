@@ -726,12 +726,12 @@ Tps_Interp::newoperator(const char* nm, long ar, Tpsstatfcn pr)
     if(strlen(nm) >= 256) return TPSSTAT_FAIL;
     op = new Tps_Operator;
     if(op) {
+	id = TPS_NAMETABLE->newname(nm);
 	op->name(id);
 	op->arity(ar);
 	op->proc(pr);
 	op->flags(0);
 	TPS_MAKEVALUE(pair._value,TPSTYPE_OPERATOR,op);
-	id = TPS_NAMETABLE->newname(nm);
 	TPS_MAKEVALUE(pair._key,TPSTYPE_NAME,id);
 	/* make all primitives untraceable and executable */
 	TPS_SET_TRACEOFF(pair._value,1);
