@@ -947,11 +947,15 @@ Tps_equal(Tps_Value v1, Tps_Value v2)
 	Tps_Container* q = (Tps_Container*)lp;
 	q->unmark();
     }
-    boolean b = Tps_equal1(v1,v2);
+
+    int b = Tps_equal1(v1,v2);
+
     for(lp=tpsg._objects->next();lp;lp=lp->next()) {
 	Tps_Container* q = (Tps_Container*)lp;
 	q->unmark();
     }
+
+    return b;
 }
 #endif /*IMTEST*/
 
